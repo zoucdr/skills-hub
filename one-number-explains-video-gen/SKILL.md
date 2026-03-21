@@ -17,13 +17,15 @@ user-invocable: true
 
 ## Prerequisites
 
-- `WERYAI_API_KEY` **must be set**; Node **18+**; `https` images only.
+- `WERYAI_API_KEY` **must be set**; Node **18+**. Prefer public **`https`** image URLs; if the assembled `scripts/video_gen.js` supports local file paths, review/verify the script and explicitly consent before local read-and-upload to WeryAI.
 - Non-empty `model`.
 
 ## Security, secrets, and API hosts
 
 - **`WERYAI_API_KEY`**: Secret; never commit.
 - **API hosts** fixed in `video_gen.js`.
+- **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
+- **Higher assurance**: Prefer a short-lived or isolated environment; review `scripts/video_gen.js` before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
 ## Prompt expansion (mandatory)
 

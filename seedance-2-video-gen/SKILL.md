@@ -1,7 +1,7 @@
 ---
 name: seedance-2-video-gen
 version: 1.0.0
-description: "Generate Seedance 2.0 videos through WeryAI for text-to-video, image-to-video, multi-image video, and first-frame/last-frame transitions. Use when you need a Seedance 2.0 video generator, want to animate an HTTPS image, create a storyboard-to-video clip, migrate `image + last_image` workflows, or generate controlled start/end frame video with your WeryAI API key."
+description: "Generate Seedance 2.0 videos through WeryAI for text-to-video, image-to-video, multi-image video, and first-frame/last-frame transitions. Use when you need a Seedance 2.0 video generator, want to animate a reference image (prefer a public https URL), create a storyboard-to-video clip, migrate `image + last_image` workflows, or generate controlled start/end frame video with your WeryAI API key."
 
 tags: [seedance, seedance-2, video-gen, text-to-video, image-to-video, multi-image-video, storyboard, start-frame, end-frame]
 
@@ -11,7 +11,7 @@ user-invocable: true
 
 # Seedance 2.0 video generator
 
-Generate Seedance 2.0 videos through WeryAI with one focused skill: text-to-video, image-to-video, multi-image video, and first-frame/last-frame transition control. This skill is intentionally strict about secret declaration and input safety: the only runtime secret is `WERYAI_API_KEY`, and reference media must be public `https` URLs rather than ad-hoc local uploads.
+Generate Seedance 2.0 videos through WeryAI with one focused skill: text-to-video, image-to-video, multi-image video, and first-frame/last-frame transition control. This skill is intentionally strict about secret declaration and input safety: the only runtime secret is `WERYAI_API_KEY`. Prefer public **`https`** URLs for reference media; if the assembled `scripts/video_gen.js` supports local file paths, review/verify the script and explicitly consent before it reads local files and uploads them to WeryAI to obtain public URLs.
 
 **Dependencies:** `scripts/video_gen.js` in this directory + `WERYAI_API_KEY` + Node.js 18+. No other Cursor skills are required.
 
@@ -53,12 +53,12 @@ node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"A glowing koi swims 
 - Main jobs: Seedance 2.0 text-to-video, single-image animation, multi-image video, start/end-frame transition video
 - Main inputs: `prompt`, `image`, `images`, `first_frame`, `last_frame`, `last_image`
 - Main outputs: `taskId`, `videos`, task status, model capability checks
-- Main trust signals: declared `WERYAI_API_KEY`, no local-file upload requirement, dry-run support, explicit paid-task warning
+- Main trust signals: declared `WERYAI_API_KEY`, dry-run support, explicit paid-task warning, and documented reference-input handling (prefer `https`; local paths only after script review and explicit consent)
 
 ## Example prompts
 
 - `Generate a Seedance 2.0 text-to-video clip: a silver train exits a tunnel into sunrise mist, 9:16 vertical`
-- `Animate this HTTPS portrait with Seedance 2.0 image-to-video and keep the face consistent`
+- `Animate this reference portrait URL with Seedance 2.0 image-to-video and keep the face consistent`
 - `Turn these three storyboard images into one coherent product reveal video with consistent lighting`
 - `Use these first and last frames to generate a smooth transition video with the same character`
 - `Migrate this WaveSpeed Seedance flow that uses image plus last_image into the WeryAI version`
@@ -67,7 +67,7 @@ node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"A glowing koi swims 
 
 - `WERYAI_API_KEY` **must be set** before running `video_gen.js`.
 - Node.js **18+** is required.
-- `image`, `images`, `first_frame`, `last_frame`, and `last_image` inputs **must** be public `https` URLs. Do not pass local files.
+- Prefer public **`https`** URLs for `image`, `images`, `first_frame`, `last_frame`, and `last_image`. If the assembled `scripts/video_gen.js` supports local file paths, review/verify the script and explicitly consent before local read-and-upload to WeryAI.
 - Every real `wait` or `submit-*` run creates a paid WeryAI task.
 
 ## Security, secrets, and API hosts
@@ -134,7 +134,7 @@ If the request is complex, structure the prompt plan internally as:
 ## Migration notes
 
 - If you are coming from a WaveSpeed-style Seedance workflow, map `last_image` to this skill's end-frame path. This skill accepts `image + last_image` as a compatibility alias and normalizes it to the ordered multi-image route.
-- Do **not** rely on local file uploads. Convert or host your references first and pass public `https` URLs only.
+- Prefer public **`https`** reference URLs by default. If your assembled `scripts/video_gen.js` supports local paths, review/verify it and explicitly consent before relying on local read-and-upload to WeryAI.
 - This skill's metadata correctly declares the required secret (`WERYAI_API_KEY`) so installers and reviewers can see the runtime contract up front.
 
 ## Prompt engineering recipes
@@ -150,7 +150,7 @@ When the user asks for "better Seedance prompts" rather than just API execution:
 ## Workflow
 
 1. Decide which path fits the request: `text`, `image`, `multi-image`, or `first-frame/last-frame`.
-2. Collect the user's brief, `duration`, optional `aspect_ratio`, optional `resolution`, and required HTTPS image URLs if the mode uses references.
+2. Collect the user's brief, `duration`, optional `aspect_ratio`, optional `resolution`, and reference image URLs if the mode uses assets (prefer public `https`).
 3. Expand the prompt with the rules from `## Prompt expansion (mandatory)`. If the request needs tighter control, read `references/seedance-prompt-optimization.md` and explicitly decide mode, asset mapping, timeline beats, and negative constraints before writing the final prompt.
 4. If you are unsure about current multi-image support or field limits, run `node {baseDir}/scripts/video_gen.js models --mode multi_image_to_video` before a paid request.
 5. Show a confirmation table with the **full expanded prompt**, model, duration, aspect ratio, resolution, audio choice, and any image URLs.
@@ -194,7 +194,7 @@ Done when the user receives at least one playable video URL, or a clear failure 
 
 ## Boundaries (out of scope)
 
-- Do not use local file paths for references; only public `https` URLs are supported.
+- Do not use local file paths for references unless you have reviewed the assembled `scripts/video_gen.js` and explicitly consent to local read-and-upload to WeryAI; otherwise prefer public **`https`** URLs.
 - Do not invent undocumented API fields beyond the JSON surface in this skill.
 - Do not assume multi-image or first/last-frame support without checking live metadata when the behavior matters.
 - Do not store the secret value of `WERYAI_API_KEY` inside the repository.
@@ -274,13 +274,13 @@ Use this when the user has only an idea and wants Seedance 2.0 to generate the c
 
 ---
 
-## Single HTTPS image -> Seedance motion
+## Single reference image -> Seedance motion
 
 Use this when the user already has one reference image and wants subtle or medium motion while preserving the subject.
 
 **Need from the user:**
 
-- One public `https` image URL
+- One reference image URL (prefer public `https`)
 - Desired motion direction
 - Optional duration, aspect ratio, and audio
 
@@ -296,13 +296,13 @@ Use this when the user already has one reference image and wants subtle or mediu
 
 ---
 
-## Multiple HTTPS images -> Seedance storyboard clip
+## Multiple reference images -> Seedance storyboard clip
 
 Use this when the user wants several frames turned into one coherent shot or short sequence.
 
 **Need from the user:**
 
-- Ordered public `https` image URLs
+- Ordered reference image URLs (prefer public `https`)
 - Desired transition logic
 - Optional duration and aspect ratio
 
@@ -324,8 +324,8 @@ Use this when the user wants tighter motion control from a known opening frame t
 
 **Need from the user:**
 
-- One public `https` start frame
-- One public `https` end frame
+- One reference start-frame URL (prefer public `https`)
+- One reference end-frame URL (prefer public `https`)
 - A prompt that explains the in-between action
 
 **Flow:**

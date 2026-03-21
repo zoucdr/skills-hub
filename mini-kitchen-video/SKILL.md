@@ -25,14 +25,15 @@ Text or one cookware / ingredient image → clip.
 ## Prerequisites
 
 - `WERYAI_API_KEY` **must be set** in the environment before running `video_gen.js`.
-- Node.js **18+** is required. Image inputs **must** be public `https` URLs (no local file paths).
+- Node.js **18+** is required. Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, review and verify the script first, then get **explicit consent** before it reads a local image and uploads it to WeryAI to obtain a public URL.
 - Each successful `wait` run consumes WeryAI credits; re-running creates new paid tasks.
 
 ## Security, secrets, and API hosts
 
 - **`WERYAI_API_KEY`**: Treat as a secret. Only configure it if you trust this skill's source; it is listed in OpenClaw metadata as **`requires.env`** / **`primaryEnv`** so installers know it is mandatory at runtime (never commit it inside the skill package).
 - **API hosts (fixed in `video_gen.js`)**: Video tasks use **`https://api.weryai.com`**; the models list uses **`https://api-growth-agent.weryai.com`**. Only **`WERYAI_API_KEY`** is read from the environment—do not rely on URL-related environment variables.
-- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use.
+- **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
+- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
 
 ## Prompt expansion (mandatory)
@@ -189,7 +190,7 @@ Public **HTTPS** photo of mini gear / food / plating → motion that matches. Re
 
 ### FAQ
 
-- Image URL must be public HTTPS; local paths fail—use an image host (e.g. imgbb, Cloudinary).
+- Prefer a public **`https`** image URL. If the assembled `scripts/video_gen.js` supports local file paths, review/verify the script and explicitly consent before local read-and-upload to WeryAI.
 - Multi-item mini bento / dessert: describe each item’s size and placement so nothing gets dropped.
 - For polish, name the surface (white marble, wood board, dark slate) instead of “nice background.”
 

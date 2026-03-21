@@ -11,22 +11,23 @@ user-invocable: true
 
 # Healing cute pet viral shorts
 
-A fluffy creature napping in afternoon sun, stretching, tilting its head—pace drops. This skill outputs **healing, cute** vertical pet clips (search: **cute pet healing video**): clean frames, gentle motion, warm grades, ready for short-video platforms; text only or one public **HTTPS** pet image for a few seconds of subtle life.
+A fluffy creature napping in afternoon sun, stretching, tilting its head—pace drops. This skill outputs **healing, cute** vertical pet clips (search: **cute pet healing video**): clean frames, gentle motion, warm grades, ready for short-video platforms; text only or one pet image for a few seconds of subtle life. Prefer a public **HTTPS** image URL; if the bundled runtime also supports local files, verify and explicitly consent before letting it read a local image and upload it to WeryAI.
 
-**Dependencies**: `scripts/video_gen.js` in this directory + `WERYAI_API_KEY` + Node.js 18+. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models.
+**Dependencies**: `scripts/video_gen.js` in this directory + `WERYAI_API_KEY` + Node.js 18+. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` and confirm you are comfortable with its file-handling behavior, especially if it supports reading local images and uploading them to WeryAI to obtain public URLs for image-to-video requests.
 
 
 ## Prerequisites
 
 - `WERYAI_API_KEY` **must be set** in the environment before running `video_gen.js`.
-- Node.js **18+** is required. Image inputs **must** be public `https` URLs (no local file paths).
+- Node.js **18+** is required. Public `https` image URLs are the safest default. If the bundled `video_gen.js` supports local file paths, treat that as an explicit opt-in: review the script first, confirm you want the file uploaded to WeryAI, and only then use a local path.
 - Each successful `wait` run consumes WeryAI credits; re-running creates new paid tasks.
 
 ## Security, secrets, and API hosts
 
 - **`WERYAI_API_KEY`**: Treat as a secret. Only configure it if you trust this skill’s source; it is listed in OpenClaw metadata as **`requires.env`** / **`primaryEnv`** so installers know it is mandatory at runtime (never commit it inside the skill package).
 - **API hosts (fixed in `video_gen.js`)**: Video tasks use **`https://api.weryai.com`**; the models list uses **`https://api-growth-agent.weryai.com`**. Only **`WERYAI_API_KEY`** is read from the environment—do not rely on URL-related environment variables.
-- **Higher assurance**: Run generation in a short‑lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use.
+- **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
+- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
 ## Prompt expansion (mandatory)
 
@@ -175,9 +176,9 @@ Quick ideation: user gives **species + coat + one action + setting**; you add le
 
 ## Pet photo → subtle healing motion
 
-User supplies a **public HTTPS** pet image; subject moves slightly (breath, ears, blink, tail)—cute, not sad.
+User supplies a pet image; subject moves slightly (breath, ears, blink, tail)—cute, not sad. Prefer a **public HTTPS** image URL. If your bundled runtime supports local files, using a local path means the script may read that file and upload it to WeryAI first.
 
-**Before use:** URL must be `https://` and directly reachable; no local paths.
+**Before use:** Prefer a directly reachable `https://` URL. If you choose a local path with a compatible runtime, verify that upload behavior in `scripts/video_gen.js` first and only proceed with explicit consent.
 
 **Flow:**
 

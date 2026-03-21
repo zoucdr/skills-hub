@@ -19,14 +19,15 @@ Built for destruction-aesthetic and satisfying creators. Lipstick smear bursts, 
 ## Prerequisites
 
 - `WERYAI_API_KEY` **must be set** in the environment before running `video_gen.js`.
-- Node.js **18+** is required. Image inputs **must** be public `https` URLs (no local file paths).
+- Node.js **18+** is required. Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, review and verify the script first, then get **explicit consent** before it reads a local image and uploads it to WeryAI to obtain a public URL.
 - Each successful `wait` run consumes WeryAI credits; re-running creates new paid tasks.
 
 ## Security, secrets, and API hosts
 
 - **`WERYAI_API_KEY`**: Treat as a secret. Only configure it if you trust this skill's source; it is listed in OpenClaw metadata as **`requires.env`** / **`primaryEnv`** so installers know it is mandatory at runtime (never commit it inside the skill package).
 - **API hosts (fixed in `video_gen.js`)**: Video tasks use **`https://api.weryai.com`**; the models list uses **`https://api-growth-agent.weryai.com`**. Only **`WERYAI_API_KEY`** is read from the environment—do not rely on URL-related environment variables.
-- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use.
+- **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
+- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
 
 ## Prompt expansion (mandatory)
@@ -186,4 +187,4 @@ Public **HTTPS** image of an object → that object crushed slowly or bursting. 
 
 **Contrast hooks:** `unexpectedly satisfying internal structure`, `reveals hidden contents`, `luxury exterior destroyed`
 
-> **Note:** Image URLs must be publicly reachable over HTTPS or the API errors. Upload to an image host first if needed.
+> **Note:** Prefer public **`https`** URLs so the API can fetch references. If the assembled `scripts/video_gen.js` supports local file paths, review/verify the script and explicitly consent before local read-and-upload to WeryAI.

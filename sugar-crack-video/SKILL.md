@@ -21,14 +21,15 @@ Text or one dessert image → 9:16 vertical.
 ## Prerequisites
 
 - `WERYAI_API_KEY` **must be set** in the environment before running `video_gen.js`.
-- Node.js **18+** is required. Image inputs **must** be public `https` URLs (no local file paths).
+- Node.js **18+** is required. Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, review and verify the script first, then get **explicit consent** before it reads a local image and uploads it to WeryAI to obtain a public URL.
 - Each successful `wait` run consumes WeryAI credits; re-running creates new paid tasks.
 
 ## Security, secrets, and API hosts
 
 - **`WERYAI_API_KEY`**: Treat as a secret. Only configure it if you trust this skill's source; it is listed in OpenClaw metadata as **`requires.env`** / **`primaryEnv`** so installers know it is mandatory at runtime (never commit it inside the skill package).
 - **API hosts (fixed in `video_gen.js`)**: Video tasks use **`https://api.weryai.com`**; the models list uses **`https://api-growth-agent.weryai.com`**. Only **`WERYAI_API_KEY`** is read from the environment—do not rely on URL-related environment variables.
-- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use.
+- **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
+- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
 
 ## Prompt expansion (mandatory)
@@ -142,7 +143,7 @@ Say what it is (candied hawthorn shell / lava cake / flowing pudding / crystal j
 
 Provide a dessert image URL; generate cut / pour motion anchored on that subject. Good for turning plating or product stills into video.
 
-URL must be publicly reachable `https`. Optional: motion direction (slice pour / shell shatter / jelly wobble / spoon crush). Infer shell, filling color, and shape from the image; keep look consistent with the reference.
+Prefer a publicly reachable **`https`** URL for the reference. Optional: motion direction (slice pour / shell shatter / jelly wobble / spoon crush). Infer shell, filling color, and shape from the image; keep look consistent with the reference.
 
 **Flow:**
 1. Collect URL + motion direction; infer food traits; build motion prompt
@@ -172,7 +173,7 @@ URL must be publicly reachable `https`. Optional: motion direction (slice pour /
 
 **Expected outcome:** Motion matches the dish; shell break and pour feel natural; strong before/after vs. still.
 
-> **Note:** URL must be public `https`; local paths or login-gated links fail the API. Upload to a host (e.g. imgur, cloud OSS) first. Clearer food and cleaner backgrounds improve accuracy.
+> **Note:** Prefer public **`https`** URLs; login-gated links may fail the API. If the assembled `scripts/video_gen.js` supports local file paths, review/verify the script and explicitly consent before local read-and-upload to WeryAI. Clearer food and cleaner backgrounds improve accuracy.
 
 ---
 

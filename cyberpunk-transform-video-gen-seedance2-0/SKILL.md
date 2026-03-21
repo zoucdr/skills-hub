@@ -18,7 +18,7 @@ Everyday content becomes **blade-runner energy**: megacity depth, wet asphalt re
 ## Prerequisites
 
 - `WERYAI_API_KEY` **must be set** before running `video_gen.js`.
-- Node.js **18+**; image inputs **must** be public `https` URLs (no local paths).
+- Node.js **18+**; prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` accepts local paths, review/verify the script and explicitly consent before local read-and-upload to WeryAI.
 - **Model (caller / agent):** The bundled `video_gen.js` **requires** a non-empty `model` in JSON—if `model` is missing or blank, the CLI exits with **`MISSING_PARAM`** (no default model). The script **does not** enforce this skill's allowed model in code: you **must** set `"model":"SEEDANCE_2_0"` for this package and show it in the confirmation table before submit—see [`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md) (`model` row).
 - Each `wait` run may consume credits; re-run creates new paid tasks.
 
@@ -26,7 +26,8 @@ Everyday content becomes **blade-runner energy**: megacity depth, wet asphalt re
 
 - **`WERYAI_API_KEY`**: Treat as a secret. Only configure it if you trust this skill's source; it is listed in OpenClaw metadata as **`requires.env`** / **`primaryEnv`** so installers know it is mandatory at runtime (never commit it inside the skill package).
 - **API hosts (fixed in `video_gen.js`)**: Video tasks use **`https://api.weryai.com`**; the models list uses **`https://api-growth-agent.weryai.com`**. Child skills must not document or rely on URL environment-variable overrides—only **`WERYAI_API_KEY`** is read from the environment.
-- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use.
+- **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
+- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
 ## Prompt expansion (mandatory)
 

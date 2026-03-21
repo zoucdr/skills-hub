@@ -30,7 +30,7 @@ Always re-check **`duration`**, **`aspect_ratio`**, **`resolution`**, **`generat
 ## Prerequisites
 
 - `WERYAI_API_KEY` **must be set** before running `video_gen.js`.
-- Node.js **18+**; reference URLs **must** be public **`https`** (no local paths).
+- Node.js **18+**; prefer public **`https`** reference URLs. If the assembled `scripts/video_gen.js` accepts local paths, review/verify the script and explicitly consent before local read-and-upload to WeryAI.
 - **`model` is mandatory** in `wait --json`. If the user does not specify a version, use **`SEEDANCE_2_0`**.
 - Each `wait` run may consume credits; re-run creates new paid tasks.
 
@@ -38,7 +38,8 @@ Always re-check **`duration`**, **`aspect_ratio`**, **`resolution`**, **`generat
 
 - **`WERYAI_API_KEY`**: Treat as a secret. Only configure it if you trust this skill's source; it is listed in OpenClaw metadata as **`requires.env`** / **`primaryEnv`** so installers know it is mandatory at runtime (never commit it inside the skill package).
 - **API hosts (fixed in `video_gen.js`)**: Video tasks use **`https://api.weryai.com`**; the models list uses **`https://api-growth-agent.weryai.com`**. Child skills must not document or rely on URL environment-variable overrides—only **`WERYAI_API_KEY`** is read from the environment.
-- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use.
+- **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
+- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
 ## Prompt expansion (mandatory)
 
@@ -82,7 +83,7 @@ Done when the user gets a playable **[Video](url)** link or a clear error with a
 
 - Do not send **`negative_prompt`** when the frozen row says **No** for that model and channel.
 - Do not exceed **`upload_image_limit`** or use multi-image when **`support_multiple_images`** is **false**.
-- Do not use local file paths for media; do not embed **`WERYAI_API_KEY`** values in files.
+- Do not use local file paths for media unless you have reviewed `scripts/video_gen.js` and explicitly consent to local read-and-upload to WeryAI; otherwise prefer public **`https`** URLs. Do not embed **`WERYAI_API_KEY`** values in files.
 - Do not link to `weryai-model-capabilities.md` or arbitrary `../references/` paths; use **`resources/WERYAI_VIDEO_API.md`** for CLI/API details.
 - Do not wrap user-facing playable URLs in Markdown code fences.
 

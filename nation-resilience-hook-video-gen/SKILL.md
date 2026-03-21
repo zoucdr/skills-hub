@@ -18,7 +18,7 @@ user-invocable: true
 ## Prerequisites
 
 - `WERYAI_API_KEY` **must be set** before running `video_gen.js`.
-- Node.js **18+**; image inputs **must** be public `https` URLs (no local paths).
+- Node.js **18+**; prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` accepts local paths, review/verify the script and explicitly consent before local read-and-upload to WeryAI.
 - `video_gen.js` **requires** a non-empty `model`—pick a tier from **Recommended models** or an explicit `model_key` from the frozen tables.
 - Each `wait` run consumes credits.
 
@@ -26,7 +26,8 @@ user-invocable: true
 
 - **`WERYAI_API_KEY`**: Secret; listed as **`requires.env`** / **`primaryEnv`**—never commit the value inside the package.
 - **API hosts (fixed in `video_gen.js`)**: Video **`https://api.weryai.com`**; models registry **`https://api-growth-agent.weryai.com`**. No URL overrides documented—only the key is read from the environment.
-- **Higher assurance**: Isolated environment; review `video_gen.js` before production use.
+- **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
+- **Higher assurance**: Use a short-lived or isolated environment; review `video_gen.js` before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
 ## Prompt expansion (mandatory)
 
@@ -84,7 +85,7 @@ Playable **[Video](url)** or clear failure. Submitted `prompt` includes **explic
 
 - No guarantee of geopolitical accuracy—**entertainment / opinion** tone only; avoid incitement.
 - No separate SRT workflow; captions live **inside** the model `prompt`.
-- No local image paths; no secret key in files.
+- Do not use local image paths unless you have reviewed `scripts/video_gen.js` and explicitly consent to local read-and-upload to WeryAI; otherwise prefer public **`https`** URLs. Do not put secret key values in files.
 - Do not link shared `../references/` capability docs; use **`resources/WERYAI_VIDEO_API.md`**.
 - Do not send unsupported API fields; no `negative_prompt` on **Seedance 2.0**.
 - **Multi-image** only **`SEEDANCE_2_0`**, max **3** URLs.

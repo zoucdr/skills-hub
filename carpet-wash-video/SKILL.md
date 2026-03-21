@@ -18,13 +18,14 @@ For cleaning / satisfying creators: pressure rinse, brush agitation, dirty water
 ## Prerequisites
 
 - `WERYAI_API_KEY` **must be set**.
-- Node.js **18+**; images **must** be `https` URLs.
+- Node.js **18+**. Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, review and verify the script first, then get **explicit consent** before it reads a local image and uploads it to WeryAI to obtain a public URL.
 
 ## Security, secrets, and API hosts
 
 - **`WERYAI_API_KEY`**: Treat as a secret. Only configure it if you trust this skill's source; it is listed in OpenClaw metadata as **`requires.env`** / **`primaryEnv`** so installers know it is mandatory at runtime (never commit it inside the skill package).
 - **API hosts (fixed in `video_gen.js`)**: Video tasks use **`https://api.weryai.com`**; the models list uses **`https://api-growth-agent.weryai.com`**. Only **`WERYAI_API_KEY`** is read from the environment—do not rely on URL-related environment variables.
-- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use.
+- **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
+- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
 
 ## Prompt expansion (mandatory)
@@ -139,4 +140,4 @@ node {baseDir}/scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prom
 
 **Sound:** `ASMR scrubbing`, `pressure washer hiss`, `wet squeegee drag`
 
-> Upload local shots to a public host first; API needs reachable HTTPS.
+> Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, review/verify the script and explicitly consent before local read-and-upload to WeryAI.
