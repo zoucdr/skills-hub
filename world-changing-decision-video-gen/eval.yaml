@@ -1,0 +1,29 @@
+version: "1"
+defaults:
+  trials: 5
+  timeout: 600
+  threshold: 0.8
+skill: "world-changing-decision-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use world-changing-decision-video-gen: historical flash about one pivotal decision and lasting consequences, English captions on a schedule."
+  - id: implicit-domain
+    should_trigger: true
+    prompt: "One old decision changed everything—archive montage, consequences today, vertical clip with scheduled English subtitles."
+  - id: implicit-paraphrase
+    should_trigger: true
+    prompt: "Storyboard a Reels history hook: absurd past choice, ripple montage, ‘we still live with it’ line on screen."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor this Python module for typing only."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "eval.yaml"
+  - id: prompt-expansion-required
+    type: llm_rubric
+    rubric: |
+      SKILL.md must document non-graphic boundary, four-beat history template, subtitle scaling, and full-prompt confirmation before WeryAI submit.
