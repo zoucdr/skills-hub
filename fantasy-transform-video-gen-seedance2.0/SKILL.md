@@ -19,6 +19,7 @@ Turn ordinary moments into **fantasy-forward** shorts: subjects feel enchanted, 
 
 - `WERYAI_API_KEY` **must be set** before running `video_gen.js`.
 - Node.js **18+**; image inputs **must** be public `https` URLs (no local paths).
+- **Model (caller / agent):** The bundled `video_gen.js` **defaults to** `WERYAI_VIDEO_1_0` when `model` is omitted and **does not** enforce this skill's model in code. You **must** include `"model":"SEEDANCE_2_0"` in every generation JSON and show it in the confirmation table before submit—see [`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md) (`model` row).
 - Each `wait` run may consume credits; re-run creates new paid tasks.
 
 ## Security, secrets, and API hosts
