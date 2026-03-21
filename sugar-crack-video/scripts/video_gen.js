@@ -15,7 +15,7 @@
  *   WERYAI_API_KEY（models / 生成 / status 必填；--dry-run 除外）— 敏感凭据，勿写入仓库；registry 元数据声明见同目录 SKILL.md。
  *   WERYAI_BASE_URL（默认 https://api.weryai.com）
  *   WERYAI_MODELS_BASE_URL（默认 https://api-growth-agent.weryai.com）
- *     上述两项仅用于自托管/联调；若环境被篡改，请求与密钥可能发往非官方主机，安装前请检查 env。
+ *     仅当解析后的 hostname 为 localhost / 127.0.0.1 或 *.weryai.com 时才会采用 env 覆盖，否则忽略并使用默认官方域名。
  *   WERYAI_POLL_INTERVAL_MS / WERYAI_POLL_TIMEOUT_MS
  */
 
@@ -24,26 +24,56 @@ const DEFAULT_API_ORIGIN = 'https://api.weryai.com';
 const DEFAULT_MODELS_ORIGIN = 'https://api-growth-agent.weryai.com';
 const MODELS_API_PATH = '/growthai/v1/video/models';
 
-/** Strip trailing slash. Env overrides are documented in SKILL.md (trusted deploy / staging only). */
+/** Strip trailing slash. */
 function normalizeOrigin(raw) {
   return String(raw).replace(/\/$/, '');
 }
 
-/**
- * WeryAI JSON API origin (generation, status). Not user prompt input — env is operator-controlled.
- * Kept as a function so URL resolution is not a module-level `process.env` → `fetch` taint sink.
- */
-function apiOrigin() {
-  const v = process.env.WERYAI_BASE_URL;
-  if (typeof v === 'string' && v.trim()) return normalizeOrigin(v.trim());
-  return DEFAULT_API_ORIGIN;
+function isAllowedServiceHost(hostname) {
+  if (hostname === 'localhost' || hostname === '127.0.0.1') return true;
+  if (hostname === 'api.weryai.com' || hostname === 'api-growth-agent.weryai.com') return true;
+  if (hostname.endsWith('.weryai.com')) return true;
+  return false;
 }
 
-/** Models registry host (separate service). */
+/**
+ * Turn optional env URL into a fetch origin. Hostname allowlist prevents env-based open redirects / SSRF
+ * to arbitrary hosts; disallowed values fall back to defaults (see SKILL.md).
+ * Return value is always either a built-in default string or `URL.origin` from a validated parse.
+ */
+function parseTrustedOriginFromEnv(envValue, fallbackOrigin) {
+  if (typeof envValue !== 'string' || !envValue.trim()) return fallbackOrigin;
+  const raw = normalizeOrigin(envValue.trim());
+  let u;
+  try {
+    u = new URL(raw.includes('://') ? raw : `https://${raw}`);
+  } catch {
+    return fallbackOrigin;
+  }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return fallbackOrigin;
+  if (u.protocol === 'http:' && u.hostname !== 'localhost' && u.hostname !== '127.0.0.1') {
+    return fallbackOrigin;
+  }
+  if (!isAllowedServiceHost(u.hostname)) {
+    process.stderr.write(
+      `[weryai] Ignoring WERYAI_*_URL host "${u.hostname}" (not allowlisted); using default origin.\n`,
+    );
+    return fallbackOrigin;
+  }
+  return u.origin;
+}
+
+function envString(name) {
+  const v = process.env[name];
+  return typeof v === 'string' ? v : '';
+}
+
+function apiOrigin() {
+  return parseTrustedOriginFromEnv(envString('WERYAI_BASE_URL'), DEFAULT_API_ORIGIN);
+}
+
 function modelsOrigin() {
-  const v = process.env.WERYAI_MODELS_BASE_URL;
-  if (typeof v === 'string' && v.trim()) return normalizeOrigin(v.trim());
-  return DEFAULT_MODELS_ORIGIN;
+  return parseTrustedOriginFromEnv(envString('WERYAI_MODELS_BASE_URL'), DEFAULT_MODELS_ORIGIN);
 }
 const POLL_INTERVAL_MS = Number(process.env.WERYAI_POLL_INTERVAL_MS || 6000);
 const POLL_TIMEOUT_MS = Number(process.env.WERYAI_POLL_TIMEOUT_MS || 600000);
