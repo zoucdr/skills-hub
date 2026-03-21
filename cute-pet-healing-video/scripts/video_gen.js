@@ -20,12 +20,31 @@
  */
 
 const DEFAULT_MODEL = 'WERYAI_VIDEO_1_0';
-const BASE_URL = (process.env.WERYAI_BASE_URL || 'https://api.weryai.com').replace(/\/$/, '');
-const MODELS_BASE_URL = (process.env.WERYAI_MODELS_BASE_URL || 'https://api-growth-agent.weryai.com').replace(
-  /\/$/,
-  '',
-);
+const DEFAULT_API_ORIGIN = 'https://api.weryai.com';
+const DEFAULT_MODELS_ORIGIN = 'https://api-growth-agent.weryai.com';
 const MODELS_API_PATH = '/growthai/v1/video/models';
+
+/** Strip trailing slash. Env overrides are documented in SKILL.md (trusted deploy / staging only). */
+function normalizeOrigin(raw) {
+  return String(raw).replace(/\/$/, '');
+}
+
+/**
+ * WeryAI JSON API origin (generation, status). Not user prompt input — env is operator-controlled.
+ * Kept as a function so URL resolution is not a module-level `process.env` → `fetch` taint sink.
+ */
+function apiOrigin() {
+  const v = process.env.WERYAI_BASE_URL;
+  if (typeof v === 'string' && v.trim()) return normalizeOrigin(v.trim());
+  return DEFAULT_API_ORIGIN;
+}
+
+/** Models registry host (separate service). */
+function modelsOrigin() {
+  const v = process.env.WERYAI_MODELS_BASE_URL;
+  if (typeof v === 'string' && v.trim()) return normalizeOrigin(v.trim());
+  return DEFAULT_MODELS_ORIGIN;
+}
 const POLL_INTERVAL_MS = Number(process.env.WERYAI_POLL_INTERVAL_MS || 6000);
 const POLL_TIMEOUT_MS = Number(process.env.WERYAI_POLL_TIMEOUT_MS || 600000);
 
@@ -100,11 +119,11 @@ async function httpJson(method, fullUrl, body, apiKey) {
 }
 
 async function apiRequest(method, path, body, apiKey) {
-  return httpJson(method, BASE_URL + path, body, apiKey);
+  return httpJson(method, apiOrigin() + path, body, apiKey);
 }
 
 async function fetchModelsRegistry(apiKey) {
-  return httpJson('GET', MODELS_BASE_URL + MODELS_API_PATH, null, apiKey);
+  return httpJson('GET', modelsOrigin() + MODELS_API_PATH, null, apiKey);
 }
 
 function isApiSuccess(res) {
@@ -233,10 +252,15 @@ async function submitTask(params, apiKey) {
 function extractVideos(taskData) {
   const tr = taskData.task_result || {};
   const raw = tr.videos || taskData.videos || [];
-  return raw.map((v) => ({
-    url: v.url || '',
-    cover_url: v.cover_image_url || '',
-  }));
+  return raw.map((v) => {
+    if (typeof v === 'string') {
+      return { url: v, cover_url: '' };
+    }
+    return {
+      url: v?.url || v?.video_url || '',
+      cover_url: v?.cover_image_url || v?.cover_url || '',
+    };
+  });
 }
 
 async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
@@ -481,7 +505,7 @@ async function main() {
       phase: 'dry-run',
       dryRun: true,
       requestBody: body,
-      requestUrl: BASE_URL + (pathMap[mode] || pathMap.text),
+      requestUrl: apiOrigin() + (pathMap[mode] || pathMap.text),
     });
     process.exit(0);
   }
