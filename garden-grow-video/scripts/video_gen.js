@@ -16,7 +16,7 @@
  *   WERYAI_BASE_URL（默认 https://api.weryai.com）
  *   WERYAI_MODELS_BASE_URL（默认 https://api-growth-agent.weryai.com）
  *     仅当解析后的 hostname 为 localhost / 127.0.0.1 或 *.weryai.com 时才会采用 env 覆盖，否则忽略并使用默认官方域名。
- *   WERYAI_POLL_INTERVAL_MS / WERYAI_POLL_TIMEOUT_MS
+ *   WERYAI_POLL_INTERVAL_MS / WERYAI_POLL_TIMEOUT_MS（解析后为毫秒整数并 clamp，不用于请求 URL）
  */
 
 const DEFAULT_MODEL = 'WERYAI_VIDEO_1_0';
@@ -63,20 +63,30 @@ function parseTrustedOriginFromEnv(envValue, fallbackOrigin) {
   return u.origin;
 }
 
-function envString(name) {
-  const v = process.env[name];
-  return typeof v === 'string' ? v : '';
-}
-
 function apiOrigin() {
-  return parseTrustedOriginFromEnv(envString('WERYAI_BASE_URL'), DEFAULT_API_ORIGIN);
+  const raw =
+    typeof process.env.WERYAI_BASE_URL === 'string' ? process.env.WERYAI_BASE_URL : '';
+  return parseTrustedOriginFromEnv(raw, DEFAULT_API_ORIGIN);
 }
 
 function modelsOrigin() {
-  return parseTrustedOriginFromEnv(envString('WERYAI_MODELS_BASE_URL'), DEFAULT_MODELS_ORIGIN);
+  const raw =
+    typeof process.env.WERYAI_MODELS_BASE_URL === 'string' ? process.env.WERYAI_MODELS_BASE_URL : '';
+  return parseTrustedOriginFromEnv(raw, DEFAULT_MODELS_ORIGIN);
 }
-const POLL_INTERVAL_MS = Number(process.env.WERYAI_POLL_INTERVAL_MS || 6000);
-const POLL_TIMEOUT_MS = Number(process.env.WERYAI_POLL_TIMEOUT_MS || 600000);
+
+/** Bounded poll tuning; values do not flow into request URLs. */
+function pollIntervalMs() {
+  const n = Number(process.env.WERYAI_POLL_INTERVAL_MS);
+  if (!Number.isFinite(n)) return 6000;
+  return Math.min(Math.max(Math.floor(n), 1000), 120_000);
+}
+
+function pollTimeoutMs() {
+  const n = Number(process.env.WERYAI_POLL_TIMEOUT_MS);
+  if (!Number.isFinite(n)) return 600_000;
+  return Math.min(Math.max(Math.floor(n), 10_000), 3_600_000);
+}
 
 const STATUS_MAP = {
   waiting: 'waiting',
@@ -297,7 +307,7 @@ async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
   const start = Date.now();
   while (true) {
     const elapsed = (Date.now() - start) / 1000;
-    if (elapsed * 1000 >= POLL_TIMEOUT_MS) {
+    if (elapsed * 1000 >= pollTimeoutMs()) {
       return {
         ok: false,
         phase: 'failed',
@@ -311,7 +321,7 @@ async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
       };
     }
 
-    await sleep(POLL_INTERVAL_MS);
+    await sleep(pollIntervalMs());
 
     let res;
     try {
