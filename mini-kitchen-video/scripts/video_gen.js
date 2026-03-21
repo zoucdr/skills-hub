@@ -16,7 +16,6 @@
  *   本脚本仅读取上述密钥；API 主机与轮询间隔为固定常量，勿用其他 env 覆盖。
  */
 
-const DEFAULT_MODEL = 'WERYAI_VIDEO_1_0';
 const BASE_URL = 'https://api.weryai.com';
 const MODELS_BASE_URL = 'https://api-growth-agent.weryai.com';
 const MODELS_API_PATH = '/growthai/v1/video/models';
@@ -171,8 +170,13 @@ function coerceBool(v, defaultVal = false) {
   return String(v).toLowerCase() === 'true';
 }
 
+function hasNonEmptyModel(params) {
+  const m = params.model;
+  return m != null && String(m).trim() !== '';
+}
+
 function buildRequestBody(params) {
-  const model = params.model || DEFAULT_MODEL;
+  const model = String(params.model).trim();
   const body = {
     prompt: params.prompt,
     model,
@@ -188,6 +192,14 @@ function buildRequestBody(params) {
 }
 
 async function submitTask(params, apiKey) {
+  if (!hasNonEmptyModel(params)) {
+    return {
+      ok: false,
+      phase: 'failed',
+      errorCode: 'MISSING_PARAM',
+      errorMessage: "'model' is required in JSON parameters (no default model).",
+    };
+  }
   const mode = detectMode(params);
   const pathMap = {
     text: '/v1/generation/text-to-video',
@@ -474,6 +486,15 @@ async function main() {
       image: '/v1/generation/image-to-video',
       multi_image: '/v1/generation/multi-image-to-video',
     };
+    if ('prompt' in params && !hasNonEmptyModel(params)) {
+      printJson({
+        ok: false,
+        phase: 'failed',
+        errorCode: 'MISSING_PARAM',
+        errorMessage: "'model' is required in JSON parameters (no default model).",
+      });
+      process.exit(1);
+    }
     const body = 'prompt' in params ? buildRequestBody(params) : {};
     printJson({
       ok: true,
@@ -516,6 +537,15 @@ async function main() {
         phase: 'failed',
         errorCode: 'MISSING_PARAM',
         errorMessage: "'prompt' is required in JSON parameters.",
+      });
+      process.exit(1);
+    }
+    if (!hasNonEmptyModel(params)) {
+      printJson({
+        ok: false,
+        phase: 'failed',
+        errorCode: 'MISSING_PARAM',
+        errorMessage: "'model' is required in JSON parameters (no default model).",
       });
       process.exit(1);
     }

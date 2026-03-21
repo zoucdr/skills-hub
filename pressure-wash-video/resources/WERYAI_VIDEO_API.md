@@ -57,7 +57,7 @@ Task id / batch id can also be passed inside JSON for some flows; see `video_gen
 
 | Field | Notes |
 |--------|--------|
-| `model` | Model key; if omitted, the script defaults to `WERYAI_VIDEO_1_0` (see `video_gen.js`). **The script does not enforce** per-skill model rules from `SKILL.md`—callers must pass the model required by that skill (e.g. Seedance-only packages must still set `"model":"SEEDANCE_2_0"` explicitly). |
+| `model` | Model key; **required** for `wait`, `submit-*`, and for `--dry-run` when `prompt` is present—if omitted or empty, the script returns `MISSING_PARAM` (no default model). **The script does not enforce** per-skill model rules from `SKILL.md`—callers must pass the model required by that skill. |
 | `prompt` | Required for `wait` and `submit-*` |
 | `duration` | Must be allowed for the model |
 | `aspect_ratio` | Only if supported |
