@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+const fs = require('node:fs/promises');
+const path = require('node:path');
+const { fileURLToPath } = require('node:url');
 /**
  * WeryAI 视频生成 — 通用 CLI（零 npm 依赖，需 Node.js 18+）
  *
@@ -9,6 +12,7 @@
  *   node video_gen.js models
  *   node video_gen.js models --mode text_to_video
  *   node video_gen.js wait --json '{"model":"WERYAI_VIDEO_1_0","prompt":"...","duration":5}'
+ *   node video_gen.js wait --json '{"model":"...","prompt":"...","image":"./local.png","duration":5}'
  *   node video_gen.js wait --json '...' --dry-run
  *
  * 环境变量:
@@ -19,8 +23,16 @@
 const BASE_URL = 'https://api.weryai.com';
 const MODELS_BASE_URL = 'https://api-growth-agent.weryai.com';
 const MODELS_API_PATH = '/growthai/v1/video/models';
+const UPLOAD_API_PATH = '/growthai/v1/generation/upload-file';
 const POLL_INTERVAL_MS = 6000;
 const POLL_TIMEOUT_MS = 600000;
+const IMAGE_MIME_TYPES = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.gif': 'image/gif',
+};
 
 const STATUS_MAP = {
   waiting: 'waiting',
@@ -98,6 +110,172 @@ async function apiRequest(method, path, body, apiKey) {
 
 async function fetchModelsRegistry(apiKey) {
   return httpJson('GET', MODELS_BASE_URL + MODELS_API_PATH, null, apiKey);
+}
+
+function isPublicHttpsUrl(value) {
+  if (typeof value !== 'string' || !value.trim()) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function isRemoteUrl(value) {
+  if (typeof value !== 'string' || !value.trim()) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' || url.protocol === 'http:';
+  } catch {
+    return false;
+  }
+}
+
+function normalizeLocalFilePath(value) {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  if (value.startsWith('file://')) {
+    return new URL(value);
+  }
+  return path.resolve(value);
+}
+
+function inferMimeType(filePath) {
+  return IMAGE_MIME_TYPES[path.extname(filePath).toLowerCase()] || 'application/octet-stream';
+}
+
+function makeUploadBatchNo() {
+  return `video-gen-${Date.now()}`;
+}
+
+function collectPossibleUploadUrls(data) {
+  const candidates = [];
+  if (!data) return candidates;
+  const maybePush = (value) => {
+    if (typeof value === 'string' && value.trim()) candidates.push(value.trim());
+  };
+  const maybePushMany = (value) => {
+    if (Array.isArray(value)) {
+      for (const item of value) maybePush(item);
+    }
+  };
+
+  maybePush(data.url);
+  maybePush(data.file_url);
+  maybePush(data.fileUrl);
+  maybePush(data.https_url);
+  maybePush(data.httpsUrl);
+  maybePush(data.public_url);
+  maybePush(data.publicUrl);
+  maybePush(data.object_url);
+  maybePush(data.objectUrl);
+  maybePush(data.origin_url);
+  maybePush(data.originUrl);
+  maybePushMany(data.object_url_list);
+  maybePushMany(data.objectUrlList);
+
+  if (data.file && typeof data.file === 'object') {
+    candidates.push(...collectPossibleUploadUrls(data.file));
+  }
+  if (data.data && typeof data.data === 'object') {
+    candidates.push(...collectPossibleUploadUrls(data.data));
+  }
+  if (Array.isArray(data.files)) {
+    for (const item of data.files) {
+      candidates.push(...collectPossibleUploadUrls(item));
+    }
+  }
+  if (Array.isArray(data.list)) {
+    for (const item of data.list) {
+      candidates.push(...collectPossibleUploadUrls(item));
+    }
+  }
+  return candidates;
+}
+
+function extractUploadedFileUrl(res) {
+  const urls = collectPossibleUploadUrls(res?.data);
+  return urls.find(isPublicHttpsUrl) || null;
+}
+
+async function uploadFileToPublicUrl(inputPath, apiKey) {
+  const resolvedPath = normalizeLocalFilePath(inputPath);
+  if (!resolvedPath) {
+    throw new Error(`Invalid local image path: ${inputPath}`);
+  }
+
+  const filePath = resolvedPath instanceof URL ? fileURLToPath(resolvedPath) : path.resolve(resolvedPath);
+  let stat;
+  try {
+    stat = await fs.stat(filePath);
+  } catch {
+    throw new Error(`Local image file not found: ${inputPath}`);
+  }
+  if (!stat.isFile()) {
+    throw new Error(`Local image path is not a file: ${inputPath}`);
+  }
+
+  const fileBuffer = await fs.readFile(filePath);
+  const fileName = path.basename(filePath);
+  const mimeType = inferMimeType(filePath);
+  const form = new FormData();
+  form.append('batch_no', makeUploadBatchNo());
+  form.append('fixed', 'false');
+  form.append('file', new Blob([fileBuffer], { type: mimeType }), fileName);
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 60_000);
+  let res;
+  try {
+    res = await fetch(MODELS_BASE_URL + UPLOAD_API_PATH, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: form,
+      signal: controller.signal,
+    });
+  } catch (err) {
+    clearTimeout(timer);
+    if (err.name === 'AbortError') {
+      throw new Error(`Upload timeout: ${filePath}`);
+    }
+    throw err;
+  }
+  clearTimeout(timer);
+
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error(`Upload failed with non-JSON response (HTTP ${res.status}).`);
+  }
+
+  const wrapped = { httpStatus: res.status, ...data };
+  if (!isApiSuccess(wrapped)) {
+    const apiErr = formatApiError(wrapped);
+    throw new Error(apiErr.errorMessage || `Upload failed (HTTP ${res.status}).`);
+  }
+
+  const uploadedUrl = extractUploadedFileUrl(wrapped);
+  if (!uploadedUrl) {
+    throw new Error('Upload succeeded but no public file URL was returned by the API.');
+  }
+
+  return uploadedUrl;
+}
+
+async function ensurePublicImageUrl(value, apiKey) {
+  if (typeof value !== 'string' || !value.trim()) {
+    throw new Error('Image source must be a non-empty string.');
+  }
+  if (isPublicHttpsUrl(value)) return value;
+  if (isRemoteUrl(value)) {
+    throw new Error(`Remote image URL must use https: ${value}`);
+  }
+
+  log(`Uploading local image to public URL: ${value}`);
+  return uploadFileToPublicUrl(value, apiKey);
 }
 
 function isApiSuccess(res) {
@@ -191,6 +369,17 @@ function buildRequestBody(params) {
   return body;
 }
 
+async function prepareRequestBody(params, apiKey) {
+  const body = buildRequestBody(params);
+  if (body.image) {
+    body.image = await ensurePublicImageUrl(body.image, apiKey);
+  }
+  if (Array.isArray(body.images) && body.images.length) {
+    body.images = await Promise.all(body.images.map((item) => ensurePublicImageUrl(item, apiKey)));
+  }
+  return body;
+}
+
 async function submitTask(params, apiKey) {
   if (!hasNonEmptyModel(params)) {
     return {
@@ -206,7 +395,17 @@ async function submitTask(params, apiKey) {
     image: '/v1/generation/image-to-video',
     multi_image: '/v1/generation/multi-image-to-video',
   };
-  const body = buildRequestBody(params);
+  let body;
+  try {
+    body = await prepareRequestBody(params, apiKey);
+  } catch (err) {
+    return {
+      ok: false,
+      phase: 'failed',
+      errorCode: 'IMAGE_PREPARE_FAILED',
+      errorMessage: err.message || String(err),
+    };
+  }
   let res;
   try {
     res = await apiRequest('POST', pathMap[mode], body, apiKey);
@@ -496,12 +695,20 @@ async function main() {
       process.exit(1);
     }
     const body = 'prompt' in params ? buildRequestBody(params) : {};
+    const notes = [];
+    if (body.image && !isPublicHttpsUrl(body.image)) {
+      notes.push('Local `image` paths are uploaded to WeryAI file storage during a real run; `--dry-run` does not upload files.');
+    }
+    if (Array.isArray(body.images) && body.images.some((item) => !isPublicHttpsUrl(item))) {
+      notes.push('Local entries in `images` are uploaded to WeryAI file storage during a real run; `--dry-run` keeps the original paths.');
+    }
     printJson({
       ok: true,
       phase: 'dry-run',
       dryRun: true,
       requestBody: body,
       requestUrl: BASE_URL + (pathMap[mode] || pathMap.text),
+      notes: notes.length ? notes : undefined,
     });
     process.exit(0);
   }
