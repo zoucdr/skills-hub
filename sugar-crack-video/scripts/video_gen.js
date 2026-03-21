@@ -12,9 +12,10 @@
  *   node video_gen.js wait --json '...' --dry-run
  *
  * 环境变量:
- *   WERYAI_API_KEY（models / 生成 / status 必填；--dry-run 除外）
+ *   WERYAI_API_KEY（models / 生成 / status 必填；--dry-run 除外）— 敏感凭据，勿写入仓库；registry 元数据声明见同目录 SKILL.md。
  *   WERYAI_BASE_URL（默认 https://api.weryai.com）
  *   WERYAI_MODELS_BASE_URL（默认 https://api-growth-agent.weryai.com）
+ *     上述两项仅用于自托管/联调；若环境被篡改，请求与密钥可能发往非官方主机，安装前请检查 env。
  *   WERYAI_POLL_INTERVAL_MS / WERYAI_POLL_TIMEOUT_MS
  */
 

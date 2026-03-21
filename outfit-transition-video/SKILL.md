@@ -5,7 +5,7 @@ description: "Generate vertical shorts of anthropomorphic outfit changes on beat
 
 tags: [outfit-change, fashion, style, beat-sync, look, short-video]
 
-metadata: { "openclaw": { "emoji": "👗", "requires": { "bins": ["node"] } } }
+metadata: { "openclaw": { "emoji": "👗", "primaryEnv": "WERYAI_API_KEY", "paid": true, "network_required": true, "requires": { "env": ["WERYAI_API_KEY"], "bins": ["node"], "node": ">=18" } } }
 user-invocable: true
 ---
 
@@ -27,6 +27,13 @@ Cats / bunnies / pandas as leads; one line for look count and vibe, straight to 
 - `WERYAI_API_KEY` **must be set** in the environment before running `video_gen.js`.
 - Node.js **18+** is required. Image inputs **must** be public `https` URLs (no local file paths).
 - Each successful `wait` run consumes WeryAI credits; re-running creates new paid tasks.
+
+## Security, secrets, and API hosts
+
+- **`WERYAI_API_KEY`**: Treat as a secret. Only configure it if you trust this skill's source; it is listed in OpenClaw metadata as **`requires.env`** / **`primaryEnv`** so installers know it is mandatory at runtime (never commit it inside the skill package).
+- **Optional URL overrides** (`WERYAI_BASE_URL`, `WERYAI_MODELS_BASE_URL`): `video_gen.js` defaults to **`https://api.weryai.com`** and **`https://api-growth-agent.weryai.com`**. Overrides are intended for testing or approved alternate endpoints. If these variables are set in your environment, confirm they point to hosts you trust—otherwise prompts, images, and your bearer token could be sent elsewhere.
+- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use.
+
 
 ## Prompt expansion (mandatory)
 

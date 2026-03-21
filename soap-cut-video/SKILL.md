@@ -5,7 +5,7 @@ description: "Generate vertical ASMR soap and wax cutting shorts (WeryAI): text-
 
 tags: [asmr, satisfying, handmade, short-video, video]
 
-metadata: { "openclaw": { "emoji": "🧼", "requires": { "bins": ["node"] } } }
+metadata: { "openclaw": { "emoji": "🧼", "primaryEnv": "WERYAI_API_KEY", "paid": true, "network_required": true, "requires": { "env": ["WERYAI_API_KEY"], "bins": ["node"], "node": ">=18" } } }
 user-invocable: true
 ---
 
@@ -26,6 +26,13 @@ From one text prompt or one product photo.
 - `WERYAI_API_KEY` **must be set** before running `video_gen.js`.
 - Node.js **18+**. Images **must** be public `https` URLs.
 - Each `wait` run uses credits; repeats create new paid tasks.
+
+## Security, secrets, and API hosts
+
+- **`WERYAI_API_KEY`**: Treat as a secret. Only configure it if you trust this skill's source; it is listed in OpenClaw metadata as **`requires.env`** / **`primaryEnv`** so installers know it is mandatory at runtime (never commit it inside the skill package).
+- **Optional URL overrides** (`WERYAI_BASE_URL`, `WERYAI_MODELS_BASE_URL`): `video_gen.js` defaults to **`https://api.weryai.com`** and **`https://api-growth-agent.weryai.com`**. Overrides are intended for testing or approved alternate endpoints. If these variables are set in your environment, confirm they point to hosts you trust—otherwise prompts, images, and your bearer token could be sent elsewhere.
+- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use.
+
 
 ## Prompt expansion (mandatory)
 
