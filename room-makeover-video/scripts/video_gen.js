@@ -13,80 +13,15 @@
  *
  * 环境变量:
  *   WERYAI_API_KEY（models / 生成 / status 必填；--dry-run 除外）— 敏感凭据，勿写入仓库；registry 元数据声明见同目录 SKILL.md。
- *   WERYAI_BASE_URL（默认 https://api.weryai.com）
- *   WERYAI_MODELS_BASE_URL（默认 https://api-growth-agent.weryai.com）
- *     仅当解析后的 hostname 为 localhost / 127.0.0.1 或 *.weryai.com 时才会采用 env 覆盖，否则忽略并使用默认官方域名。
- *   WERYAI_POLL_INTERVAL_MS / WERYAI_POLL_TIMEOUT_MS（解析后为毫秒整数并 clamp，不用于请求 URL）
+ *   本脚本仅读取上述密钥；API 主机与轮询间隔为固定常量，勿用其他 env 覆盖。
  */
 
 const DEFAULT_MODEL = 'WERYAI_VIDEO_1_0';
-const DEFAULT_API_ORIGIN = 'https://api.weryai.com';
-const DEFAULT_MODELS_ORIGIN = 'https://api-growth-agent.weryai.com';
+const BASE_URL = 'https://api.weryai.com';
+const MODELS_BASE_URL = 'https://api-growth-agent.weryai.com';
 const MODELS_API_PATH = '/growthai/v1/video/models';
-
-/** Strip trailing slash. */
-function normalizeOrigin(raw) {
-  return String(raw).replace(/\/$/, '');
-}
-
-function isAllowedServiceHost(hostname) {
-  if (hostname === 'localhost' || hostname === '127.0.0.1') return true;
-  if (hostname === 'api.weryai.com' || hostname === 'api-growth-agent.weryai.com') return true;
-  if (hostname.endsWith('.weryai.com')) return true;
-  return false;
-}
-
-/**
- * Turn optional env URL into a fetch origin. Hostname allowlist prevents env-based open redirects / SSRF
- * to arbitrary hosts; disallowed values fall back to defaults (see SKILL.md).
- * Return value is always either a built-in default string or `URL.origin` from a validated parse.
- */
-function parseTrustedOriginFromEnv(envValue, fallbackOrigin) {
-  if (typeof envValue !== 'string' || !envValue.trim()) return fallbackOrigin;
-  const raw = normalizeOrigin(envValue.trim());
-  let u;
-  try {
-    u = new URL(raw.includes('://') ? raw : `https://${raw}`);
-  } catch {
-    return fallbackOrigin;
-  }
-  if (u.protocol !== 'https:' && u.protocol !== 'http:') return fallbackOrigin;
-  if (u.protocol === 'http:' && u.hostname !== 'localhost' && u.hostname !== '127.0.0.1') {
-    return fallbackOrigin;
-  }
-  if (!isAllowedServiceHost(u.hostname)) {
-    process.stderr.write(
-      `[weryai] Ignoring WERYAI_*_URL host "${u.hostname}" (not allowlisted); using default origin.\n`,
-    );
-    return fallbackOrigin;
-  }
-  return u.origin;
-}
-
-function apiOrigin() {
-  const raw =
-    typeof process.env.WERYAI_BASE_URL === 'string' ? process.env.WERYAI_BASE_URL : '';
-  return parseTrustedOriginFromEnv(raw, DEFAULT_API_ORIGIN);
-}
-
-function modelsOrigin() {
-  const raw =
-    typeof process.env.WERYAI_MODELS_BASE_URL === 'string' ? process.env.WERYAI_MODELS_BASE_URL : '';
-  return parseTrustedOriginFromEnv(raw, DEFAULT_MODELS_ORIGIN);
-}
-
-/** Bounded poll tuning; values do not flow into request URLs. */
-function pollIntervalMs() {
-  const n = Number(process.env.WERYAI_POLL_INTERVAL_MS);
-  if (!Number.isFinite(n)) return 6000;
-  return Math.min(Math.max(Math.floor(n), 1000), 120_000);
-}
-
-function pollTimeoutMs() {
-  const n = Number(process.env.WERYAI_POLL_TIMEOUT_MS);
-  if (!Number.isFinite(n)) return 600_000;
-  return Math.min(Math.max(Math.floor(n), 10_000), 3_600_000);
-}
+const POLL_INTERVAL_MS = 6000;
+const POLL_TIMEOUT_MS = 600000;
 
 const STATUS_MAP = {
   waiting: 'waiting',
@@ -159,11 +94,11 @@ async function httpJson(method, fullUrl, body, apiKey) {
 }
 
 async function apiRequest(method, path, body, apiKey) {
-  return httpJson(method, apiOrigin() + path, body, apiKey);
+  return httpJson(method, BASE_URL + path, body, apiKey);
 }
 
 async function fetchModelsRegistry(apiKey) {
-  return httpJson('GET', modelsOrigin() + MODELS_API_PATH, null, apiKey);
+  return httpJson('GET', MODELS_BASE_URL + MODELS_API_PATH, null, apiKey);
 }
 
 function isApiSuccess(res) {
@@ -307,7 +242,7 @@ async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
   const start = Date.now();
   while (true) {
     const elapsed = (Date.now() - start) / 1000;
-    if (elapsed * 1000 >= pollTimeoutMs()) {
+    if (elapsed * 1000 >= POLL_TIMEOUT_MS) {
       return {
         ok: false,
         phase: 'failed',
@@ -321,7 +256,7 @@ async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
       };
     }
 
-    await sleep(pollIntervalMs());
+    await sleep(POLL_INTERVAL_MS);
 
     let res;
     try {
@@ -545,7 +480,7 @@ async function main() {
       phase: 'dry-run',
       dryRun: true,
       requestBody: body,
-      requestUrl: apiOrigin() + (pathMap[mode] || pathMap.text),
+      requestUrl: BASE_URL + (pathMap[mode] || pathMap.text),
     });
     process.exit(0);
   }
