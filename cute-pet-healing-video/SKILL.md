@@ -11,9 +11,9 @@ user-invocable: true
 
 # Healing cute pet viral shorts
 
-A fluffy creature napping in afternoon sun, stretching, tilting its head—pace drops. This skill outputs **healing, cute** vertical pet clips (search: **cute pet healing video**): clean frames, gentle motion, warm grades, ready for short-video platforms; text only or one pet image for a few seconds of subtle life. Prefer a public **HTTPS** image URL; if the bundled runtime also supports local files, verify and explicitly consent before letting it read a local image and upload it to WeryAI.
+A fluffy creature napping in afternoon sun, stretching, tilting its head—pace drops. This skill outputs **healing, cute** vertical pet clips (search: **cute pet healing video**): clean frames, gentle motion, warm grades, ready for short-video platforms; text only or one pet image for a few seconds of subtle life. A public **HTTPS** image URL is strongly recommended for consistency and security. Local files should only be used after verifying `video_gen.js` behavior and explicitly consenting to the file upload process to WeryAI.
 
-**Dependencies**: `scripts/video_gen.js` in this directory + `WERYAI_API_KEY` + Node.js 18+. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` and confirm you are comfortable with its file-handling behavior, especially if it supports reading local images and uploading them to WeryAI to obtain public URLs for image-to-video requests.
+**Dependencies**: `scripts/video_gen.js` in this directory + `WERYAI_API_KEY` + Node.js 18+. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests.
 
 
 ## Prerequisites
