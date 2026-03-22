@@ -13,7 +13,7 @@ user-invocable: true
 
 For cleaning / satisfying creators: pressure rinse, brush agitation, dirty water running out, fibers standing up again—strong before/after and ASMR wash sounds. One prompt or one dirty carpet photo.
 
-**Dependencies:** `scripts/video_gen.js` + `WERYAI_API_KEY` + Node.js 18+.
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`{baseDir}/scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`{baseDir}/resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests.
 
 ## Prerequisites
 
@@ -54,7 +54,7 @@ For cleaning / satisfying creators: pressure rinse, brush agitation, dirty water
 2. Collect the user's **brief**, optional `https` image URL, tier (**best** / **good** / **fast**) or explicit `model`.
 3. **Expand prompt (mandatory):** Unless the user supplied a finished long prompt and asked not to rewrite, expand the brief with full shot, light, wash physics, and audio cues per `## Prompt expansion (mandatory)`. **Do not** submit a one-liner.
 4. Check the **expanded** `prompt` against `prompt_length_limit` if listed for the model; trim if needed.
-5. Verify `duration`, `aspect_ratio`, `generate_audio`, and other fields against this doc.
+5. Verify `duration`, `aspect_ratio`, `generate_audio`, and other fields against this document and **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
 6. Show the confirmation table with the **full expanded `prompt`**; wait for **confirm** or edits.
 7. After confirmation, run `node {baseDir}/scripts/video_gen.js wait --json '...'` with the **expanded** prompt.
 8. Return playable URL(s) or clear error guidance.
@@ -67,6 +67,8 @@ node {baseDir}/scripts/video_gen.js wait --json '…' --dry-run
 node {baseDir}/scripts/video_gen.js status --task-id <id>
 ```
 
+**Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
+
 ## Definition of done
 
 Playable URL(s) or clear failure; parameters within model limits. The submitted `prompt` **must** be the **expanded** production prompt unless the user explicitly supplied a finished long prompt and asked not to rewrite it.
@@ -74,6 +76,8 @@ Playable URL(s) or clear failure; parameters within model limits. The submitted 
 ## Boundaries (out of scope)
 
 - No legal/commercial guarantees; no offline editing stacks; `{baseDir}` only—no absolute paths.
+- No API field combinations not documented in this SKILL or **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
+- Do not link to `weryai-model-capabilities.md` or shared `../references/` paths; use **`resources/WERYAI_VIDEO_API.md`** for CLI/API details.
 
 ### Example prompts
 

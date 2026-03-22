@@ -1,21 +1,86 @@
 # WeryAI video CLI & JSON (`video_gen.js`)
 
-Shipped at **`{baseDir}/resources/WERYAI_VIDEO_API.md`** (next to `SKILL.md`). Run the CLI from **`{baseDir}/scripts/video_gen.js`**. Node.js **18+** required.
+Shipped at **`{baseDir}/resources/WERYAI_VIDEO_API.md`** (next to `SKILL.md`). Run commands from **`{baseDir}/scripts/video_gen.js`**. **Node.js 18+** required.
+
+This file describes **CLI usage, JSON shape, and image handling**. Per-skill rules (prompt expansion, confirmation tables, allowed models) live in each skill’s **`SKILL.md`**.
+
+---
+
+## What you need by generation mode
+
+The script picks the API route from your JSON:
+
+| Mode | When | Required in JSON | API path (conceptually) |
+|------|------|-------------------|-------------------------|
+| **Text → video** | No `image` and no non-empty `images[]` | `model`, `prompt`, `duration` (and any optional fields the **model** supports) | `text-to-video` |
+| **Image → video** | Non-empty string `image` | Same as above **plus** `image` — **must be a public `https` image URL** (see below) | `image-to-video` |
+| **Multi-image → video** | Non-empty `images` array | Same as above **plus** `images` — **every element must be a public `https` image URL** | `multi-image-to-video` |
+
+- **`model`**: required for real runs and for `--dry-run` when `prompt` is present. Empty/missing → `MISSING_PARAM` (there is **no default model**). The script does **not** enforce skill-specific model allowlists—callers must match the skill’s `SKILL.md`.
+- **`prompt`**: required for `wait` and all `submit-*` flows that generate video.
+- **`duration`**: sent to the API; must be one of the values allowed for the chosen model (check `models` output or the skill’s frozen table).
+- Other fields (`aspect_ratio`, `resolution`, `generate_audio`, `negative_prompt`) are **only** valid if that model supports them—see `node …/video_gen.js models` and the skill’s **`## Model and API constraints`**.
+
+---
+
+## Image-to-video & multi-image: public URL requirement
+
+For **image-to-video** (`image`) and **multi-image-to-video** (`images[]`), the value that ultimately reaches WeryAI must be a **public, directly fetchable image URL on the internet**:
+
+- **Scheme must be `https://`** — plain **`http://` image URLs are rejected** by `video_gen.js` and must not be used.
+- The URL must be reachable **from WeryAI’s servers** (not `localhost`, `127.0.0.1`, LAN-only hosts, or links that only work inside your browser session).
+- Do **not** pass opaque file paths, `data:` URLs, or private object-storage links that are not already a stable public `https` address.
+
+**Operational rule for skills and operators:** treat **public `https` image URLs as mandatory** for any image-to-video request. Host the image on a CDN, object storage with public read, or any HTTPS endpoint the API can GET without your local machine.
+
+---
+
+## Image input: public URL vs local path (how `video_gen.js` behaves)
+
+### Normal path: public **https** URL (required for correct image-to-video usage)
+
+- Put that URL in `image` (single) or each entry of `images[]` (multi).
+- The script **does not** re-upload; it sends the URL straight to the video API.
+- This matches the **public URL requirement** above.
+
+### Advanced: local file → script uploads, then uses returned public URL
+
+If `image` or an `images[]` entry is **not** already a public https URL, `video_gen.js` treats it as a **local path** (or `file://…`) and:
+
+1. Reads the file from disk.
+2. **POST**s it to **`https://api-growth-agent.weryai.com/growthai/v1/generation/upload-file`** with `Authorization: Bearer $WERYAI_API_KEY` and multipart fields `batch_no`, `fixed`, `file`.
+3. Parses the response for a returned **public https** URL and substitutes that URL into the JSON sent to **video** generation — i.e. the video API still only ever sees a **public URL**; the script is just creating one from a local file.
+
+**Implications (local path only)**
+
+- Requires **`WERYAI_API_KEY`** with access to both **video** and **upload-file** endpoints.
+- File must exist and be a **regular file**. Extensions with sensible MIME types in script: **`.jpg` / `.jpeg` / `.png` / `.webp` / `.gif`**.
+- **`--dry-run`**: does **not** upload; stdout may still show local paths with a note that a real run would upload first.
+
+**Skills / product docs:** prefer telling users to supply a **public `https` link**; use local paths only after **reviewing `video_gen.js`** and **explicit user consent** to read and upload files.
+
+### Multi-image limits in this script
+
+- `images` is passed through after upload resolution; the built request body keeps **at most the first 3** entries (`images.slice(0, 3)`). Models may allow fewer—always check `models` / skill tables (e.g. `upload_image_limit`).
+
+---
 
 ## Environment
 
-- **`WERYAI_API_KEY`** (required for `models`, generation, and `status`, except `--dry-run`): bearer token for HTTPS requests. Never commit the value.
-- **No other environment variables** are read by this script. API hosts and poll timing are fixed in `video_gen.js` source.
+- **`WERYAI_API_KEY`** (required for `models`, generation, `status`, and local-image upload; **not** required for `--dry-run` only): bearer token. Never commit the value.
+- **No other environment variables** are read. Hosts and poll timing are fixed in `video_gen.js`.
 
 ## API hosts (fixed)
 
-- Video tasks: `https://api.weryai.com`
-- Models registry: `https://api-growth-agent.weryai.com`
-- File upload for local images: `https://api-growth-agent.weryai.com/growthai/v1/generation/upload-file`
+| Purpose | Base URL |
+|---------|-----------|
+| Video generation & task status | `https://api.weryai.com` |
+| Model registry (`models` command) | `https://api-growth-agent.weryai.com` |
+| Local file → public URL (upload) | `https://api-growth-agent.weryai.com/growthai/v1/generation/upload-file` |
 
-## `models` — fetch model metadata (JSON on stdout)
+---
 
-Run from the skill root (`{baseDir}`):
+## `models` — model metadata (JSON on stdout)
 
 ```sh
 node {baseDir}/scripts/video_gen.js models
@@ -24,76 +89,78 @@ node {baseDir}/scripts/video_gen.js models --mode image_to_video
 node {baseDir}/scripts/video_gen.js models --mode multi_image_to_video
 ```
 
-Typical fields per model (names as returned by the API): `model_key`, `title`, `durations`, `aspect_ratios`, `resolutions`, `has_generate_audio`, `has_negative_prompt`, `prompt_length_limit`; image / multi-image modes may include `support_multiple_images`, `support_first_last_frame`, `upload_image_limit`, etc.
-
-Use this output to fill **`## Model and API constraints`** in the skill’s `SKILL.md`. Do not send fields (e.g. `resolution`, `aspect_ratio`) that the chosen model does not support.
-
-## `wait` — submit and block until done (polls status)
-
-```sh
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"...","duration":5,"aspect_ratio":"9:16"}'
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"...","prompt":"...","image":"https://...","duration":5}'
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"...","prompt":"...","image":"./girl.png","duration":5}'
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"...","prompt":"...","images":["https://..."],"duration":5}'
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"...","prompt":"...","images":["./frame-1.png","./frame-2.png"],"duration":5}'
-node {baseDir}/scripts/video_gen.js wait --json '...' --dry-run
-```
-
-## `submit-*` — submit only (async; no wait)
-
-```sh
-node {baseDir}/scripts/video_gen.js submit-text --json '{"model":"…","prompt":"…","duration":5}'
-node {baseDir}/scripts/video_gen.js submit-image --json '{"model":"…","prompt":"…","image":"https://…","duration":5}'
-node {baseDir}/scripts/video_gen.js submit-image --json '{"model":"…","prompt":"…","image":"./local.png","duration":5}'
-node {baseDir}/scripts/video_gen.js submit-multi-image --json '{"model":"…","prompt":"…","images":["https://…"],"duration":5}'
-```
-
-## `status` / `batch-status`
-
-```sh
-node {baseDir}/scripts/video_gen.js status --task-id <id>
-node {baseDir}/scripts/video_gen.js batch-status --batch-id <id>
-```
-
-Task id / batch id can also be passed inside JSON for some flows; see `video_gen.js` usage text.
-
-## Common JSON fields
-
-| Field | Notes |
-|--------|--------|
-| `model` | Model key; **required** for `wait`, `submit-*`, and for `--dry-run` when `prompt` is present—if omitted or empty, the script returns `MISSING_PARAM` (no default model). **The script does not enforce** per-skill model rules from `SKILL.md`—callers must pass the model required by that skill. |
-| `prompt` | Required for `wait` and `submit-*` |
-| `duration` | Must be allowed for the model |
-| `aspect_ratio` | Only if supported |
-| `resolution` | Only if supported |
-| `generate_audio` | Only if supported |
-| `negative_prompt` | Only if supported |
-| `image` | Single image source. Accepts a public **https** URL, a local file path like `./girl.png`, or a `file://` URL. Local files are uploaded first, then the returned public URL is sent to the image-to-video API. |
-| `images` | Array of image sources for multi-image video. Each entry may be a public **https** URL, a local file path, or a `file://` URL. Local files are uploaded first and then replaced with public URLs before submit. |
-
-## Local image upload behavior
-
-- The script auto-detects whether an `image` / `images[]` entry is already a public **https** URL.
-- If an entry is a local path, the script uploads it to `https://api-growth-agent.weryai.com/growthai/v1/generation/upload-file` with:
-  - `Authorization: Bearer $WERYAI_API_KEY`
-  - form field `batch_no`: auto-generated by the script
-  - form field `fixed`: `"false"`
-  - form field `file`: the image binary
-- After upload, the script extracts the returned public URL and uses that URL for the actual image-to-video or multi-image-to-video request.
-- Plain `http://` remote image URLs are rejected. Remote images must already be public **https** URLs.
-- `--dry-run` does **not** upload local files; it prints the original local paths and adds a note so callers know a real run will upload them first.
-
-## Status response (conventions)
-
-- HTTP OK with business `status === 0`: query succeeded.
-- `data` may be a single object or an array of tasks; the script matches `task_id` or uses the first item.
-- In progress: `phase` may be `running`, `inProgress: true`.
-- Errors: stdout JSON with `ok: false`, `errorCode`, `errorMessage` (prefers API `message` / `desc`).
-
-## Stdout JSON (generation / wait)
-
-Common keys: `ok`, `phase`, `taskId`, `batchId`, `taskIds`, `videos` (`url`, `cover_url`), `tasks` (batch), `inProgress`, `errorCode`, `errorMessage`.
+Typical fields include `model_key`, `title`, `durations`, `aspect_ratios`, `resolutions`, `has_generate_audio`, `has_negative_prompt`, `prompt_length_limit`; image modes may add `support_multiple_images`, `support_first_last_frame`, `upload_image_limit`, etc. Use this to author **`## Model and API constraints`** in `SKILL.md`.
 
 ---
 
-**Per-skill rules** in `SKILL.md` (prompt expansion, confirmation table, niche tables) still apply; this file only documents the **CLI and request shape**.
+## `wait` — submit and block until done
+
+```sh
+node {baseDir}/scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"...","duration":5,"aspect_ratio":"9:16"}'
+node {baseDir}/scripts/video_gen.js wait --json '{"model":"...","prompt":"...","image":"https://cdn.example.com/pet.jpg","duration":5}'
+node {baseDir}/scripts/video_gen.js wait --json '{"model":"...","prompt":"...","images":["https://cdn.example.com/a.jpg","https://cdn.example.com/b.jpg"],"duration":5}'
+# Advanced only: local paths trigger upload-file first; skills should default to public https URLs above.
+node {baseDir}/scripts/video_gen.js wait --json '{"model":"...","prompt":"...","image":"./girl.png","duration":5}'
+node {baseDir}/scripts/video_gen.js wait --json '...' --dry-run
+```
+
+Same JSON object is used for **`submit-*`**; only the blocking behavior differs.
+
+---
+
+## `submit-*` — submit only (async)
+
+```sh
+node {baseDir}/scripts/video_gen.js submit-text  --json '{"model":"…","prompt":"…","duration":5}'
+node {baseDir}/scripts/video_gen.js submit-image --json '{"model":"…","prompt":"…","image":"https://…","duration":5}'
+node {baseDir}/scripts/video_gen.js submit-multi-image --json '{"model":"…","prompt":"…","images":["https://…","https://…"],"duration":5}'
+# Advanced only: local file → upload then submit (same public-URL requirement for the API).
+node {baseDir}/scripts/video_gen.js submit-image --json '{"model":"…","prompt":"…","image":"./local.png","duration":5}'
+```
+
+**Note:** `submit-text`, `submit-image`, and `submit-multi-image` are **aliases** in this script: routing (text vs image vs multi-image) is decided **only** from JSON (`image` / `images`), exactly like `wait`. Use the verb that matches your intent; behavior is the same `submitTask` path aside from blocking.
+
+Poll completion with **`status`** (below). Response JSON may include `batchId` / `taskIds` from the API; this CLI does **not** expose a separate `batch-status` subcommand.
+
+---
+
+## `status`
+
+```sh
+node {baseDir}/scripts/video_gen.js status --task-id <id>
+```
+
+You may also pass a task id inside JSON as `task_id` or `taskId` when using `--json` (less common). If `--task-id` is omitted and JSON has no id, the script errors with `status command requires --task-id <id>`.
+
+There is **no** `batch-status` command in `video_gen.js`; use per-task `status` with each `taskId` you care about. Invalid invocation prints a **Usage** line to stdout JSON (there is no `--help` flag).
+
+---
+
+## JSON field reference
+
+| Field | Role |
+|--------|------|
+| `model` | **Required** (non-empty). No default. |
+| `prompt` | **Required** for generation commands. |
+| `duration` | Sent as number; default **5** if missing/invalid in script—still must be valid for the model. |
+| `aspect_ratio` | Optional; model-dependent. |
+| `resolution` | Optional; model-dependent. |
+| `generate_audio` | Optional boolean; model-dependent. |
+| `negative_prompt` | Optional string; model-dependent. |
+| `image` | **Image-to-video:** use a **public `https` image URL** (required for normal use). Local path / `file://` is **script-only**: uploads first, then the API receives the returned public URL. |
+| `images` | **Multi-image-to-video:** each entry must end up as a **public `https` URL** (directly, or via the script’s upload step). Up to **3** entries are forwarded after preparation. |
+
+Do not send fields the chosen model does not support (reduces spurious `1002` / parameter errors).
+
+---
+
+## Status & stdout conventions
+
+- HTTP OK with business `status === 0` (or `200` in some responses): request accepted for that layer.
+- Generation success: look for completed phase and `videos` with `url` / `cover_url`.
+- Errors: stdout JSON with `ok: false`, `errorCode`, `errorMessage` (script maps common API codes to short messages).
+- Common keys: `ok`, `phase`, `taskId`, `batchId`, `taskIds`, `videos`, `tasks`, `inProgress`, `errorCode`, `errorMessage`.
+
+---
+
+**Reminder:** Skills may require user confirmation before any paid `wait` / `submit-*` call. For **any** image-to-video flow, assume **public `https` image URLs are mandatory** unless the skill explicitly documents a vetted local-upload path—always follow the active skill’s **`SKILL.md`**.
