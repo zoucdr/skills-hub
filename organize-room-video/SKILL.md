@@ -1,6 +1,6 @@
 ---
 name: organize-room-video
-version: 1.0.1
+version: 1.0.2
 description: "Generate vertical shorts of organizing from chaos to order (WeryAI): closets, fridges, vanities, desks, luggage. Use when you need organizing satisfying video, declutter ASMR, before/after tidy clips, or users ask for rainbow-fold stacks and the snap of a clear lid. Requires WERYAI_API_KEY at runtime (declared in frontmatter for registries). SEO: organize room video; organizing video generation."
 
 tags: [organizing, satisfying, healing, neat-freak, short-video, lifestyle]
@@ -28,8 +28,17 @@ Picture this: a messy pile of clothes, sorted by a bear’s paws into neat rows,
 
 **Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests.
 
-**Registry metadata:** The only **required** runtime secret is **`WERYAI_API_KEY`**. It appears in YAML frontmatter as top-level **`requires.env`** (flow mapping, for tools that flatten root keys only), **`metadata.openclaw.primaryEnv`**, and **`metadata.openclaw.requires.env`**. Never commit the key inside the package.
+**Registry metadata:** The only **required** runtime secret is **`WERYAI_API_KEY`**. It appears in YAML frontmatter as top-level **`requires.env`** (flow mapping, for tools that flatten root keys only), **`metadata.openclaw.primaryEnv`**, and **`metadata.openclaw.requires.env`**. Skill directories and registries **should** surface that requirement up front so installers see it before download. Never commit the key inside the package.
 
+## Before you install or set `WERYAI_API_KEY`
+
+Complete this checklist **before** installing the package or placing any API key in the environment:
+
+1. **Trust and account fit:** Decide whether you trust **WeryAI** as a processor and whether your key’s **permissions and quotas** are acceptable for paid video generation.
+2. **Key hygiene:** Do **not** paste a **production** key into chat or logs. Start with a **limited-scope or test** key until you are satisfied with behavior and cost.
+3. **Review `scripts/video_gen.js`:** Read the bundled script yourself. Non–`--dry-run` runs send your **`prompt`** and image inputs (public **`https`** URLs and, when used, bytes uploaded per **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**) to **`https://api.weryai.com`** and **`https://api-growth-agent.weryai.com`** (models / upload paths as documented). Treat prompts and media as **leaving the device**.
+4. **Data sensitivity:** If you must limit leakage, run in an **isolated or test** environment. Use **`--dry-run`** on `wait` / `submit-*` (see **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**) to inspect the JSON the CLI would send **without** performing a paid submit.
+5. **If you are not comfortable** with authenticated network calls to WeryAI or with exposing prompts/media to that service, **do not** set `WERYAI_API_KEY` or run paid commands.
 
 ## Prerequisites
 
@@ -42,7 +51,7 @@ Picture this: a messy pile of clothes, sorted by a bear’s paws into neat rows,
 - **`WERYAI_API_KEY`**: Treat as a secret. Only configure it if you trust this skill's source; it is listed in OpenClaw metadata as **`requires.env`** / **`primaryEnv`** so installers know it is mandatory at runtime (never commit it inside the skill package).
 - **API hosts (fixed in `video_gen.js`)**: Video tasks use **`https://api.weryai.com`**; the models list uses **`https://api-growth-agent.weryai.com`**. The bundled script **pins** these bases in code—**only** **`WERYAI_API_KEY`** is read from the environment for authentication. Do not rely on any environment variables to change API hostnames; requests only go to those official endpoints plus the documented upload URL when a local image is uploaded (see **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**).
 - **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
-- **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
+- **Higher assurance:** Follow **`## Before you install or set WERYAI_API_KEY`** above; use a short-lived or isolated environment for paid runs; review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
 
 ## Prompt expansion (mandatory)
