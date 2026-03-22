@@ -5,7 +5,18 @@ description: "Generate vertical miniature kitchen cooking shorts (WeryAI): text 
 
 tags: [mini-kitchen, food, healing, handmade, curiosity, short-video, video]
 
-metadata: { "openclaw": { "emoji": "🍳", "primaryEnv": "WERYAI_API_KEY", "paid": true, "network_required": true, "requires": { "env": ["WERYAI_API_KEY"], "bins": ["node"], "node": ">=18" } } }
+metadata:
+  openclaw:
+    emoji: "🍳"
+    primaryEnv: "WERYAI_API_KEY"
+    paid: true
+    network_required: true
+    requires:
+      env:
+        - "WERYAI_API_KEY"
+      bins:
+        - "node"
+      node: ">=18"
 user-invocable: true
 ---
 

@@ -5,7 +5,18 @@ description: "Generate vertical miniature build & reveal shorts (WeryAI): text o
 
 tags: [craft, miniature, immersive, creative, aesthetic, short-video]
 
-metadata: { "openclaw": { "emoji": "🏗️", "primaryEnv": "WERYAI_API_KEY", "paid": true, "network_required": true, "requires": { "env": ["WERYAI_API_KEY"], "bins": ["node"], "node": ">=18" } } }
+metadata:
+  openclaw:
+    emoji: "🏗️"
+    primaryEnv: "WERYAI_API_KEY"
+    paid: true
+    network_required: true
+    requires:
+      env:
+        - "WERYAI_API_KEY"
+      bins:
+        - "node"
+      node: ">=18"
 user-invocable: true
 ---
 

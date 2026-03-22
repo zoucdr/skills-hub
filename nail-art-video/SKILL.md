@@ -5,7 +5,18 @@ description: "Generate vertical short videos of nail-art process (WeryAI): extre
 
 tags: [nail-art, refined, asmr, glow-up, handmade, short-video]
 
-metadata: { "openclaw": { "emoji": "💅", "primaryEnv": "WERYAI_API_KEY", "paid": true, "network_required": true, "requires": { "env": ["WERYAI_API_KEY"], "bins": ["node"], "node": ">=18" } } }
+metadata:
+  openclaw:
+    emoji: "💅"
+    primaryEnv: "WERYAI_API_KEY"
+    paid: true
+    network_required: true
+    requires:
+      env:
+        - "WERYAI_API_KEY"
+      bins:
+        - "node"
+      node: ">=18"
 user-invocable: true
 ---
 
