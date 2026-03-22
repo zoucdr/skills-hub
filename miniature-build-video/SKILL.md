@@ -1,9 +1,11 @@
 ---
 name: miniature-build-video
-version: 1.0.0
-description: "Generate vertical miniature build & reveal shorts (WeryAI): text or finished-shot image to shallow-depth push-ins, lights coming on, immersive camera. Use when you need a miniature diorama reel, tilt-shift room clip, or the user asks for a tiny house lights-on moment or a slow push into interior detail. SEO: miniature build video; miniature model build video generation."
+version: 1.0.1
+description: "Generate vertical miniature build & reveal shorts (WeryAI): text or finished-shot image to shallow-depth push-ins, lights coming on, immersive camera. Use when you need a miniature diorama reel, tilt-shift room clip, or the user asks for a tiny house lights-on moment or a slow push into interior detail. Requires WERYAI_API_KEY at runtime (declared in frontmatter for registries). SEO: miniature build video; miniature model build video generation."
 
 tags: [craft, miniature, immersive, creative, aesthetic, short-video]
+
+requires: { env: ["WERYAI_API_KEY"] }
 
 metadata:
   openclaw:
@@ -28,6 +30,7 @@ Conbini, rainy noodle stand, cyberpunk workshop—or a photo of a finished build
 
 **Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests.
 
+**Registry metadata:** The only **required** runtime secret is **`WERYAI_API_KEY`**. It appears in YAML frontmatter as top-level **`requires.env`** (flow mapping, for tools that flatten root keys only), **`metadata.openclaw.primaryEnv`**, and **`metadata.openclaw.requires.env`**. Never commit the key inside the package.
 
 ## Prerequisites
 
@@ -38,7 +41,7 @@ Conbini, rainy noodle stand, cyberpunk workshop—or a photo of a finished build
 ## Security, secrets, and API hosts
 
 - **`WERYAI_API_KEY`**: Treat as a secret. Only configure it if you trust this skill's source; it is listed in OpenClaw metadata as **`requires.env`** / **`primaryEnv`** so installers know it is mandatory at runtime (never commit it inside the skill package).
-- **API hosts (fixed in `video_gen.js`)**: Video tasks use **`https://api.weryai.com`**; the models list uses **`https://api-growth-agent.weryai.com`**. Only **`WERYAI_API_KEY`** is read from the environment—do not rely on URL-related environment variables.
+- **API hosts (fixed in `video_gen.js`)**: Video tasks use **`https://api.weryai.com`**; the models list uses **`https://api-growth-agent.weryai.com`**. The bundled script **pins** these bases in code—**only** **`WERYAI_API_KEY`** is read from the environment for authentication. Do not rely on any environment variables to change API hostnames; requests only go to those official endpoints plus the documented upload URL when a local image is uploaded (see **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**).
 - **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
 - **Higher assurance**: Run generation in a short-lived or isolated environment (separate account or container), and review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
