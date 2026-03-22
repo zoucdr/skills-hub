@@ -13,7 +13,7 @@ user-invocable: true
 
 **Template (timings assume `duration` 10; rescale proportionally for 5 or 15):** **0–2s** contrarian hook (“almost can’t collapse”); **2–8s** **three** ultra-short on-screen beats (e.g. resources / geography / defense) synced to **fast B-roll**; **8–10s** **twist** line that reframes the biggest risk (open-ended ellipsis allowed). **English subtitles are burned in** with explicit second windows—derived from the user’s **country or theme** unless they supply a final script. Default **`duration`** is **10** when unspecified.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`{baseDir}/scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** under **`{baseDir}/resources/`** (assembly before run). **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** under **`resources/`** (assembly before run). **No other Cursor skills required.**
 
 ## Prerequisites
 
@@ -65,14 +65,14 @@ user-invocable: true
 3. **Expand prompt** per above—**author English lines** from the brief unless user supplied a script.
 4. Validate JSON fields against frozen tables.
 5. Show confirmation table + **full** expanded `prompt`; wait for **confirm**.
-6. `node {baseDir}/scripts/video_gen.js wait --json '…'`.
+6. `node scripts/video_gen.js wait --json '…'`.
 7. Return **`[Video](url)`** links or errors—**never** wrap playable URLs in code fences.
 
 ## CLI reference
 
 ~~~sh
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"…","duration":10,"aspect_ratio":"9:16","generate_audio":true,"negative_prompt":"illegible text, garbled captions, watermark"}'
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
+node scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"…","duration":10,"aspect_ratio":"9:16","generate_audio":true,"negative_prompt":"illegible text, garbled captions, watermark"}'
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
 **Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
@@ -101,7 +101,7 @@ Playable **[Video](url)** or clear failure. Submitted `prompt` includes **explic
 
 ## Model and API constraints (frozen for this skill)
 
-> From `node {baseDir}/scripts/video_gen.js models --mode text_to_video` and `--mode image_to_video` at authoring; re-run after upgrades.
+> From `node scripts/video_gen.js models --mode text_to_video` and `--mode image_to_video` at authoring; re-run after upgrades.
 
 ### Text-to-video
 

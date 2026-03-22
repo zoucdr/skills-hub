@@ -13,7 +13,7 @@ user-invocable: true
 
 Generate video with **Seedance 2.0**, **Seedance 1.5 Pro**, or **Seedance 1.0** variants on WeryAI. **`model` is required** in every JSON body—**default `model_key` is `SEEDANCE_2_0`** unless the user explicitly picks another row in **`## Model and API constraints`**.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`{baseDir}/scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`{baseDir}/resources/`** (publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`resources/`** (publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. **No other Cursor skills required.**
 
 ## Choosing a Seedance version (quick map)
 
@@ -62,15 +62,15 @@ Always re-check **`duration`**, **`aspect_ratio`**, **`resolution`**, **`generat
 3. **Validate features vs model:** e.g. do **not** send **`images`** with more than one URL for models with **`support_multiple_images: false`** or **`upload_image_limit: 1`**.
 4. **Expand prompt (mandatory)** per above.
 5. Show the confirmation table (full `prompt`, `model`, `duration`, `aspect_ratio`, `resolution`, `generate_audio`, optional `negative_prompt`, URLs).
-6. Run `node {baseDir}/scripts/video_gen.js wait --json '...'`.
+6. Run `node scripts/video_gen.js wait --json '...'`.
 7. Return **`videos`** as **`[Video](url)`** Markdown links—**not** inside code fences.
 
 ## CLI reference
 
 ~~~sh
-node {baseDir}/scripts/video_gen.js models --mode text_to_video
-node {baseDir}/scripts/video_gen.js models --mode image_to_video
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
+node scripts/video_gen.js models --mode text_to_video
+node scripts/video_gen.js models --mode image_to_video
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
 **Full reference:** **[`resources/WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
@@ -98,7 +98,7 @@ Done when the user gets a playable **[Video](url)** link or a clear error with a
 
 ## Model and API constraints (frozen for this skill)
 
-> From `node {baseDir}/scripts/video_gen.js models` (`text_to_video` + `image_to_video`) at authoring time. Re-run after upgrades. **`multi_image_to_video` mode returned `[]` on the authoring run**—use **`image_to_video`** rows below for image counts and flags.
+> From `node scripts/video_gen.js models` (`text_to_video` + `image_to_video`) at authoring time. Re-run after upgrades. **`multi_image_to_video` mode returned `[]` on the authoring run**—use **`image_to_video`** rows below for image counts and flags.
 
 ### Text-to-video
 

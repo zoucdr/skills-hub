@@ -13,7 +13,7 @@ user-invocable: true
 
 Generate Seedance 2.0 videos through WeryAI with one focused skill: text-to-video, image-to-video, multi-image video, and first-frame/last-frame transition control. This skill is intentionally strict about secret declaration and input safety: the only runtime secret is `WERYAI_API_KEY`. Prefer public **`https`** URLs for reference media; if the assembled `scripts/video_gen.js` supports local file paths, review/verify the script and explicitly consent before it reads local files and uploads them to WeryAI to obtain public URLs.
 
-**Dependencies:** `scripts/video_gen.js` in this directory + `WERYAI_API_KEY` + Node.js 18+. No other Cursor skills are required.
+**Dependencies:** `scripts/video_gen.js` at the skill package root (alongside `SKILL.md`) + `WERYAI_API_KEY` + Node.js 18+. No other Cursor skills are required.
 
 ## Authentication and first-time setup
 
@@ -40,8 +40,8 @@ export WERYAI_API_KEY="your_api_key_here"
 Use one safe check before the first paid run:
 
 ```sh
-node {baseDir}/scripts/video_gen.js models --mode text_to_video
-node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"A glowing koi swims through ink clouds","duration":5}' --dry-run
+node scripts/video_gen.js models --mode text_to_video
+node scripts/video_gen.js wait --json '{"prompt":"A glowing koi swims through ink clouds","duration":5}' --dry-run
 ```
 
 - `models` confirms that the key is configured and the models endpoint is reachable.
@@ -152,40 +152,40 @@ When the user asks for "better Seedance prompts" rather than just API execution:
 1. Decide which path fits the request: `text`, `image`, `multi-image`, or `first-frame/last-frame`.
 2. Collect the user's brief, `duration`, optional `aspect_ratio`, optional `resolution`, and reference image URLs if the mode uses assets (prefer public `https`).
 3. Expand the prompt with the rules from `## Prompt expansion (mandatory)`. If the request needs tighter control, read `references/seedance-prompt-optimization.md` and explicitly decide mode, asset mapping, timeline beats, and negative constraints before writing the final prompt.
-4. If you are unsure about current multi-image support or field limits, run `node {baseDir}/scripts/video_gen.js models --mode multi_image_to_video` before a paid request.
+4. If you are unsure about current multi-image support or field limits, run `node scripts/video_gen.js models --mode multi_image_to_video` before a paid request.
 5. Show a confirmation table with the **full expanded prompt**, model, duration, aspect ratio, resolution, audio choice, and any image URLs.
-6. After explicit confirmation, run `node {baseDir}/scripts/video_gen.js wait --json '...'`.
+6. After explicit confirmation, run `node scripts/video_gen.js wait --json '...'`.
 7. Return the JSON result. On success, surface the video URLs. On failure, report `errorCode` and `errorMessage` and suggest the likely parameter fix.
 
 ## CLI reference
 
 ```sh
 # Check live model metadata
-node {baseDir}/scripts/video_gen.js models
-node {baseDir}/scripts/video_gen.js models --mode text_to_video
-node {baseDir}/scripts/video_gen.js models --mode image_to_video
-node {baseDir}/scripts/video_gen.js models --mode multi_image_to_video
+node scripts/video_gen.js models
+node scripts/video_gen.js models --mode text_to_video
+node scripts/video_gen.js models --mode image_to_video
+node scripts/video_gen.js models --mode multi_image_to_video
 
 # Text-to-video
-node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"A paper crane unfolds into a real bird, cinematic lighting, 9:16 vertical","duration":5}'
+node scripts/video_gen.js wait --json '{"prompt":"A paper crane unfolds into a real bird, cinematic lighting, 9:16 vertical","duration":5}'
 
 # Single image to video
-node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"Animate this portrait with subtle hair and cloth movement","image":"https://example.com/frame.png","duration":5,"aspect_ratio":"9:16","resolution":"720p"}'
+node scripts/video_gen.js wait --json '{"prompt":"Animate this portrait with subtle hair and cloth movement","image":"https://example.com/frame.png","duration":5,"aspect_ratio":"9:16","resolution":"720p"}'
 
 # Multi-image to video
-node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"Turn these storyboard frames into one coherent reveal shot","images":["https://example.com/1.png","https://example.com/2.png","https://example.com/3.png"],"duration":5,"aspect_ratio":"9:16"}'
+node scripts/video_gen.js wait --json '{"prompt":"Turn these storyboard frames into one coherent reveal shot","images":["https://example.com/1.png","https://example.com/2.png","https://example.com/3.png"],"duration":5,"aspect_ratio":"9:16"}'
 
 # First-frame / last-frame guided video
-node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"Start on the first frame and transition naturally to the last frame with the same subject and environment","first_frame":"https://example.com/start.png","last_frame":"https://example.com/end.png","duration":5,"aspect_ratio":"9:16"}'
+node scripts/video_gen.js wait --json '{"prompt":"Start on the first frame and transition naturally to the last frame with the same subject and environment","first_frame":"https://example.com/start.png","last_frame":"https://example.com/end.png","duration":5,"aspect_ratio":"9:16"}'
 
 # WaveSpeed-style compatibility alias
-node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"Transition smoothly from the start image to the end image","image":"https://example.com/start.png","last_image":"https://example.com/end.png","duration":5,"aspect_ratio":"9:16"}'
+node scripts/video_gen.js wait --json '{"prompt":"Transition smoothly from the start image to the end image","image":"https://example.com/start.png","last_image":"https://example.com/end.png","duration":5,"aspect_ratio":"9:16"}'
 
 # Preview without spending credits
-node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"A glowing koi swims through ink clouds","duration":5}' --dry-run
+node scripts/video_gen.js wait --json '{"prompt":"A glowing koi swims through ink clouds","duration":5}' --dry-run
 
 # Poll an existing task
-node {baseDir}/scripts/video_gen.js status --task-id <task-id>
+node scripts/video_gen.js status --task-id <task-id>
 ```
 
 ## Definition of done
@@ -202,7 +202,7 @@ Done when the user receives at least one playable video URL, or a clear failure 
 
 ## Model & API constraints (frozen for this skill)
 
-> Frozen from the repository's current WeryAI capability snapshots. Re-run `node {baseDir}/scripts/video_gen.js models` after platform upgrades.
+> Frozen from the repository's current WeryAI capability snapshots. Re-run `node scripts/video_gen.js models` after platform upgrades.
 
 ### Text-to-video (`SEEDANCE_2_0`)
 
@@ -220,7 +220,7 @@ Done when the user receives at least one playable video URL, or a clear failure 
 
 - Use the `images` array for multi-image generation.
 - Use either `images` with ordered URLs, `first_frame` + `last_frame`, or `image` + `last_image` for start/end-frame control.
-- Before a paid submission where multi-image support matters, run `node {baseDir}/scripts/video_gen.js models --mode multi_image_to_video` and confirm `support_multiple_images`, `support_first_last_frame`, `upload_image_limit`, and allowed output fields on the live account.
+- Before a paid submission where multi-image support matters, run `node scripts/video_gen.js models --mode multi_image_to_video` and confirm `support_multiple_images`, `support_first_last_frame`, `upload_image_limit`, and allowed output fields on the live account.
 - If the live registry says the model cannot take multiple images, the runtime falls back to the first image only.
 
 ---
@@ -269,7 +269,7 @@ Use this when the user has only an idea and wants Seedance 2.0 to generate the c
 4. After confirmation, run:
 
    ```sh
-   node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"...","duration":5,"aspect_ratio":"9:16","resolution":"720p"}'
+   node scripts/video_gen.js wait --json '{"prompt":"...","duration":5,"aspect_ratio":"9:16","resolution":"720p"}'
    ```
 
 ---
@@ -291,7 +291,7 @@ Use this when the user already has one reference image and wants subtle or mediu
 3. Confirm parameters and URL, then run:
 
    ```sh
-   node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"...","image":"https://example.com/input.png","duration":5,"aspect_ratio":"9:16","resolution":"720p"}'
+   node scripts/video_gen.js wait --json '{"prompt":"...","image":"https://example.com/input.png","duration":5,"aspect_ratio":"9:16","resolution":"720p"}'
    ```
 
 ---
@@ -313,7 +313,7 @@ Use this when the user wants several frames turned into one coherent shot or sho
 3. Confirm the final prompt plus ordered `images`, then run:
 
    ```sh
-   node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"...","images":["https://example.com/1.png","https://example.com/2.png","https://example.com/3.png"],"duration":5,"aspect_ratio":"9:16"}'
+   node scripts/video_gen.js wait --json '{"prompt":"...","images":["https://example.com/1.png","https://example.com/2.png","https://example.com/3.png"],"duration":5,"aspect_ratio":"9:16"}'
    ```
 
 ---
@@ -335,7 +335,7 @@ Use this when the user wants tighter motion control from a known opening frame t
 3. Confirm both URLs and the full prompt, then run:
 
    ```sh
-   node {baseDir}/scripts/video_gen.js wait --json '{"prompt":"...","first_frame":"https://example.com/start.png","last_frame":"https://example.com/end.png","duration":5,"aspect_ratio":"9:16"}'
+   node scripts/video_gen.js wait --json '{"prompt":"...","first_frame":"https://example.com/start.png","last_frame":"https://example.com/end.png","duration":5,"aspect_ratio":"9:16"}'
    ```
 
 4. If the live registry rejects multi-image routing, reduce expectations: the runtime will fall back to single-image behavior with the first frame.

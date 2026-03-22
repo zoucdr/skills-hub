@@ -13,7 +13,7 @@ user-invocable: true
 
 **Template (segment lengths assume `duration` 10 → 30% / 30% / 40%; rescale for 5 or 15):** **Beat 1** *YOU THINK {X}*; **Beat 2** *ACTUALLY: IT’S {Y}*; **Beat 3** *BUT WHAT REALLY DECIDES IS {Z}* — **X / Y / Z** come from the user’s brief (you **compress each to ≤6 words** for on-screen legibility). **Hard cuts** and **kinetic** energy between beats. **English subtitles** with **exact windows**. Default **`duration`** is **10** when unspecified.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`{baseDir}/scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
 
 ## Prerequisites
 
@@ -70,15 +70,15 @@ user-invocable: true
 **After confirmation** — async submit, then `status` (user opts in to polling):
 
 ~~~sh
-node {baseDir}/scripts/video_gen.js submit-text --json '{"model":"KLING_V3_0_PRO","prompt":"…","duration":10,"aspect_ratio":"9:16","generate_audio":true,"negative_prompt":"illegible text, watermark, garbled captions"}'
-node {baseDir}/scripts/video_gen.js submit-image --json '{"model":"SEEDANCE_2_0","prompt":"…","image":"https://…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
-node {baseDir}/scripts/video_gen.js status --task-id <TASK_ID>
+node scripts/video_gen.js submit-text --json '{"model":"KLING_V3_0_PRO","prompt":"…","duration":10,"aspect_ratio":"9:16","generate_audio":true,"negative_prompt":"illegible text, watermark, garbled captions"}'
+node scripts/video_gen.js submit-image --json '{"model":"SEEDANCE_2_0","prompt":"…","image":"https://…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
+node scripts/video_gen.js status --task-id <TASK_ID>
 ~~~
 
 **Block until done** — only if the user explicitly chose `wait`:
 
 ~~~sh
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
 **Full reference** (`submit-multi-image`, stdout fields, errors): **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.

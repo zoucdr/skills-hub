@@ -1,7 +1,7 @@
 ---
 name: cute-pet-healing-video
 version: 1.0.0
-description: "Generate vertical healing-style cute pet shorts (WeryAI): soft motion, warm soft light, slow pace and light ambience—strong completion on short-video feeds; text-to-video or one HTTPS pet photo to subtle motion. Use when you need a pet healing reel, cozy cat clip, dog vertical cozy clip, or the user asks for windowsill naps, fluffy close-ups, or image-to-video with only breathing and blinks. Whenever you run or debug video_gen.js, open resources/WERYAI_VIDEO_API.md for full CLI flags, JSON fields, public https image rules, submit/status flows, and stdout error codes. SEO: cute pet healing video; healing pet viral short video."
+description: "Generate vertical healing-style cute pet shorts (WeryAI): soft motion, warm soft light, slow pace and light ambience—strong completion on short-video feeds; text-to-video or one pet still (public https URL or a local attachment path that video_gen.js can read and upload). Use when you need a pet healing reel, cozy cat clip, dog vertical cozy clip, or the user asks for windowsill naps, fluffy close-ups, or image-to-video with only breathing and blinks. Whenever you run or debug video_gen.js, open resources/WERYAI_VIDEO_API.md for CLI flags, JSON fields, https vs local image handling, submit/status flows, and stdout error codes. SEO: cute pet healing video; healing pet viral short video."
 
 tags: [pets, healing, short-video, vertical-feed, cute]
 
@@ -11,11 +11,11 @@ user-invocable: true
 
 # Healing cute pet viral shorts
 
-A fluffy creature napping in afternoon sun, stretching, tilting its head—pace drops. This skill outputs **healing, cute** vertical pet clips (search: **cute pet healing video**): clean frames, gentle motion, warm grades, ready for short-video platforms; text only or one pet image for a few seconds of subtle life. A public **HTTPS** image URL is strongly recommended for consistency and security. Local files should only be used after verifying `video_gen.js` behavior and explicitly consenting to the file upload process to WeryAI.
+A fluffy creature napping in afternoon sun, stretching, tilting its head—pace drops. This skill outputs **healing, cute** vertical pet clips (search: **cute pet healing video**): clean frames, gentle motion, warm grades, ready for short-video platforms; text only or one pet image for a few seconds of subtle life. **Image input:** a **public `https` URL** is ideal when the user already hosts the file; **OpenClaw / chat attachments** are often a **local filesystem path**—if `video_gen.js` can read that path, pass it as `image` and the script **uploads** it to WeryAI first (see **`## OpenClaw, attachments, and local image paths`**). Users should know their image may be read and uploaded when using a local path.
 
-**When to read [`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md):** Use it any time you **invoke or troubleshoot** `video_gen.js`—e.g. exact `wait` / `submit-*` / `status` / `models` syntax, `--dry-run`, full JSON shape beyond this file’s tables, **mandatory public `https`** image URLs for image-to-video, or interpreting **`errorCode` / `errorMessage`** on stdout. This `SKILL.md` carries the pet scenario, prompt rules, and frozen model rows; the API doc is the shared CLI contract.
+**When to read [`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md):** Use it any time you **invoke or troubleshoot** `video_gen.js`—e.g. exact `wait` / `submit-*` / `status` / `models` syntax, `--dry-run`, full JSON shape beyond this file’s tables, **`https` vs local path** rules and upload behavior, or interpreting **`errorCode` / `errorMessage`** on stdout. This `SKILL.md` carries the pet scenario, prompt rules, and frozen model rows; the API doc is the shared CLI contract.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`{baseDir}/scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`{baseDir}/resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests.
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests.
 
 
 ## Prerequisites
@@ -23,6 +23,22 @@ A fluffy creature napping in afternoon sun, stretching, tilting its head—pace 
 - `WERYAI_API_KEY` **must be set** in the environment before running `video_gen.js`.
 - Node.js **18+** is required. Public `https` image URLs are the safest default. If the bundled `video_gen.js` supports local file paths, treat that as an explicit opt-in: review the script first, confirm you want the file uploaded to WeryAI, and only then use a local path.
 - Each successful `wait` run consumes WeryAI credits; re-running creates new paid tasks.
+
+## OpenClaw, attachments, and local image paths
+
+**Problem:** Hosts like **OpenClaw** often give the agent a **local file path** for a user-attached image, not a public URL. The skill still works: `video_gen.js` treats a non-`https` `image` value as a **local path** (or `file://…`), **uploads** it via WeryAI’s upload API, then runs **image-to-video** with the returned public URL.
+
+**What the executor must do**
+
+1. **Do not drop the attachment.** If the user attached a pet photo, put the host-supplied path into JSON as `"image":"<path>"` together with `model`, `prompt`, `duration`, etc. Skipping `image` because there is no `https` URL is a common mistake.
+2. Prefer an **absolute path** if a relative path fails (`Local image file not found`). The Node process cwd may differ from the attachment directory.
+3. **Shell escaping:** wrap `--json` in single quotes and escape any single quotes inside the path, or write JSON to a temp file and pass it per your host’s pattern—see [`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md).
+4. **Formats:** use `.jpg` / `.jpeg` / `.png` / `.webp` / `.gif` when possible (same as `video_gen.js` MIME mapping).
+
+**If upload still fails**
+
+- `IMAGE_PREPARE_FAILED` / upload errors: confirm `WERYAI_API_KEY`, network, and that the path is readable by the same user running `node`.
+- If the platform exposes **no filesystem path** (only an opaque attachment id or inline bytes), this CLI cannot consume it—ask the user for a **public `https`** image link or use a host-specific way to materialize a path or URL.
 
 ## Security, secrets, and API hosts
 
@@ -54,20 +70,20 @@ A fluffy creature napping in afternoon sun, stretching, tilting its head—pace 
 ## Workflow
 
 1. Confirm the user request matches this skill's scenario (text-to-video and/or image-to-video as documented).
-2. Collect the user's **brief**, optional image URL(s), tier (**best** / **good** / **fast**) or an explicit `model` key.
+2. Collect the user's **brief**, optional **image** for image-to-video: **public `https` URL** and/or **local attachment path** from OpenClaw (see **`## OpenClaw, attachments, and local image paths`**), tier (**best** / **good** / **fast**) or an explicit `model` key.
 3. **Expand prompt (mandatory):** Unless the user supplied a finished long prompt and explicitly asked not to rewrite it, expand the brief into a full English production `prompt` using `## Prompt expansion (mandatory)` below. **Do not** call the API with only the user's minimal words.
 4. Check the **expanded** `prompt` against the selected model's `prompt_length_limit` in the frozen tables in this document (when present); shorten if needed.
 5. Verify `duration`, `aspect_ratio`, `resolution`, `generate_audio`, `negative_prompt`, and other fields against the frozen tables in this document and **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
 6. Show the pre-submit parameter table including the **full expanded `prompt`**; wait for **confirm** or edits.
-7. After confirmation, run `node {baseDir}/scripts/video_gen.js wait --json '...'` with the **expanded** prompt.
+7. After confirmation, run `node scripts/video_gen.js wait --json '...'` with the **expanded** prompt.
 8. Parse stdout JSON and return video URLs; on failure, surface `errorCode` / `errorMessage` and suggest parameter fixes.
 
 ## CLI reference
 
 ```sh
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"…","prompt":"…","duration":5,"aspect_ratio":"9:16"}'
-node {baseDir}/scripts/video_gen.js wait --json '…' --dry-run
-node {baseDir}/scripts/video_gen.js status --task-id <id>
+node scripts/video_gen.js wait --json '{"model":"…","prompt":"…","duration":5,"aspect_ratio":"9:16"}'
+node scripts/video_gen.js wait --json '…' --dry-run
+node scripts/video_gen.js status --task-id <id>
 ```
 
 **Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
@@ -81,7 +97,7 @@ Done when the user receives at least one playable video URL from the API respons
 - Does not review platform compliance, copyright, or portrait rights; does not guarantee commercial usability of outputs.
 - Does not provide non-WeryAI offline rendering, traditional edit timelines, or API field combinations not documented in this SKILL or **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
 - Do not link to `weryai-model-capabilities.md` or shared `../references/` paths; use **`resources/WERYAI_VIDEO_API.md`** for CLI/API details.
-- Does not hard-code absolute paths in the skill doc; `{baseDir}` means the skill package root (same level as `SKILL.md`).
+- Does not hard-code absolute paths in the skill doc; run `node scripts/...` from the skill package root (the directory containing `SKILL.md`) so `scripts/` and `resources/` paths resolve.
 
 ### Example prompts
 
@@ -163,12 +179,13 @@ Quick ideation: user gives **species + coat + one action + setting**; you add le
    > | resolution | 720p |
    > | generate_audio | true / false (match tier) |
    > | prompt | (≤20-char Chinese summary or short English summary) |
+   > | image | (for image-to-video: **https URL** or **absolute local path** from attachment—do not omit if user attached a photo) |
    > | Loop seam | No (user says **loop** → append seamless-loop trio at end of prompt) |
 
-5. After confirmation (`{baseDir}` is this skill root):
+5. After confirmation, from the skill package root:
 
    ```sh
-   node {baseDir}/scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"...","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
+   node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"...","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
    ```
 
 6. Parse stdout JSON, return `videos[].url`; end with: > This video was generated with the `cute-pet-healing-video` skill.
@@ -181,19 +198,25 @@ Quick ideation: user gives **species + coat + one action + setting**; you add le
 
 ## Pet photo → subtle healing motion
 
-User supplies a pet image; subject moves slightly (breath, ears, blink, tail)—cute, not sad. Prefer a **public HTTPS** image URL. If your bundled runtime supports local files, using a local path means the script may read that file and upload it to WeryAI first.
+User supplies a pet image; subject moves slightly (breath, ears, blink, tail)—cute, not sad. **Either** a **public `https` URL** **or** a **local path** the Node process can read (typical for **OpenClaw attachments**). Local paths trigger **read + upload** to WeryAI before generation—disclose that to the user when relevant.
 
-**Before use:** Prefer a directly reachable `https://` URL. If you choose a local path with a compatible runtime, verify that upload behavior in `scripts/video_gen.js` first and only proceed with explicit consent.
+**Before use:** If using `https`, it must be directly reachable (not `http://`). If using a local path, prefer **absolute** paths; see **`## OpenClaw, attachments, and local image paths`** when the image comes from a chat attachment.
 
 **Flow:**
 
-1. Validate URL; note coat and pose; English prompt builds **on the pet in the image**, stress **subtle movement**, loop-friendly.
-2. Same tiering as above; image-to-video JSON must include `image`.
-3. Same **parameter confirmation table**, plus a row **`image`**: URL summary.
+1. Resolve `image`: **https URL** or **attachment/local path**; note coat and pose; English prompt builds **on the pet in the image**, stress **subtle movement**, loop-friendly.
+2. Same tiering as above; image-to-video JSON **must** include non-empty `image`.
+3. Same **parameter confirmation table**, plus **`image`**: show https host **or** `local:<filename>` (never invent a URL for a local file).
 4. After confirmation:
 
    ```sh
-   node {baseDir}/scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"...","image":"https://...","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
+   node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"...","image":"https://...","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
+   ```
+
+   OpenClaw / local attachment (example—use the real absolute path your host provides):
+
+   ```sh
+   node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"...","image":"/absolute/path/to/user-pet.png","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
    ```
 
 5. Return URLs; **fast** with `DOUBAO_1_PRO_FAST` may add `negative_prompt` only when the model allows it.

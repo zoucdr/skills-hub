@@ -13,7 +13,7 @@ user-invocable: true
 
 **Template (seconds below assume `duration` 10; rescale for 5 or 15):** **0–3s** hook: *what you use daily comes from here* (user’s **X**); **3–8s** **stark contrast** montage (sleek product ↔ labor, factory, waste, or source environment—**non-gore**, suggestive not graphic); **8–10s** **one-line summary** that lands the thesis. **English subtitles** with **explicit second windows**. Default **`duration`** is **10** when unspecified.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`{baseDir}/scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** under **`{baseDir}/resources/`**. **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** under **`resources/`**. **No other Cursor skills required.**
 
 ## Prerequisites
 
@@ -66,14 +66,14 @@ user-invocable: true
 3. **Expand** with locked windows + visuals; **translate** user Chinese brief to **English** on-screen lines unless they request another language.
 4. Validate fields vs frozen tables.
 5. Confirmation table + full `prompt` → user **confirm**.
-6. `node {baseDir}/scripts/video_gen.js wait --json '…'`.
+6. `node scripts/video_gen.js wait --json '…'`.
 7. Return **`[Video](url)`**; no code fences around links.
 
 ## CLI reference
 
 ~~~sh
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"…","duration":10,"aspect_ratio":"9:16","generate_audio":true,"negative_prompt":"illegible text, watermark, garbled captions"}'
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
+node scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"…","duration":10,"aspect_ratio":"9:16","generate_audio":true,"negative_prompt":"illegible text, watermark, garbled captions"}'
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
 **Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.

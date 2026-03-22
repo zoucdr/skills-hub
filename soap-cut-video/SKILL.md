@@ -19,7 +19,7 @@ Three hooks that stop the scroll:
 
 From one text prompt or one product photo.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`{baseDir}/scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`{baseDir}/resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests. No other Cursor skills.
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests. No other Cursor skills.
 
 ## Prerequisites
 
@@ -63,15 +63,15 @@ From one text prompt or one product photo.
 4. Check the **expanded** `prompt` against the selected model's `prompt_length_limit` in the frozen tables in this document (when present); shorten if needed.
 5. Verify `duration`, `aspect_ratio`, `resolution`, `generate_audio`, `negative_prompt`, and other fields against the frozen tables in this document and **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
 6. Show the pre-submit parameter table including the **full expanded `prompt`**; wait for **confirm** or edits.
-7. After confirmation, run `node {baseDir}/scripts/video_gen.js wait --json '...'` with the **expanded** prompt.
+7. After confirmation, run `node scripts/video_gen.js wait --json '...'` with the **expanded** prompt.
 8. Parse stdout JSON and return video URLs; on failure, surface `errorCode` / `errorMessage` and suggest parameter fixes.
 
 ## CLI reference
 
 ```sh
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"…","prompt":"…","duration":5,"aspect_ratio":"9:16"}'
-node {baseDir}/scripts/video_gen.js wait --json '…' --dry-run
-node {baseDir}/scripts/video_gen.js status --task-id <id>
+node scripts/video_gen.js wait --json '{"model":"…","prompt":"…","duration":5,"aspect_ratio":"9:16"}'
+node scripts/video_gen.js wait --json '…' --dry-run
+node scripts/video_gen.js status --task-id <id>
 ```
 
 **Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
@@ -84,7 +84,7 @@ Done when the user gets playable video URL(s) or a clear failure with next steps
 
 - No compliance/copyright/likeness review; no commercial warranty.
 - No offline NLE or API field combinations not documented in this SKILL or **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
-- No hard-coded absolute paths; `{baseDir}` = this skill root.
+- No hard-coded absolute paths; run from the skill package root so `scripts/` and `resources/` paths resolve.
 - Do not link to `weryai-model-capabilities.md` or shared `../references/` paths; use **`resources/WERYAI_VIDEO_API.md`** for CLI/API details.
 
 ### Example prompts
@@ -159,6 +159,6 @@ Public `https` image + desired cut style (single / multi / wavy / strips). Match
 
 **Loop:** append `seamless loop, first and last frame identical, perfectly looping`
 
-**FAQ:** URLs must be HTTPS public. For color pop, state background (dark vs white). For grid cuts, state slice count (e.g. `6 successive slices`). If API 1002 on `aspect_ratio`, retry without it for models that omit the field.
+**FAQ:** Remote image URLs must be **`https://`** (not `http://`). **Local paths** are OK if `video_gen.js` can read them (upload first)—useful for OpenClaw attachments; prefer **absolute** paths. For color pop, state background (dark vs white). For grid cuts, state slice count (e.g. `6 successive slices`). If API 1002 on `aspect_ratio`, retry without it for models that omit the field.
 
 > **Note:** Not every model supports `aspect_ratio`; on 1002, drop it and retry.

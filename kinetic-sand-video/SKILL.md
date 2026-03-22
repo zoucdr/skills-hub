@@ -19,7 +19,7 @@ Core beats:
 - **Layered collapse:** Colored strata slip at the edge like a soft solid in slow motion
 - **Streaming pour:** Sand falls evenly; pile-up feels fluffy and fine
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`{baseDir}/scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`{baseDir}/resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests.
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests.
 
 
 ## Prerequisites
@@ -64,15 +64,15 @@ Core beats:
 4. Check the **expanded** `prompt` against the selected model's `prompt_length_limit` in the frozen tables in this document (when present); shorten if needed.
 5. Verify `duration`, `aspect_ratio`, `resolution`, `generate_audio`, `negative_prompt`, and other fields against the frozen tables in this document and **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
 6. Show the pre-submit parameter table including the **full expanded `prompt`**; wait for **confirm** or edits.
-7. After confirmation, run `node {baseDir}/scripts/video_gen.js wait --json '...'` with the **expanded** prompt.
+7. After confirmation, run `node scripts/video_gen.js wait --json '...'` with the **expanded** prompt.
 8. Parse stdout JSON and return video URLs; on failure, surface `errorCode` / `errorMessage` and suggest parameter fixes.
 
 ## CLI reference
 
 ```sh
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"…","prompt":"…","duration":5,"aspect_ratio":"9:16"}'
-node {baseDir}/scripts/video_gen.js wait --json '…' --dry-run
-node {baseDir}/scripts/video_gen.js status --task-id <id>
+node scripts/video_gen.js wait --json '{"model":"…","prompt":"…","duration":5,"aspect_ratio":"9:16"}'
+node scripts/video_gen.js wait --json '…' --dry-run
+node scripts/video_gen.js status --task-id <id>
 ```
 
 **Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
@@ -86,7 +86,7 @@ Done when the user receives at least one playable video URL from the API respons
 - Does not review platform compliance, copyright, or portrait rights; does not guarantee commercial usability of outputs.
 - Does not provide non-WeryAI offline rendering, traditional edit timelines, or API field combinations not documented in this SKILL or **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
 - Do not link to `weryai-model-capabilities.md` or shared `../references/` paths; use **`resources/WERYAI_VIDEO_API.md`** for CLI/API details.
-- Does not hard-code absolute paths in the skill doc; `{baseDir}` means the skill package root (same level as `SKILL.md`).
+- Does not hard-code absolute paths in the skill doc; run `node scripts/...` from the skill package root (the directory containing `SKILL.md`) so `scripts/` and `resources/` paths resolve.
 
 ### Example prompts
 
@@ -127,7 +127,7 @@ Tell me in one line: sand color or layer count, and the action.
    > - duration: 5s
    > - generate_audio: true
    > - Loop seam: off by default (reply **loop** to append `seamless loop, perfectly looping video, first and last frame identical` to the prompt)
-4. After confirmation (and optional loop keywords), run `node {baseDir}/scripts/video_gen.js wait --json '…'` (text-to-video); parse stdout.
+4. After confirmation (and optional loop keywords), run `node scripts/video_gen.js wait --json '…'` (text-to-video); parse stdout.
 5. Return URLs; note swaps (palette / action / loop).
 
 **Parameter configuration:**
@@ -157,7 +157,7 @@ Public **HTTPS** photo of a kinetic sand shape → slice, press, or collapse sta
    > - duration: 5s
    > - generate_audio: true
    > - Loop seam: off (reply **loop** to enable)
-4. Run `node {baseDir}/scripts/video_gen.js wait --json '…'` with `image`; parse stdout.
+4. Run `node scripts/video_gen.js wait --json '…'` with `image`; parse stdout.
 5. Return URLs.
 
 **Parameter configuration:**

@@ -1,6 +1,6 @@
 # WeryAI video CLI & JSON (`video_gen.js`)
 
-Shipped at **`{baseDir}/resources/WERYAI_VIDEO_API.md`** (next to `SKILL.md`). Run commands from **`{baseDir}/scripts/video_gen.js`**. **Node.js 18+** required.
+Shipped at **`resources/WERYAI_VIDEO_API.md`** (next to `SKILL.md`). From the skill package root, run **`node scripts/video_gen.js`** (see examples below). **Node.js 18+** required.
 
 This file describes **CLI usage, JSON shape, and image handling**. Per-skill rules (prompt expansion, confirmation tables, allowed models) live in each skill’s **`SKILL.md`**.
 
@@ -19,7 +19,7 @@ The script picks the API route from your JSON:
 - **`model`**: required for real runs and for `--dry-run` when `prompt` is present. Empty/missing → `MISSING_PARAM` (there is **no default model**). The script does **not** enforce skill-specific model allowlists—callers must match the skill’s `SKILL.md`.
 - **`prompt`**: required for `wait` and all `submit-*` flows that generate video.
 - **`duration`**: sent to the API; must be one of the values allowed for the chosen model (check `models` output or the skill’s frozen table).
-- Other fields (`aspect_ratio`, `resolution`, `generate_audio`, `negative_prompt`) are **only** valid if that model supports them—see `node …/video_gen.js models` and the skill’s **`## Model and API constraints`**.
+- Other fields (`aspect_ratio`, `resolution`, `generate_audio`, `negative_prompt`) are **only** valid if that model supports them—see `node scripts/video_gen.js models` and the skill’s **`## Model and API constraints`**.
 
 ---
 
@@ -83,10 +83,10 @@ If `image` or an `images[]` entry is **not** already a public https URL, `video_
 ## `models` — model metadata (JSON on stdout)
 
 ```sh
-node {baseDir}/scripts/video_gen.js models
-node {baseDir}/scripts/video_gen.js models --mode text_to_video
-node {baseDir}/scripts/video_gen.js models --mode image_to_video
-node {baseDir}/scripts/video_gen.js models --mode multi_image_to_video
+node scripts/video_gen.js models
+node scripts/video_gen.js models --mode text_to_video
+node scripts/video_gen.js models --mode image_to_video
+node scripts/video_gen.js models --mode multi_image_to_video
 ```
 
 Typical fields include `model_key`, `title`, `durations`, `aspect_ratios`, `resolutions`, `has_generate_audio`, `has_negative_prompt`, `prompt_length_limit`; image modes may add `support_multiple_images`, `support_first_last_frame`, `upload_image_limit`, etc. Use this to author **`## Model and API constraints`** in `SKILL.md`.
@@ -96,12 +96,12 @@ Typical fields include `model_key`, `title`, `durations`, `aspect_ratios`, `reso
 ## `wait` — submit and block until done
 
 ```sh
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"...","duration":5,"aspect_ratio":"9:16"}'
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"...","prompt":"...","image":"https://cdn.example.com/pet.jpg","duration":5}'
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"...","prompt":"...","images":["https://cdn.example.com/a.jpg","https://cdn.example.com/b.jpg"],"duration":5}'
+node scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"...","duration":5,"aspect_ratio":"9:16"}'
+node scripts/video_gen.js wait --json '{"model":"...","prompt":"...","image":"https://cdn.example.com/pet.jpg","duration":5}'
+node scripts/video_gen.js wait --json '{"model":"...","prompt":"...","images":["https://cdn.example.com/a.jpg","https://cdn.example.com/b.jpg"],"duration":5}'
 # Advanced only: local paths trigger upload-file first; skills should default to public https URLs above.
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"...","prompt":"...","image":"./girl.png","duration":5}'
-node {baseDir}/scripts/video_gen.js wait --json '...' --dry-run
+node scripts/video_gen.js wait --json '{"model":"...","prompt":"...","image":"./girl.png","duration":5}'
+node scripts/video_gen.js wait --json '...' --dry-run
 ```
 
 Same JSON object is used for **`submit-*`**; only the blocking behavior differs.
@@ -111,11 +111,11 @@ Same JSON object is used for **`submit-*`**; only the blocking behavior differs.
 ## `submit-*` — submit only (async)
 
 ```sh
-node {baseDir}/scripts/video_gen.js submit-text  --json '{"model":"…","prompt":"…","duration":5}'
-node {baseDir}/scripts/video_gen.js submit-image --json '{"model":"…","prompt":"…","image":"https://…","duration":5}'
-node {baseDir}/scripts/video_gen.js submit-multi-image --json '{"model":"…","prompt":"…","images":["https://…","https://…"],"duration":5}'
+node scripts/video_gen.js submit-text  --json '{"model":"…","prompt":"…","duration":5}'
+node scripts/video_gen.js submit-image --json '{"model":"…","prompt":"…","image":"https://…","duration":5}'
+node scripts/video_gen.js submit-multi-image --json '{"model":"…","prompt":"…","images":["https://…","https://…"],"duration":5}'
 # Advanced only: local file → upload then submit (same public-URL requirement for the API).
-node {baseDir}/scripts/video_gen.js submit-image --json '{"model":"…","prompt":"…","image":"./local.png","duration":5}'
+node scripts/video_gen.js submit-image --json '{"model":"…","prompt":"…","image":"./local.png","duration":5}'
 ```
 
 **Note:** `submit-text`, `submit-image`, and `submit-multi-image` are **aliases** in this script: routing (text vs image vs multi-image) is decided **only** from JSON (`image` / `images`), exactly like `wait`. Use the verb that matches your intent; behavior is the same `submitTask` path aside from blocking.
@@ -127,7 +127,7 @@ Poll completion with **`status`** (below). Response JSON may include `batchId` /
 ## `status`
 
 ```sh
-node {baseDir}/scripts/video_gen.js status --task-id <id>
+node scripts/video_gen.js status --task-id <id>
 ```
 
 You may also pass a task id inside JSON as `task_id` or `taskId` when using `--json` (less common). If `--task-id` is omitted and JSON has no id, the script errors with `status command requires --task-id <id>`.

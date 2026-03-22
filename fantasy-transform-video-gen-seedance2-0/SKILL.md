@@ -13,7 +13,7 @@ user-invocable: true
 
 Turn ordinary moments into **fantasy-forward** shorts: subjects feel enchanted, props read as magical artifacts, space becomes mysterious, light breaks into particles, motion feels ritual, and audio leans ethereal when `generate_audio` is on.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. This skill uses **only** `SEEDANCE_2_0`. When you run the CLI, **`{baseDir}/scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`{baseDir}/resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. This skill uses **only** `SEEDANCE_2_0`. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. **No other Cursor skills required.**
 
 ## Prerequisites
 
@@ -61,14 +61,14 @@ Turn ordinary moments into **fantasy-forward** shorts: subjects feel enchanted, 
 3. **Expand prompt (mandatory):** Unless the user opted out with a finished long prompt, expand using `## Prompt expansion (mandatory)`. **Do not** submit only the user's minimal words.
 4. Validate **`model`** is **`SEEDANCE_2_0` only**; validate `duration`, `aspect_ratio`, `resolution`, `generate_audio` against the frozen tables.
 5. Show the confirmation table with the **full expanded `prompt`**; wait for **confirm** or edits.
-6. Run `node {baseDir}/scripts/video_gen.js wait --json '...'`.
+6. Run `node scripts/video_gen.js wait --json '...'`.
 7. Parse stdout JSON; return `videos` URLs or explain errors.
 8. When presenting playable URLs to the user, use **Markdown inline links only** (e.g. `[Video](https://...)`). **Do not** wrap user-facing links in code fences.
 
 ## CLI reference
 
 ~~~sh
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
 **Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
@@ -81,7 +81,7 @@ Done when the user gets at least one playable **[Video](url)**-style link, or a 
 
 - Do not use **any model other than `SEEDANCE_2_0`** for this package.
 - Do not link to `weryai-model-capabilities.md` or shared `../references/` paths; use **`resources/WERYAI_VIDEO_API.md`** for CLI/API details.
-- Do not use local file paths for `image`; never embed the secret value of `WERYAI_API_KEY` in files.
+- Prefer public **`https`** for `image` when easy; **OpenClaw / chat attachments** are often a **local path**—if `video_gen.js` can read it, pass it as `image` and the script uploads first (use an **absolute** path if a relative path fails). Never embed the secret value of `WERYAI_API_KEY` in files.
 - Do not invent API fields; do not send `negative_prompt` (not supported for this model).
 - Do not wrap user-facing playable URLs in Markdown code fences.
 
@@ -95,7 +95,7 @@ Done when the user gets at least one playable **[Video](url)**-style link, or a 
 
 ## Model and API constraints (frozen for this skill)
 
-> Derived from `node {baseDir}/scripts/video_gen.js models` alignment at authoring time; re-run `models` after platform upgrades. **This skill is locked to `SEEDANCE_2_0` only.**
+> Derived from `node scripts/video_gen.js models` alignment at authoring time; re-run `models` after platform upgrades. **This skill is locked to `SEEDANCE_2_0` only.**
 
 ### Text-to-video
 
@@ -145,7 +145,7 @@ Tier only changes **duration / resolution / audio** defaults—**never** the mod
 4. Execute:
 
 ~~~sh
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"<expanded>","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"<expanded>","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
 5. Return `[Video](url)` links.
@@ -154,14 +154,14 @@ node {baseDir}/scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt
 
 ## Scenario: Image-to-video style transform
 
-**Before use:** `image` must be `https://` and reachable.
+**Before use:** **Prefer** a public **`https://`** URL reachable from the internet. **Local paths** (e.g. OpenClaw attachment paths) work when the Node process can read them—`video_gen.js` uploads then submits; use **absolute** paths if needed. Do not use plain `http://` remote URLs.
 
 1. Plan how the still **re-styles** in motion (props, light, environment) without breaking likeness if the user requests preservation.
 2. Expand prompt; add `image` to the confirmation table.
 3. After **confirm**:
 
 ~~~sh
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"<expanded>","image":"https://…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"<expanded>","image":"https://…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
 4. Return `[Video](url)` links.

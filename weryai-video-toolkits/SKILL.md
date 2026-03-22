@@ -10,7 +10,7 @@ Use this skill for official WeryAI video editing, video post-processing, and Wer
 
 This is not a text-to-video generator. Use it when the user wants to edit, transform, clean up, translate, upscale, or extend an existing video with WeryAI rather than create a brand-new video from a prompt.
 
-**Dependencies:** `scripts/video_toolkits.js` in this directory, `WERYAI_API_KEY`, and Node.js 18+. No other skills are required.
+**Dependencies:** `scripts/video_toolkits.js` at the skill package root (alongside `SKILL.md`), `WERYAI_API_KEY`, and Node.js 18+. No other skills are required.
 
 ## Example Prompts
 
@@ -51,8 +51,8 @@ export WERYAI_API_KEY="your_api_key_here"
 Use one safe check before the first paid run:
 
 ```sh
-node {baseDir}/scripts/video_toolkits.js tools
-node {baseDir}/scripts/video_toolkits.js wait --tool background-remove --json '{"video_url":"https://example.com/video.mp4"}' --dry-run
+node scripts/video_toolkits.js tools
+node scripts/video_toolkits.js wait --tool background-remove --json '{"video_url":"https://example.com/video.mp4"}' --dry-run
 ```
 
 - `tools` confirms the local CLI is available and shows the supported tool registry.
@@ -124,36 +124,36 @@ Read [references/video-tools-matrix.md](references/video-tools-matrix.md) when y
 
 ```sh
 # List supported tools and defaults
-node {baseDir}/scripts/video_toolkits.js tools
+node scripts/video_toolkits.js tools
 
 # Remove background with default BLACK fill
-node {baseDir}/scripts/video_toolkits.js wait \
+node scripts/video_toolkits.js wait \
   --tool background-remove \
   --json '{"video_url":"https://example.com/video.mp4"}'
 
 # Replace or move an object in anime style
-node {baseDir}/scripts/video_toolkits.js wait \
+node scripts/video_toolkits.js wait \
   --tool anime-replace \
   --json '{"video_url":"https://example.com/video.mp4","image_url":"https://example.com/ref.jpg","type":"replace","resolution":"720p"}'
 
 # Extend a clip
-node {baseDir}/scripts/video_toolkits.js wait \
+node scripts/video_toolkits.js wait \
   --tool extend \
   --json '{"video_url":"https://example.com/video.mp4","prompt":"Continue the motion naturally for 5 seconds","style":"anime","duration":5,"resolution":"720p"}'
 
 # Translate subtitles
-node {baseDir}/scripts/video_toolkits.js wait \
+node scripts/video_toolkits.js wait \
   --tool subtitle-translate \
   --json '{"video_url":"https://example.com/video.mp4","target_language":"en"}'
 
 # Dry-run preview without spending credits
-node {baseDir}/scripts/video_toolkits.js wait \
+node scripts/video_toolkits.js wait \
   --tool upscaler \
   --json '{"video_url":"https://example.com/video.mp4","resolution":"1080p"}' \
   --dry-run
 
 # Poll an existing task
-node {baseDir}/scripts/video_toolkits.js status --task-id <task-id>
+node scripts/video_toolkits.js status --task-id <task-id>
 ```
 
 ## Workflow

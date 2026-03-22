@@ -13,7 +13,7 @@ user-invocable: true
 
 The arc of gel strokes, cat-eye powder snapping into lines under a magnet, mirror gloss after cure—those seconds are the hook. Bunnies or kittens as tiny hand models doing polished nails: every detail is healing content, plus brush ASMR in post for completion rate.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`{baseDir}/scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`{baseDir}/resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests.
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests.
 
 
 ## Prerequisites
@@ -58,15 +58,15 @@ The arc of gel strokes, cat-eye powder snapping into lines under a magnet, mirro
 4. Check the **expanded** `prompt` against the selected model's `prompt_length_limit` in the frozen tables in this document (when present); shorten if needed.
 5. Verify `duration`, `aspect_ratio`, `resolution`, `generate_audio`, `negative_prompt`, and other fields against the frozen tables in this document and **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
 6. Show the pre-submit parameter table including the **full expanded `prompt`**; wait for **confirm** or edits.
-7. After confirmation, run `node {baseDir}/scripts/video_gen.js wait --json '...'` with the **expanded** prompt.
+7. After confirmation, run `node scripts/video_gen.js wait --json '...'` with the **expanded** prompt.
 8. Parse stdout JSON and return video URLs; on failure, surface `errorCode` / `errorMessage` and suggest parameter fixes.
 
 ## CLI reference
 
 ```sh
-node {baseDir}/scripts/video_gen.js wait --json '{"model":"…","prompt":"…","duration":5,"aspect_ratio":"9:16"}'
-node {baseDir}/scripts/video_gen.js wait --json '…' --dry-run
-node {baseDir}/scripts/video_gen.js status --task-id <id>
+node scripts/video_gen.js wait --json '{"model":"…","prompt":"…","duration":5,"aspect_ratio":"9:16"}'
+node scripts/video_gen.js wait --json '…' --dry-run
+node scripts/video_gen.js status --task-id <id>
 ```
 
 **Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
@@ -80,7 +80,7 @@ Done when the user receives at least one playable video URL from the API respons
 - We do not review platform compliance, copyright, or likeness; we do not warrant commercial usability of outputs.
 - We do not provide offline rendering outside WeryAI, traditional NLE projects, or API field combinations not documented in this SKILL or **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
 - Do not link to `weryai-model-capabilities.md` or shared `../references/` paths; use **`resources/WERYAI_VIDEO_API.md`** for CLI/API details.
-- Do not hard-code absolute paths in this doc; `{baseDir}` is this skill root (next to `SKILL.md`).
+- Do not hard-code absolute paths in this doc; run from the skill package root (next to `SKILL.md`) so `scripts/` and `resources/` paths resolve.
 
 ### Example prompts
 
@@ -113,7 +113,7 @@ Describe the character and the nail look; the rest is filled by prompt.
 
 **Flow:**
 
-Collect character + nail design → build a prompt stressing gel gloss, cat-eye lines, mirror top coat → show parameter confirmation → run `node {baseDir}/scripts/video_gen.js wait --json '…'` (fields match the confirmation table)
+Collect character + nail design → build a prompt stressing gel gloss, cat-eye lines, mirror top coat → show parameter confirmation → run `node scripts/video_gen.js wait --json '…'` (fields match the confirmation table)
 
 > About to generate with:
 > - model: KLING_V3_0_PRO
