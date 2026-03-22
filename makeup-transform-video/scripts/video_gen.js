@@ -17,14 +17,19 @@ const { fileURLToPath } = require('node:url');
  *
  * 环境变量:
  *   WERYAI_API_KEY（models / 生成 / status 必填；--dry-run 除外）— 敏感凭据，勿写入仓库；registry 元数据声明见同目录 SKILL.md。
- *   本脚本仅读取上述密钥；API 主机与轮询间隔为固定常量，勿用其他 env 覆盖。
+ *   本脚本仅读取上述密钥；API 主机与轮询策略为固定常量，勿用其他 env 覆盖。
+ *   wait 轮询：首次间隔 3s，之后每次翻倍，单步上限 60s，总超时 600s（10 min）。
  */
 
 const BASE_URL = 'https://api.weryai.com';
 const MODELS_BASE_URL = 'https://api-growth-agent.weryai.com';
 const MODELS_API_PATH = '/growthai/v1/video/models';
 const UPLOAD_API_PATH = '/growthai/v1/generation/upload-file';
-const POLL_INTERVAL_MS = 6000;
+/** First delay before the first status poll (ms). */
+const POLL_FIRST_DELAY_MS = 3000;
+/** Max delay between polls — backoff doubles until this cap (ms). */
+const POLL_MAX_DELAY_MS = 60000;
+/** Total wall-clock budget for all polls in `wait` (ms). */
 const POLL_TIMEOUT_MS = 600000;
 const IMAGE_MIME_TYPES = {
   '.jpg': 'image/jpeg',
@@ -451,14 +456,15 @@ function extractVideos(taskData) {
 
 async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
   const start = Date.now();
+  let nextDelayMs = POLL_FIRST_DELAY_MS;
   while (true) {
-    const elapsed = (Date.now() - start) / 1000;
-    if (elapsed * 1000 >= POLL_TIMEOUT_MS) {
+    const elapsedMs = Date.now() - start;
+    if (elapsedMs >= POLL_TIMEOUT_MS) {
       return {
         ok: false,
         phase: 'failed',
         errorCode: 'TIMEOUT',
-        errorMessage: `Poll timeout after ${Math.floor(elapsed)}s.`,
+        errorMessage: `Poll timeout after ${Math.floor(elapsedMs / 1000)}s.`,
         batchId,
         taskIds,
         taskId,
@@ -467,7 +473,8 @@ async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
       };
     }
 
-    await sleep(POLL_INTERVAL_MS);
+    await sleep(nextDelayMs);
+    nextDelayMs = Math.min(nextDelayMs * 2, POLL_MAX_DELAY_MS);
 
     let res;
     try {
@@ -486,7 +493,9 @@ async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
     const rawStatus = taskData.task_status || '';
     const normalized = STATUS_MAP[rawStatus] || 'unknown';
     const elapsedSec = Math.floor((Date.now() - start) / 1000);
-    log(`Polling ${taskId}... status: ${rawStatus} (${elapsedSec}s elapsed)`);
+    log(
+      `Polling ${taskId}... status: ${rawStatus} (${elapsedSec}s elapsed); next backoff delay ${Math.min(nextDelayMs, POLL_MAX_DELAY_MS)}ms`,
+    );
 
     if (normalized === 'completed') {
       const videos = extractVideos(taskData);

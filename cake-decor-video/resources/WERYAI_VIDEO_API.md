@@ -68,7 +68,7 @@ If `image` or an `images[]` entry is **not** already a public https URL, `video_
 ## Environment
 
 - **`WERYAI_API_KEY`** (required for `models`, generation, `status`, and local-image upload; **not** required for `--dry-run` only): bearer token. Never commit the value.
-- **No other environment variables** are read. Hosts and poll timing are fixed in `video_gen.js`.
+- **No other environment variables** are read. Hosts are fixed in `video_gen.js`. The **`wait`** command polls task status with **exponential backoff**: first delay **3s**, then **6s → 12s → 24s → …** (each step doubles), **capped at 60s** between polls, with a **total wall-clock budget of 600s (10 minutes)** before timeout.
 
 ## API hosts (fixed)
 
@@ -133,6 +133,20 @@ node scripts/video_gen.js status --task-id <id>
 You may also pass a task id inside JSON as `task_id` or `taskId` when using `--json` (less common). If `--task-id` is omitted and JSON has no id, the script errors with `status command requires --task-id <id>`.
 
 There is **no** `batch-status` command in `video_gen.js`; use per-task `status` with each `taskId` you care about. Invalid invocation prints a **Usage** line to stdout JSON (there is no `--help` flag).
+
+---
+
+## Agent UX: in-progress notice, task IDs, backoff polling, completion, skill name
+
+Use this when an executor should **talk to the user** during async generation (not only return raw JSON).
+
+1. **Right after a successful `submit-*`:** Tell the user that generation **has started** and paste **`taskId`** from stdout JSON. If the API returns **`batchId`** and/or **`taskIds`**, include those too so logs and support can correlate the job.
+
+2. **Poll until terminal state:** Run `status --task-id <id>` repeatedly until the payload shows **completed** or **failed** (or your wrapper treats the script’s `phase` / `ok` as terminal). **Recommended delay between polls:** **3s, then 6s, then 12s, …** doubling each time, **cap at 60s**—the same pattern as **`wait`** uses inside `video_gen.js`. Stop early on success/failure; respect your own overall timeout if you need stricter limits than the built-in 10-minute `wait` budget.
+
+3. **`wait` vs `submit-*`:** **`wait`** is one blocking call; it does **not** emit a separate “submitted” line for the user unless **your** layer prints one before/after. For “notify immediately, then poll in the open,” use **`submit-*`** and your own **`status`** loop with the backoff above.
+
+4. **When generation finishes:** Summarize the **outcome** for the user: on success, **playable links** from **`videos`** (e.g. Markdown `[label](url)`); on failure, **`errorCode`** and **`errorMessage`**. **`video_gen.js` does not know which skill was used**—add **skill attribution** yourself from the active skill’s **`SKILL.md`** (e.g. frontmatter **`name`**) or the skill folder slug, in the same user-facing message.
 
 ---
 
