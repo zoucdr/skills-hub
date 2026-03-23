@@ -1,6 +1,6 @@
 ---
 name: room-makeover-video
-version: 1.0.0
+version: 1.0.1
 description: "Generate vertical home makeover shorts (WeryAI): rental cream aesthetic, balcony café corner, themed kids’ rooms, strong before/after. Use when you need room makeover reels, soft-furnishing glow-up clips, or users ask for lights-on reveal and split before/after. SEO: room makeover video; room transformation video generation."
 
 tags: [makeover, home, aesthetics, healing, life-inspo, short-video]

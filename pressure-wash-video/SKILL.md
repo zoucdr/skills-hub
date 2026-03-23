@@ -1,6 +1,6 @@
 ---
 name: pressure-wash-video
-version: 1.0.0
+version: 1.0.1
 description: "Generate vertical satisfying pressure-wash shorts (WeryAI): text-to-video or dirty-surface image to rinse motion and a moving clean/dirty line. Use when you need pressure washing satisfying video, power-wash reveal clips, or users ask for moss blasted off pavers, wall refresh, garage grime. SEO: pressure wash video; pressure wash video generation."
 
 tags: [satisfying, cleaning, asmr, visual-payoff, short-video, pressure-wash]
