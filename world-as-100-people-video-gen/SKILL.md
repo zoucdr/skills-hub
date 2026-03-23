@@ -15,17 +15,24 @@ user-invocable: true
 
 **Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
 
+## Instruction scope
+
+This skill’s **SKILL.md** and **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)** document the normal flows: **text → video**, **image → video**, and **multi-image → video** (Seedance 2.0, up to three images). **Prefer public `https` image URLs** in JSON whenever possible.
+
+The shipped **`scripts/video_gen.js`** accepts `image` / `images` as either public HTTPS URLs **or** local filesystem paths. For a **local path**, the script **reads the file from disk**, uploads it to **`https://api-growth-agent.weryai.com`** (`growthai/v1/generation/upload-file`) **using `WERYAI_API_KEY`**, obtains a **public URL**, then submits that URL to the video-generation API. That **read-and-upload** path is **in scope** for image → video and multi-image.
+
+**Consent:** Local paths imply reading user files and sending image bytes to WeryAI. **Agents and operators must obtain explicit user consent** (and review this behavior) **before** passing local paths to the CLI. If consent is skipped, **unintended read-and-upload** (effective local file exfiltration to WeryAI) is possible.
+
 ## Prerequisites
 
-- `WERYAI_API_KEY` **must be set**; Node **18+**. Prefer public **`https`** image URLs; if the assembled `scripts/video_gen.js` supports local file paths, review/verify the script and explicitly consent before local read-and-upload to WeryAI.
+- `WERYAI_API_KEY` **must be set**; Node **18+**. URL preference and local-path rules: **Instruction scope** above.
 - Non-empty `model` in JSON.
 
 ## Security, secrets, and API hosts
 
 - **`WERYAI_API_KEY`**: Secret; never commit.
-- **API hosts** fixed in `video_gen.js` as in sibling skills—only the key is read from env.
-- **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
-- **Higher assurance**: Prefer a short-lived or isolated environment; review `scripts/video_gen.js` before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
+- **API hosts** are fixed in `video_gen.js` (including **`api-growth-agent.weryai.com`** for file upload); only the key is read from env. Details: **Instruction scope**.
+- **Higher assurance**: Prefer a short-lived or isolated environment; review `scripts/video_gen.js` before production use.
 
 ## Prompt expansion (mandatory)
 **Audio (default-on):** Default **`generate_audio`: `true`** for models that support audio. Always add an **`Audio:`** subsection to the expanded **`prompt`** (whooshes, ticks, sub-bass, risers, room tone—**generic**, non-copyrighted)—**even if the user never mentioned sound**. Use **`generate_audio`: `false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
