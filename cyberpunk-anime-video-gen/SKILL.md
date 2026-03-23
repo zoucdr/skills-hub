@@ -142,7 +142,7 @@ Done when the user receives a playable **`[Video](url)`** link (Markdown inline)
 |------|-----------|------------------|--------|
 | ⭐ Best (default) | `KLING_V3_0_PRO` | 10 | **Kling 3.0**—rain, **HUD**, reflections; **neg** for muddy CG. |
 | 👍 Good | `KLING_V2_6_PRO` | 10 | **Kling 2.6**—aggressive **contrast** in **5/10s** only. |
-| ⚡ Fast | `VEO_3_1_FAST` | 8 | **Veo 3.1 Fast**—**8s** only; great **trailer-energy** neon; image fast → **`CHATBOT_VEO_3_1_FAST`**. |
+| ⚡ Fast | `VEO_3_1_FAST` | 8 | **Veo 3.1 Fast**—**8s** only; image fast → **`CHATBOT_VEO_3_1_FAST`**. |
 
 ---
 
@@ -156,6 +156,7 @@ Done when the user receives a playable **`[Video](url)`** link (Markdown inline)
 | `resolution` | *(omit)* for **default best**; **Seedance / Vidu / Veo / Sora / Wan / Doubao / Dreamina / Grok / Pika / WERYAI** per row—**Kling 3.x** **omit** |
 | `generate_audio` | **`true`** for tiers with **Audio = Yes** in the frozen table; **`false`** (or omit per API file) for **Sora / Wan / Dreamina / Grok / Pika / WERYAI_VIDEO_1_0 / DOUBAO_1_PRO_FAST / KLING_V2_5_TURBO** rows |
 | `negative_prompt` | **Only** if frozen row = **Yes** (genre lines from **Prompt expansion**) |
+
 ## Scenario: Text-to-video (genre)
 
 1. Collect brief + tier/model. **Expand** per **`## Prompt expansion (mandatory)`**.

@@ -1,7 +1,7 @@
 ---
 name: sports-anime-video-gen
 version: 1.0.0
-description: "High-tension sports anime moments—sweat highlights, decisive plays, team huddles, and speed for vertical hype. Use when you need match climax beats, training montage slices, or motion from sports key art; expand briefs before submit. Paid API; **KLING_V3_0_PRO** for **anime** sweat + **audio**; **SORA_2** **silent** **8s** **realistic** physics tests; **WAN_2.5** silent **quick** cuts."
+description: "High-tension sports anime moments—sweat highlights, decisive plays, team huddles, and speed for vertical hype. Use when you need match climax beats, training montage slices, or motion from sports key art; expand briefs before submit. Paid API; **KLING_V3_0_PRO** for **anime** sweat + **audio**; **SORA_2** **silent** **8s** **realistic** physics tests; **WAN_2_5** silent **quick** cuts."
 
 tags: [anime, sports, team, competition, motion, vertical, text-to-video, image-to-video, video-gen]
 
@@ -156,6 +156,7 @@ Done when the user receives a playable **`[Video](url)`** link (Markdown inline)
 | `resolution` | *(omit)* for **default best**; **Seedance / Vidu / Veo / Sora / Wan / Doubao / Dreamina / Grok / Pika / WERYAI** per row—**Kling 3.x** **omit** |
 | `generate_audio` | **`true`** for tiers with **Audio = Yes** in the frozen table; **`false`** (or omit per API file) for **Sora / Wan / Dreamina / Grok / Pika / WERYAI_VIDEO_1_0 / DOUBAO_1_PRO_FAST / KLING_V2_5_TURBO** rows |
 | `negative_prompt` | **Only** if frozen row = **Yes** (genre lines from **Prompt expansion**) |
+
 ## Scenario: Text-to-video (genre)
 
 1. Collect brief + tier/model. **Expand** per **`## Prompt expansion (mandatory)`**.

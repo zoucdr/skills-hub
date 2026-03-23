@@ -1,7 +1,7 @@
 ---
 name: healing-ghibli-style-video-gen
 version: 1.0.0
-description: "Warm healing anime nature reminiscent of hand-painted pastoral fantasy—sun shafts, wind through grass, water glints for vertical calm. Use when you need peaceful countryside anime, flight of imagination **generic**, or motion from landscape art; expand briefs before submit. Paid API; **SEEDANCE_2.0** **painterly** **wind**; **DOUBAO_1.5 Pro** **woodwind**-friendly **audio**; **VEO_3.1** **8s** **cinematic** **sun shaft** polish."
+description: "Warm healing anime nature reminiscent of hand-painted pastoral fantasy—sun shafts, wind through grass, water glints for vertical calm. Use when you need peaceful countryside anime, flight of imagination **generic**, or motion from landscape art; expand briefs before submit. Paid API; **SEEDANCE_2_0** **painterly** **wind**; **DOUBAO_1_5_PRO** **woodwind**-friendly **audio**; **VEO_3_1** **8s** **cinematic** **sun shaft** polish."
 
 tags: [anime, ghibli-inspired, healing, nature, pastoral, vertical, text-to-video, image-to-video, video-gen]
 
@@ -156,6 +156,7 @@ Done when the user receives a playable **`[Video](url)`** link (Markdown inline)
 | `resolution` | `720p` for **default best**; **Seedance / Vidu / Veo / Sora / Wan / Doubao / Dreamina / Grok / Pika / WERYAI** per row—**Kling 3.x** **omit** |
 | `generate_audio` | **`true`** for tiers with **Audio = Yes** in the frozen table; **`false`** (or omit per API file) for **Sora / Wan / Dreamina / Grok / Pika / WERYAI_VIDEO_1_0 / DOUBAO_1_PRO_FAST / KLING_V2_5_TURBO** rows |
 | `negative_prompt` | **Only** if frozen row = **Yes** (genre lines from **Prompt expansion**) |
+
 ## Scenario: Text-to-video (genre)
 
 1. Collect brief + tier/model. **Expand** per **`## Prompt expansion (mandatory)`**.

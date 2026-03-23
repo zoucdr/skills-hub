@@ -1,7 +1,7 @@
 ---
 name: supernatural-anime-video-gen
 version: 1.0.0
-description: "Eerie supernatural anime phenomena—spirit glow, barrier ripples, talisman motifs, and uncanny calm for vertical mystery. Use when you need yokai-adjacent mood **generic**, shrine oddities, or motion from paranormal art; expand briefs before submit. Paid API; **KLING_V2_6_PRO** **shrine** **tension** **10s**; **SEEDANCE_2.0** **spirit** **audio**; **WAN_2.6** **neg**-heavy **silent** passes."
+description: "Eerie supernatural anime phenomena—spirit glow, barrier ripples, talisman motifs, and uncanny calm for vertical mystery. Use when you need yokai-adjacent mood **generic**, shrine oddities, or motion from paranormal art; expand briefs before submit. Paid API; **KLING_V2_6_PRO** **shrine** **tension** **10s**; **SEEDANCE_2_0** **spirit** **audio**; **WAN_2_6** **neg**-heavy **silent** passes."
 
 tags: [anime, supernatural, paranormal, spiritual, mystery, vertical, text-to-video, image-to-video, video-gen]
 
@@ -156,6 +156,7 @@ Done when the user receives a playable **`[Video](url)`** link (Markdown inline)
 | `resolution` | *(omit)* for **default best**; **Seedance / Vidu / Veo / Sora / Wan / Doubao / Dreamina / Grok / Pika / WERYAI** per row—**Kling 3.x** **omit** |
 | `generate_audio` | **`true`** for tiers with **Audio = Yes** in the frozen table; **`false`** (or omit per API file) for **Sora / Wan / Dreamina / Grok / Pika / WERYAI_VIDEO_1_0 / DOUBAO_1_PRO_FAST / KLING_V2_5_TURBO** rows |
 | `negative_prompt` | **Only** if frozen row = **Yes** (genre lines from **Prompt expansion**) |
+
 ## Scenario: Text-to-video (genre)
 
 1. Collect brief + tier/model. **Expand** per **`## Prompt expansion (mandatory)`**.

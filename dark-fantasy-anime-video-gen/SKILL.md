@@ -132,7 +132,7 @@ Done when the user receives a playable **`[Video](url)`** link (Markdown inline)
 |-----------|-----------|---------------|-------------|-------|-----------------|--------|
 | `KLING_V3_0_PRO` | 5, 10, 15 | 9:16, 16:9, 1:1 | *(omit)* | Yes | Yes | single `image` |
 | `WAN_2_6` | 5, 10, 15 | *(omit)* | 720p, 1080p | No | Yes | single `image`; **omit** `aspect_ratio` |
-| `KLING_V2_5_TURBO` | 5, 10 | 9:16, 16:9, 1:1 | *(omit)* | No | Yes | single `image` (registry lists `aspect_ratio` for i2v—use **`9:16`** for vertical) |
+| `KLING_V2_5_TURBO` | 5, 10 | 9:16, 16:9, 1:1 | *(omit)* | No | Yes | single `image` (use **`9:16`** for vertical) |
 
 ---
 
@@ -156,6 +156,7 @@ Done when the user receives a playable **`[Video](url)`** link (Markdown inline)
 | `resolution` | *(omit)* for **default best**; **Seedance / Vidu / Veo / Sora / Wan / Doubao / Dreamina / Grok / Pika / WERYAI** per row—**Kling 3.x** **omit** |
 | `generate_audio` | **`true`** for tiers with **Audio = Yes** in the frozen table; **`false`** (or omit per API file) for **Sora / Wan / Dreamina / Grok / Pika / WERYAI_VIDEO_1_0 / DOUBAO_1_PRO_FAST / KLING_V2_5_TURBO** rows |
 | `negative_prompt` | **Only** if frozen row = **Yes** (genre lines from **Prompt expansion**) |
+
 ## Scenario: Text-to-video (genre)
 
 1. Collect brief + tier/model. **Expand** per **`## Prompt expansion (mandatory)`**.
