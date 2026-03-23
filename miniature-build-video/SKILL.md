@@ -28,7 +28,7 @@ Late night: a matchbox-sized Japanese konbini glows amber; the camera eases out 
 
 Conbini, rainy noodle stand, cyberpunk workshop—or a photo of a finished build: one line or one image → clip.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests.
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)** must exist under **`references/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`references/WERYAI_VIDEO_API.md`**. No other Cursor skills. **Default parameters** and model tiers are in the tables below; live API limits follow **weryai** models. Before installing or running, review the bundled `video_gen.js` to confirm it meets your requirements. Pay particular attention to how it handles local files if you choose to allow their usage, ensuring this behavior aligns with the skill's intended workflow for image-to-video requests.
 
 **Registry metadata:** The only **required** runtime secret is **`WERYAI_API_KEY`**. It appears in YAML frontmatter as top-level **`requires.env`** (flow mapping, for tools that flatten root keys only), **`metadata.openclaw.primaryEnv`**, and **`metadata.openclaw.requires.env`**. Skill directories and registries **should** surface that requirement up front so installers see it before download. Never commit the key inside the package.
 
@@ -36,14 +36,14 @@ Conbini, rainy noodle stand, cyberpunk workshop—or a photo of a finished build
 
 1. **Trust:** Confirm you trust **WeryAI** and accept that **prompts** and **image inputs** (URLs and, if used, uploaded bytes) are sent to WeryAI’s servers over the network.
 2. **Sensitive content:** Do **not** put **secrets** in `prompt`. Do **not** supply **image URLs or local files** you consider sensitive unless you accept provider-side processing.
-3. **`--dry-run` first:** Run `node scripts/video_gen.js wait --json '…' --dry-run` (and/or `submit-*` with `--dry-run`) **before** setting a key to inspect the JSON shape; **`WERYAI_API_KEY` is not required for `--dry-run` only** (see **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**).
+3. **`--dry-run` first:** Run `node scripts/video_gen.js wait --json '…' --dry-run` (and/or `submit-*` with `--dry-run`) **before** setting a key to inspect the JSON shape; **`WERYAI_API_KEY` is not required for `--dry-run` only** (see **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**).
 4. **Source:** If you cannot verify the package author or need strict data control, do **not** set `WERYAI_API_KEY`, or run only in an **isolated / test** environment.
 
 ## Environment variables (bundled `video_gen.js`)
 
 - **Required for real API calls:** **`WERYAI_API_KEY`** only (models, generation, `status`, local-image upload). **Not required** for **`--dry-run` only**.
 - **Not read by this script:** Environment variables **do not** override API hostnames; **`https://api.weryai.com`** and **`https://api-growth-agent.weryai.com`** are **fixed in code** (see Security). Do not expect URL-override knobs—there are none in this build.
-- **Polling:** `wait` uses **fixed** exponential backoff and timeout constants in the script (see **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**), not separate poll env vars in this package.
+- **Polling:** `wait` uses **fixed** exponential backoff and timeout constants in the script (see **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**), not separate poll env vars in this package.
 
 ## Script vs skill defaults (must match JSON)
 
@@ -59,7 +59,7 @@ Conbini, rainy noodle stand, cyberpunk workshop—or a photo of a finished build
 ## Security, secrets, and API hosts
 
 - **`WERYAI_API_KEY`**: Treat as a secret. Only configure it if you trust this skill's source; it is listed in OpenClaw metadata as **`requires.env`** / **`primaryEnv`** so installers know it is mandatory at runtime (never commit it inside the skill package).
-- **API hosts (fixed in `video_gen.js`)**: Video tasks use **`https://api.weryai.com`**; the models list uses **`https://api-growth-agent.weryai.com`**. The bundled script **pins** these bases in code—**only** **`WERYAI_API_KEY`** is read from the environment for authentication. Do not rely on any environment variables to change API hostnames; requests only go to those official endpoints plus the documented upload URL when a local image is uploaded (see **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**).
+- **API hosts (fixed in `video_gen.js`)**: Video tasks use **`https://api.weryai.com`**; the models list uses **`https://api-growth-agent.weryai.com`**. The bundled script **pins** these bases in code—**only** **`WERYAI_API_KEY`** is read from the environment for authentication. Do not rely on any environment variables to change API hostnames; requests only go to those official endpoints plus the documented upload URL when a local image is uploaded (see **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**).
 - **Local image handling disclosure**: Prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` supports local file paths, it may read a local image and upload it to WeryAI to obtain a public URL; require review / verification and explicit consent before using that path.
 - **Remote processing:** Paid runs send **`prompt`** and image inputs to WeryAI; see **`## Before you install or set WERYAI_API_KEY`**.
 - **Higher assurance:** Follow **`## Before you install or set WERYAI_API_KEY`**; use a short-lived or isolated environment for paid runs; review `scripts/video_gen.js` (HTTPS submit + poll loop) before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
@@ -91,7 +91,7 @@ Conbini, rainy noodle stand, cyberpunk workshop—or a photo of a finished build
 2. Collect the user's **brief**, optional image URL(s), tier (**best** / **good** / **fast**) or an explicit `model` key.
 3. **Expand prompt (mandatory):** Unless the user supplied a finished long prompt and explicitly asked not to rewrite it, expand the brief into a full English production `prompt` using `## Prompt expansion (mandatory)` below. **Do not** call the API with only the user's minimal words.
 4. Check the **expanded** `prompt` against the selected model's `prompt_length_limit` in the frozen tables in this document (when present); shorten if needed.
-5. Verify `duration`, `aspect_ratio`, `generate_audio`, `negative_prompt`, and other fields against the frozen tables in this document and **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**. Include **`resolution` only** when the **selected `model`** supports it (for this skill’s default **KLING** tier, **do not** send `resolution`—see **`## Script vs skill defaults`**).
+5. Verify `duration`, `aspect_ratio`, `generate_audio`, `negative_prompt`, and other fields against the frozen tables in this document and **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**. Include **`resolution` only** when the **selected `model`** supports it (for this skill’s default **KLING** tier, **do not** send `resolution`—see **`## Script vs skill defaults`**).
 6. Show the pre-submit parameter table including the **full expanded `prompt`**; wait for **confirm** or edits.
 7. After confirmation, run `node scripts/video_gen.js wait --json '...'` with the **expanded** prompt.
 8. Parse stdout JSON and return video URLs; on failure, surface `errorCode` / `errorMessage` and suggest parameter fixes.
@@ -104,7 +104,7 @@ node scripts/video_gen.js wait --json '…' --dry-run
 node scripts/video_gen.js status --task-id <id>
 ```
 
-**Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
+**Full reference:** **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**.
 
 ## Definition of done
 
@@ -113,9 +113,9 @@ Done when the user receives at least one playable video URL from the API respons
 ## Boundaries (out of scope)
 
 - Does not review platform compliance, copyright, or portrait rights; does not guarantee commercial usability of outputs.
-- Does not provide non-WeryAI offline rendering, traditional edit timelines, or API field combinations not documented in this SKILL or **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
-- Do not link to `weryai-model-capabilities.md` or shared `../references/` paths; use **`resources/WERYAI_VIDEO_API.md`** for CLI/API details.
-- Does not hard-code absolute paths in the skill doc; run `node scripts/...` from the skill package root (the directory containing `SKILL.md`) so `scripts/` and `resources/` paths resolve.
+- Does not provide non-WeryAI offline rendering, traditional edit timelines, or API field combinations not documented in this SKILL or **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**.
+- Do not rely on paths or unofficial docs outside this package for CLI/API details; use only **`references/WERYAI_VIDEO_API.md`**.
+- Does not hard-code absolute paths in the skill doc; run `node scripts/...` from the skill package root (the directory containing `SKILL.md`) so `scripts/` and `references/` paths resolve.
 
 ### Example prompts
 

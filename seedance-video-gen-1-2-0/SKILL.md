@@ -13,7 +13,7 @@ user-invocable: true
 
 Generate video with **Seedance 2.0**, **Seedance 1.5 Pro**, or **Seedance 1.0** variants on WeryAI. **`model` is required** in every JSON body—**default `model_key` is `SEEDANCE_2_0`** unless the user explicitly picks another row in **`## Model and API constraints`**.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`resources/`** (publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)** must exist under **`references/`** (publish or pre-use assembly). Full commands and JSON fields: see **`references/WERYAI_VIDEO_API.md`**. **No other Cursor skills required.**
 
 ## Choosing a Seedance version (quick map)
 
@@ -73,7 +73,7 @@ node scripts/video_gen.js models --mode image_to_video
 node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
-**Full reference:** **[`resources/WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
+**Full reference:** **[`references/WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**.
 
 ## Definition of done
 
@@ -84,7 +84,7 @@ Done when the user gets a playable **[Video](url)** link or a clear error with a
 - Do not send **`negative_prompt`** when the frozen row says **No** for that model and channel.
 - Do not exceed **`upload_image_limit`** or use multi-image when **`support_multiple_images`** is **false**.
 - Do not use local file paths for media unless you have reviewed `scripts/video_gen.js` and explicitly consent to local read-and-upload to WeryAI; otherwise prefer public **`https`** URLs. Do not embed **`WERYAI_API_KEY`** values in files.
-- Do not link to `weryai-model-capabilities.md` or arbitrary `../references/` paths; use **`resources/WERYAI_VIDEO_API.md`** for CLI/API details.
+- Do not rely on out-of-package paths or ad-hoc shared docs for CLI/API details; use only **`references/WERYAI_VIDEO_API.md`**.
 - Do not wrap user-facing playable URLs in Markdown code fences.
 
 ### Example prompts
@@ -139,6 +139,6 @@ Done when the user gets a playable **[Video](url)** link or a clear error with a
 - **Text-only:** Any row in the text table; default **`SEEDANCE_2_0`**.
 - **Single `image`:** Any image row; respect **`upload_image_limit`**.
 - **Several images / storyboard:** Prefer **`SEEDANCE_2_0`** or **`DOUBAO_1_LITE`**—never send multi-image payloads to models with **Multi-image = No**.
-- **First + last frame:** **`SEEDANCE_2_0`** or **`DOUBAO_1_5_PRO`** per image metadata; confirm against **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** field names (`first_frame` / `last_frame`, `image` / `last_image`, or ordered `images`).
+- **First + last frame:** **`SEEDANCE_2_0`** or **`DOUBAO_1_5_PRO`** per image metadata; confirm against **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)** field names (`first_frame` / `last_frame`, `image` / `last_image`, or ordered `images`).
 
 > Pack: `seedance-video-gen-1-2.0`.

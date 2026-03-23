@@ -21,7 +21,7 @@ user-invocable: true
 
 User may **swap wording** but **must keep five windows** unless they explicitly compress (then show **full** custom schedule in confirmation). Default **`duration`** is **10** when unspecified.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
 
 ## Prerequisites
 
@@ -74,7 +74,7 @@ node scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"…",
 node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
-**Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
+**Full reference:** **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**.
 
 ## Definition of done
 
@@ -83,7 +83,7 @@ node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","d
 ## Boundaries (out of scope)
 
 - Not factual **platform internals** documentation—**rhetorical short** only.
-- **`resources/WERYAI_VIDEO_API.md`** for CLI; no `negative_prompt` on Seedance.
+- **`references/WERYAI_VIDEO_API.md`** for CLI; no `negative_prompt` on Seedance.
 - **Multi-image** only **SEEDANCE_2_0**, max **3**.
 
 ### Example prompts

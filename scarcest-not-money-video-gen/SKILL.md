@@ -13,7 +13,7 @@ user-invocable: true
 
 **Template (assume `duration` 10 unless scaled):** **0–3s** *THE SCARCEST THING ISN’T MONEY*; **3–8s** **two or three quick option teases** on screen—e.g. **3–5** *ATTENTION?*, **5–6.5** *TRUST?*, **6.5–8** *TIME?* (user can swap candidates); **8–10s** **reveal** line naming the **one answer** they want (e.g. *IT’S ATTENTION*—**must** be **≤6 words**). **English subtitles** with **exact windows**. Default **`duration`** is **10** when unspecified.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
 
 ## Prerequisites
 
@@ -64,7 +64,7 @@ node scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"…",
 node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
-**Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
+**Full reference:** **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**.
 
 ## Definition of done
 
@@ -73,7 +73,7 @@ node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","d
 ## Boundaries (out of scope)
 
 - Not a finance or therapy authority—**hook content** only.
-- **`resources/WERYAI_VIDEO_API.md`** for CLI; no `negative_prompt` on Seedance.
+- **`references/WERYAI_VIDEO_API.md`** for CLI; no `negative_prompt` on Seedance.
 - **Multi-image** only **SEEDANCE_2_0**, max **3**.
 
 ### Example prompts

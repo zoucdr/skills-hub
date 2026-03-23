@@ -13,7 +13,7 @@ user-invocable: true
 
 **Template (assume `duration` 10 unless scaled):** **0–2s** *ten minutes after you vanish*; **2–8s** **three beats**—e.g. **2–4** *HOME GOES QUIET*, **4–6** *PHONE STOPS FOR YOU*, **6–8** *THE FEED MOVES ON* (user may rename beats); **8–10s** *NOBODY NOTICES… YET* (or user’s **softer** variant). **English subtitles** with **explicit windows**. Tone: **melancholic**, **not** self-harm instruction. Default **`duration`** is **10** when unspecified.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
 
 ## Prerequisites
 
@@ -63,7 +63,7 @@ node scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"…",
 node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
-**Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
+**Full reference:** **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**.
 
 ## Definition of done
 
@@ -73,7 +73,7 @@ node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","d
 
 - **No** self-harm / suicide method content; if user asks, **refuse** and offer **safer** emotional framing.
 - Not therapy; **creative short** only.
-- **`resources/WERYAI_VIDEO_API.md`** for CLI; no `negative_prompt` on Seedance.
+- **`references/WERYAI_VIDEO_API.md`** for CLI; no `negative_prompt` on Seedance.
 - **Multi-image** only **SEEDANCE_2_0**, max **3**.
 
 ### Example prompts

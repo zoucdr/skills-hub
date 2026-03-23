@@ -13,7 +13,7 @@ user-invocable: true
 
 **Template (segment lengths assume `duration` 10 → 30% / 30% / 40%; rescale for 5 or 15):** **Beat 1** *YOU THINK {X}*; **Beat 2** *ACTUALLY: IT’S {Y}*; **Beat 3** *BUT WHAT REALLY DECIDES IS {Z}* — **X / Y / Z** come from the user’s brief (you **compress each to ≤6 words** for on-screen legibility). **Hard cuts** and **kinetic** energy between beats. **English subtitles** with **exact windows**. Default **`duration`** is **10** when unspecified.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
 
 ## Prerequisites
 
@@ -61,7 +61,7 @@ user-invocable: true
 2. Extract or **draft X, Y, Z**; if the user only gave a topic, **propose** three beats and get their OK on concepts **before** expanding the full cinematic prompt.
 3. **Expand prompt (mandatory):** Build the full production `prompt` (three distinct looks, motion, timed English captions per beat, negatives for Kling). Validate length against `prompt_length_limit` for the chosen `model`.
 4. **Pre-submit gate:** Show the **parameter confirmation table** with the **complete** expanded `prompt`. **Stop** until the user **explicitly confirms** or requests edits.
-5. **Submit (async, default):** After explicit confirmation, run **`submit-text`**, **`submit-image`**, or **`submit-multi-image`** (same JSON shape as `wait`; see **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**). Do **not** start a long blocking `wait` in the same turn unless the user **already** asked to block until the video is ready.
+5. **Submit (async, default):** After explicit confirmation, run **`submit-text`**, **`submit-image`**, or **`submit-multi-image`** (same JSON shape as `wait`; see **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**). Do **not** start a long blocking `wait` in the same turn unless the user **already** asked to block until the video is ready.
 6. **Immediate notify:** On successful accept (e.g. **`taskId`** / **`batchId`** returned), **immediately** tell the user the id(s), short status (e.g. queued), and **ask** whether to continue with **`status`** polling or **`wait`** (block-until-done).
 7. **Continue (user-driven):** Only after they agree, poll `status --task-id <id>` at reasonable intervals **or** run `wait --json '…'` with the **same** payload — per user choice.
 8. Return results: **`[Video](url)`** when URLs exist; otherwise explain `errorCode` / `errorMessage`. **Never** wrap playable links in code fences.
@@ -82,7 +82,7 @@ node scripts/video_gen.js status --task-id <TASK_ID>
 node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
-**Full reference** (`submit-multi-image`, stdout fields, errors): **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
+**Full reference** (`submit-multi-image`, stdout fields, errors): **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**.
 
 ## Definition of done
 
@@ -91,7 +91,7 @@ node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","d
 ## Boundaries (out of scope)
 
 - Not financial or medical advice—**rhetorical template** only.
-- **`resources/WERYAI_VIDEO_API.md`** for CLI; no `negative_prompt` on Seedance.
+- **`references/WERYAI_VIDEO_API.md`** for CLI; no `negative_prompt` on Seedance.
 - **Multi-image** only **SEEDANCE_2_0**, max **3**.
 
 ### Example prompts

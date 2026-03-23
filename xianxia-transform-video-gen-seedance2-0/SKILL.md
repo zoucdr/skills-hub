@@ -13,13 +13,13 @@ user-invocable: true
 
 **Eastern fantasy grammar:** jade mist, sword qi hints (non-graphic), floating petals, silk motion, cliff-side clouds in vertical frame.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. This skill uses **only** `SEEDANCE_2_0`. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** must exist under **`resources/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`resources/WERYAI_VIDEO_API.md`**. **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. This skill uses **only** `SEEDANCE_2_0`. When you run the CLI, **`scripts/video_gen.js`** must exist; **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)** must exist under **`references/`** (supply both via publish or pre-use assembly). Full commands and JSON fields: see **`references/WERYAI_VIDEO_API.md`**. **No other Cursor skills required.**
 
 ## Prerequisites
 
 - `WERYAI_API_KEY` **must be set** before running `video_gen.js`.
 - Node.js **18+**; prefer public **`https`** image URLs. If the assembled `scripts/video_gen.js` accepts local paths, review/verify the script and explicitly consent before local read-and-upload to WeryAI.
-- **Model (caller / agent):** The bundled `video_gen.js` **requires** a non-empty `model` in JSON—if `model` is missing or blank, the CLI exits with **`MISSING_PARAM`** (no default model). The script **does not** enforce this skill's allowed model in code: you **must** set `"model":"SEEDANCE_2_0"` for this package and show it in the confirmation table before submit—see [`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md) (`model` row).
+- **Model (caller / agent):** The bundled `video_gen.js` **requires** a non-empty `model` in JSON—if `model` is missing or blank, the CLI exits with **`MISSING_PARAM`** (no default model). The script **does not** enforce this skill's allowed model in code: you **must** set `"model":"SEEDANCE_2_0"` for this package and show it in the confirmation table before submit—see [`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md) (`model` row).
 - Each `wait` run may consume credits; re-run creates new paid tasks.
 
 ## Security, secrets, and API hosts
@@ -71,7 +71,7 @@ user-invocable: true
 node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
-**Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
+**Full reference:** **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**.
 
 ## Definition of done
 
@@ -80,7 +80,7 @@ Done when the user gets at least one playable **[Video](url)**-style link, or a 
 ## Boundaries (out of scope)
 
 - Do not use **any model other than `SEEDANCE_2_0`** for this package.
-- Do not link to `weryai-model-capabilities.md` or shared `../references/` paths; use **`resources/WERYAI_VIDEO_API.md`** for CLI/API details.
+- Do not rely on paths or unofficial docs outside this package for CLI/API details; use only **`references/WERYAI_VIDEO_API.md`**.
 - Prefer public **`https`** for `image` when easy; **OpenClaw / chat attachments** are often a **local path**—if `video_gen.js` can read it, pass it as `image` and the script uploads first (use an **absolute** path if a relative path fails). Never embed the secret value of `WERYAI_API_KEY` in files.
 - Do not invent API fields; do not send `negative_prompt` (not supported for this model).
 - Do not wrap user-facing playable URLs in Markdown code fences.

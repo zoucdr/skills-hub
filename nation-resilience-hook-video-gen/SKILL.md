@@ -13,7 +13,7 @@ user-invocable: true
 
 **Template (timings assume `duration` 10; rescale proportionally for 5 or 15):** **0–2s** contrarian hook (“almost can’t collapse”); **2–8s** **three** ultra-short on-screen beats (e.g. resources / geography / defense) synced to **fast B-roll**; **8–10s** **twist** line that reframes the biggest risk (open-ended ellipsis allowed). **English subtitles are burned in** with explicit second windows—derived from the user’s **country or theme** unless they supply a final script. Default **`duration`** is **10** when unspecified.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)** under **`resources/`** (assembly before run). **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)** under **`references/`** (assembly before run). **No other Cursor skills required.**
 
 ## Prerequisites
 
@@ -76,7 +76,7 @@ node scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"…",
 node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
-**Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
+**Full reference:** **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**.
 
 ## Definition of done
 
@@ -87,7 +87,7 @@ Playable **[Video](url)** or clear failure. Submitted `prompt` includes **explic
 - No guarantee of geopolitical accuracy—**entertainment / opinion** tone only; avoid incitement.
 - No separate SRT workflow; captions live **inside** the model `prompt`.
 - Do not use local image paths unless you have reviewed `scripts/video_gen.js` and explicitly consent to local read-and-upload to WeryAI; otherwise prefer public **`https`** URLs. Do not put secret key values in files.
-- Do not link shared `../references/` capability docs; use **`resources/WERYAI_VIDEO_API.md`**.
+- Do not link shared `../references/` capability docs; use **`references/WERYAI_VIDEO_API.md`**.
 - Do not send unsupported API fields; no `negative_prompt` on **Seedance 2.0**.
 - **Multi-image** only **`SEEDANCE_2_0`**, max **3** URLs.
 

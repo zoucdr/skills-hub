@@ -13,7 +13,7 @@ user-invocable: true
 
 **Template (assume `duration` 10 unless scaled):** **0–3s** *this number explains it all* (user names **which metric** conceptually—caption stays **short**); **3–8s** **number grows / graph ramps**—**motion must not stop** (tickers, bars, globe wireframe); **8–10s** **one conclusion line** (user-themed). **English subtitles** with **exact windows**. Default **`duration`** is **10** when unspecified.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
 
 ## Prerequisites
 
@@ -66,7 +66,7 @@ node scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"…",
 node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
-**Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
+**Full reference:** **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**.
 
 ## Definition of done
 
@@ -75,7 +75,7 @@ node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","d
 ## Boundaries (out of scope)
 
 - Not a data journalism vetting pipeline.
-- **`resources/WERYAI_VIDEO_API.md`** for CLI; no `negative_prompt` on Seedance.
+- **`references/WERYAI_VIDEO_API.md`** for CLI; no `negative_prompt` on Seedance.
 - **Multi-image** only **SEEDANCE_2_0**, max **3**.
 
 ### Example prompts

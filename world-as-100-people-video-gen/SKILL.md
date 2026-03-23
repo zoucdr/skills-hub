@@ -1,6 +1,6 @@
 ---
 name: world-as-100-people-video-gen
-version: 1.0.1
+version: 1.0.0
 description: "Create ‘world as 100 people’ verticals: shrink hook, stat morphs, punchline, timed English captions and motion graphics (WeryAI). Use for infographic TikToks, demographic explainers, or icon-driven stats. Use when the user names the 100-people metaphor. SEO: 100 people world video; demographic hook video."
 
 tags: [infographic, demographics, data, icons, hooks, subtitles, short-video, video-gen]
@@ -13,7 +13,7 @@ user-invocable: true
 
 **Template (assume `duration` 10 unless scaled):** **0–2s** *shrink the world to 100 people*; **2–9s** **rapid visual changes** (wealth split, gender, access to water/internet, etc.—user picks **themes**); **9–10s** **one shocking or memorable stat line** (user-themed). **English on-screen text** with **exact windows**. Default **`duration`** is **10** when unspecified.
 
-**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
+**Dependencies:** `WERYAI_API_KEY` + Node.js 18+. **`scripts/video_gen.js`** + **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**. **No other Cursor skills required.**
 
 ## Prerequisites
 
@@ -70,7 +70,7 @@ node scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"…",
 node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","duration":10,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 ~~~
 
-**Full reference:** **[`WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**.
+**Full reference:** **[`WERYAI_VIDEO_API.md`](references/WERYAI_VIDEO_API.md)**.
 
 ## Definition of done
 
@@ -80,7 +80,7 @@ node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","d
 
 - **Not** verified census data—**illustrative** motion; user owns factual claims.
 - No `negative_prompt` on Seedance; no unsupported fields.
-- **`resources/WERYAI_VIDEO_API.md`** for CLI details.
+- **`references/WERYAI_VIDEO_API.md`** for CLI details.
 
 ### Example prompts
 

@@ -18,7 +18,7 @@ outcome_tests:
   - id: skill-package-layout
     type: deterministic
     checks:
-      - description: "SKILL.md required; full runnable package also needs scripts/video_gen.js and resources/WERYAI_VIDEO_API.md (see SKILL.md Dependencies)"
+      - description: "SKILL.md required; full runnable package also needs scripts/video_gen.js and references/WERYAI_VIDEO_API.md (see SKILL.md Dependencies)"
       - file_exists: "SKILL.md"
   - id: optional-quality
     type: llm_rubric
