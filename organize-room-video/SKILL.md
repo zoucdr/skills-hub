@@ -69,7 +69,7 @@ Complete this checklist **before** installing the package or placing any API key
 
 **When:** The user gives only keywords, one line, or loose intent—or asks for richer video language. **Exception:** They paste a finished long prompt within the model's `prompt_length_limit` and ask you **not** to rewrite; still show the **full** text in the confirmation table.
 
-**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical.
+**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical. **Audio (default-on):** **`generate_audio` defaults to `true`** when the selected model supports audio; add a labeled **`Audio:`** block in the expanded **`prompt`** (ambience + layered SFX; generic, non-copyrighted)—**even if the user never mentioned sound**. Use **`generate_audio`: `false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
 
 **Length:** Obey `prompt_length_limit` for the chosen `model_key` when this doc lists it; trim filler adjectives before removing core action, lens, or light clauses.
 
@@ -131,7 +131,7 @@ Done when the user receives at least one playable video URL from the API respons
 | Model | KLING_V3_0_PRO |
 | Aspect | 9:16 (fixed, vertical short) |
 | Duration | 5 s (`duration: 5`, peak moments first) |
-| Audio | Off (pair with BGM; beat cuts work better) |
+| Audio | **On** — default **`generate_audio`: `true`**; include **`Audio:`** in **`prompt`** (room tone + satisfying foley); user may opt into silent if they say so |
 | Look | Overhead or ~45° close, soft diffuse light, strong color unity, extreme before/after contrast |
 
 > **API validity (default `KLING_V3_0_PRO`):** Text-to-video: `duration` only **5 / 10 / 15**, `aspect_ratio` only **9:16, 1:1, 16:9**; image-to-video: `aspect_ratio` only **9:16, 16:9, 1:1**; **no `resolution` field—do not send.** Fast VEO tier: text **`VEO_3_1_FAST`**, image **`CHATBOT_VEO_3_1_FAST`**, `duration` **fixed 8**, `aspect_ratio` only **9:16** or **16:9**. For other `model_key` values, follow the allowed sets in this document and the API validity notes above; do not send unsupported fields such as `resolution`.
@@ -152,7 +152,7 @@ Collect character + scene → build a prompt with full chaos→order arc and key
 > - model: KLING_V3_0_PRO
 > - aspect_ratio: 9:16
 > - duration: 5
-> - generate_audio: false
+> - generate_audio: true
 > - seamless loop: off (reply "loop" to enable—append `seamless loop` to prompt)
 
 **Expanded prompt:** Compose at generation time per `## Prompt expansion (mandatory)` from the user's actual brief—do not reuse fixed sample paragraphs.
@@ -179,7 +179,7 @@ Single organizing moves at peak satisfaction: drawer jam-packed → zoned; suitc
    > | `model` | `KLING_V3_0_PRO` | Best tier default; fast: text `VEO_3_1_FAST`, image `CHATBOT_VEO_3_1_FAST` (`duration` fixed 8); good → `KLING_V3_0_STA`; or specify a model name |
    > | `aspect_ratio` | `9:16` | Default KLING: 9:16, 1:1, 16:9 only; if you switch model, check that row’s `aspect_ratios` etc. |
    > | `duration` | `5s` | KLING family: 5 / 10 / 15; VEO fast: duration 8 only |
-   > | `generate_audio` | `false` | Auto-generate audio or not |
+   > | `generate_audio` | `true` | Default **on**; **`Audio:`** in **`prompt`** unless user wants silent |
    > | `prompt` | **Full expanded English prompt** (entire text for this run) | Revise before confirm |
    > | `seamless loop` | off | Reply "loop" to add seamless loop |
    >
@@ -187,7 +187,7 @@ Single organizing moves at peak satisfaction: drawer jam-packed → zoned; suitc
 4. After confirmation, in the terminal from the skill package root:
 
    ```sh
-   node scripts/video_gen.js wait --json '{"model":"(confirmed model)","prompt":"(full English prompt)","aspect_ratio":"9:16","duration":5,"generate_audio":false}'
+   node scripts/video_gen.js wait --json '{"model":"(confirmed model)","prompt":"(full English prompt)","aspect_ratio":"9:16","duration":5,"generate_audio":true}'
    ```
 
    `aspect_ratio`, `duration`, `generate_audio`, `model` must match the table; add `resolution` only if the model supports it. Parse `videos` from stdout.

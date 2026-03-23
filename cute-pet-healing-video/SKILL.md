@@ -53,7 +53,7 @@ A fluffy creature napping in afternoon sun, stretching, tilting its head—pace 
 
 **When:** The user gives only keywords, one line, or loose intent—or asks for richer video language. **Exception:** They paste a finished long prompt within the model's `prompt_length_limit` and ask you **not** to rewrite; still show the **full** text in the confirmation table.
 
-**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical.
+**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical. **Audio (default-on):** **`generate_audio` defaults to `true`** when the selected model supports audio; add a labeled **`Audio:`** block in the expanded **`prompt`** (ambience + layered SFX; generic, non-copyrighted)—**even if the user never mentioned sound**. Use **`generate_audio`: `false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
 
 **Length:** Obey `prompt_length_limit` for the chosen `model_key` when this doc lists it; trim filler adjectives before removing core action, lens, or light clauses.
 
@@ -128,7 +128,7 @@ Done when the user receives at least one playable video URL from the API respons
 | `DOUBAO_1_5_PRO` | 5, 10 | 9:16, 16:9, 4:3, 3:4, 1:1, 21:9 | 480p, 720p, 1080p | Yes | Yes | 1 | No |
 | `DOUBAO_1_PRO_FAST` | 5, 10 | 9:16, 16:9, 4:3, 3:4, 1:1, 21:9 | 480p, 720p, 1080p | No | Yes | 1 | No |
 
-**This skill’s defaults:** Recommend **`aspect_ratio` 9:16**; **`duration` 5** (snappy, easy to finish); **best / good** tiers **`generate_audio`: true** (ambience feels more healing); **fast** omit or set `generate_audio` **false**. Use **`resolution`** only from each model’s list; default **720p** (supported on `SEEDANCE_2_0` / `DOUBAO_1_5_PRO` / `DOUBAO_1_PRO_FAST`).
+**This skill’s defaults:** Recommend **`aspect_ratio` 9:16**; **`duration` 5** (snappy, easy to finish); **`generate_audio`: `true`** whenever the **selected model supports audio** (expanded **`prompt`** must include **`Audio:`**—soft ambience, gentle foley—**even if the user never mentioned sound**). **Fast** tier `DOUBAO_1_PRO_FAST` has **no audio** in the frozen row—**omit** `generate_audio` or set **`false`** and **omit** **`Audio:`** for that model only. Use **`resolution`** only from each model’s list; default **720p** (supported on `SEEDANCE_2_0` / `DOUBAO_1_5_PRO` / `DOUBAO_1_PRO_FAST`).
 
 ---
 
@@ -151,7 +151,7 @@ Say “cheaper / draft / faster” → **fast**; “balanced / good” → **goo
 | Aspect ratio | 9:16 (vertical short-video; **good** tier can use 3:4 if inside DOUBAO `aspect_ratios`) |
 | Duration | 5s (can use 10; only `SEEDANCE_2_0` allows 15) |
 | Resolution | 720p (480p optional; follow the model table above) |
-| Audio | **best** / **good**: true; **fast**: false |
+| Audio | **`true`** when the model supports audio (**best** / **good**); **fast** (`DOUBAO_1_PRO_FAST`): no audio—omit **`Audio:`** / omit or `false` `generate_audio` |
 | Style | Soft focus, warm WB, shallow DOF, slow motion, clean background; avoid horror, gore, uncanny anthropomorphism |
 
 ---
@@ -177,7 +177,7 @@ Quick ideation: user gives **species + coat + one action + setting**; you add le
    > | aspect_ratio | 9:16 |
    > | duration | 5 |
    > | resolution | 720p |
-   > | generate_audio | true / false (match tier) |
+   > | generate_audio | `true` if model supports audio (default for **best**/**good**); `false` or omit for **fast** DOUBAO only |
    > | prompt | (≤20-char Chinese summary or short English summary) |
    > | image | (for image-to-video: **https URL** or **absolute local path** from attachment—do not omit if user attached a photo) |
    > | Loop seam | No (user says **loop** → append seamless-loop trio at end of prompt) |

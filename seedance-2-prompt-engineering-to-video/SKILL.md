@@ -1,6 +1,6 @@
 ---
 name: seedance-2-prompt-engineering-video-gen
-version: 1.1.1
+version: 1.1.2
 description: "Design production English prompts for Seedance 2.0 then generate text-to-video or image-to-video on WeryAI (`SEEDANCE_2_0`), using bundled recipes (A–K), mode-to-JSON mapping, camera vocabulary, and pre-flight checklists. Use when you need JiMeng-grade prompt control translated to WeryAI submit-* flows with explicit pre-submit confirmation. SEO: Seedance 2.0 prompt engineering; Seedance text and image to video; recipe library."
 
 tags: [seedance, seedance-2, prompt-engineering, text-to-video, image-to-video, video-gen]
@@ -45,13 +45,13 @@ Combine **high-control Seedance-style prompt design** (modes, asset roles, timel
 
 ⚠️ **No paid submit without explicit user confirmation.** Do **not** call `submit-text`, `submit-image`, `submit-multi-image`, or `wait` until the user has **explicitly approved** the full parameter table below, including the **entire expanded `prompt`**. **Never** infer consent from silence or vague “continue”. **Explicit** means **confirm** / **go** / **approved** / **yes, generate** (or clear equivalent in the user’s language).
 
-**Parameter confirmation table (show before any submit):** `model`, `duration`, `aspect_ratio`, `resolution`, `generate_audio`, reference URLs (if any), and **full expanded `prompt` (complete text, not a summary)**.
+**Parameter confirmation table (show before any submit):** `model`, `duration`, `aspect_ratio`, `resolution`, `generate_audio`, reference URLs (if any), and **full expanded `prompt` (complete text, not a summary)**. When **`generate_audio`** is **`true`** (the default for this skill), the **`prompt`** must include a clear **audio / ambience / SFX** section—see **`## Prompt expansion (mandatory)`**.
 
 ## Workflow
 
 1. Confirm the user wants **Seedance 2.0** on WeryAI and whether the path is **text-only** or uses **reference image(s)**.
-2. Collect the brief, optional **`https`** URLs, target **`duration`** (5–15 s, integer), **`aspect_ratio`**, **`resolution`**, and whether **`generate_audio`** should be **true** or **false**.
-3. **Prompt engineering (mandatory):** Use the **resource library** above. Start from **[`resources/seedance2-prompt-engineering-playbook.md`](resources/seedance2-prompt-engineering-playbook.md)**; for mode and JSON mapping use **[`resources/modes-and-weryai-mapping.md`](resources/modes-and-weryai-mapping.md)**; match a scenario from **[`resources/recipes-weryai.md`](resources/recipes-weryai.md)** when helpful; sharpen wording with **[`resources/camera-and-styles.md`](resources/camera-and-styles.md)**. Choose mode, map each URL to a role, draft timecoded beats, then compress into one API **`prompt`**. The API does not use `@image1` tokens; roles belong in prose while URLs sit in JSON. Unless the user supplied a finished long prompt and asked **not** to rewrite, **always** expand short input into a production English prompt.
+2. Collect the brief, optional **`https`** URLs, target **`duration`** (5–15 s, integer), **`aspect_ratio`**, **`resolution`**, and whether **`generate_audio`** should be **true** or **false**. **Default:** **`generate_audio`: `true`**; use **`false`** only if the user explicitly wants **silent** output.
+3. **Prompt engineering (mandatory):** Use the **resource library** above. Start from **[`resources/seedance2-prompt-engineering-playbook.md`](resources/seedance2-prompt-engineering-playbook.md)**; for mode and JSON mapping use **[`resources/modes-and-weryai-mapping.md`](resources/modes-and-weryai-mapping.md)**; match a scenario from **[`resources/recipes-weryai.md`](resources/recipes-weryai.md)** when helpful; sharpen wording with **[`resources/camera-and-styles.md`](resources/camera-and-styles.md)**. Choose mode, map each URL to a role, draft timecoded beats, then compress into one API **`prompt`**. The API does not use `@image1` tokens; roles belong in prose while URLs sit in JSON. Unless the user supplied a finished long prompt and asked **not** to rewrite, **always** expand short input into a production English prompt. **Whenever `generate_audio` is `true`**, the expanded **`prompt`** **must** include **audio guidance** (labeled **`Audio:`** or equivalent): ambience, layered SFX, and optional dialogue in **generic, non-copyrighted** terms—even if the user **never mentioned sound** (see **[`resources/modes-and-weryai-mapping.md`](resources/modes-and-weryai-mapping.md) §4**). **Do not** omit the audio dimension on the default audio-on path.
 4. Validate **`prompt`** length against **`prompt_length_limit`** (**2000**); trim lower-priority clauses if over limit.
 5. **Pre-submit gate:** Show the confirmation table; **stop** until the user explicitly confirms or edits.
 6. **Submit (async, default):** After confirmation, run **`submit-text`** or **`submit-image`** (or **`submit-multi-image`** when using multiple URLs), using the **same** JSON shape as `wait` (see **[`resources/WERYAI_VIDEO_API.md`](resources/WERYAI_VIDEO_API.md)**). **Do not** start a long blocking **`wait`** in the same turn unless the user already asked to block until the video is ready.
@@ -63,8 +63,8 @@ Combine **high-control Seedance-style prompt design** (modes, asset roles, timel
 
 `video_gen.js` does **not** auto-expand prompts.
 
-- **When:** The user gives a short or vague brief. **Exception:** They provide a final long prompt within **2000** characters and explicitly opt out of rewriting—still show the **full** text in the pre-submit table.
-- **What to add:** Mode; asset mapping (for each URL); timecoded beats for the chosen **`duration`**; shot scale, angle, camera move (see **[`resources/camera-and-styles.md`](resources/camera-and-styles.md)**); lighting and materials; one clear payoff; framing for **`aspect_ratio`**; if **`generate_audio`** is **true**, describe ambience/SFX in generic, non-copyrighted terms; dialogue/sound as separate labeled lines when needed (see **[`resources/modes-and-weryai-mapping.md`](resources/modes-and-weryai-mapping.md) §4**).
+- **When:** The user gives a short or vague brief, **or no usable production detail** (e.g. only a topic)—you still build a full **`prompt`**. **Exception:** They provide a final long prompt within **2000** characters and explicitly opt out of rewriting—still show the **full** text in the pre-submit table.
+- **What to add:** Mode; asset mapping (for each URL); timecoded beats for the chosen **`duration`**; shot scale, angle, camera move (see **[`resources/camera-and-styles.md`](resources/camera-and-styles.md)**); lighting and materials; one clear payoff; framing for **`aspect_ratio`**. **Audio in the prompt (default-on):** For **`SEEDANCE_2_0`**, **`generate_audio` defaults to `true`**. Unless the user chose **`generate_audio`: `false`**, **always** add a dedicated **`Audio:`** block: room tone / ambience, beat-synced SFX, and optional dialogue as **separate labeled lines** when needed—**generic, non-copyrighted** wording only (see **[`resources/modes-and-weryai-mapping.md`](resources/modes-and-weryai-mapping.md) §4**). **Even if the user said nothing about sound**, you **must** invent scene-appropriate audio cues; silent output requires explicit user opt-in to **`generate_audio`: `false`** (then omit audio lines from the **`prompt`**).
 - **IP / moderation:** **[`resources/modes-and-weryai-mapping.md`](resources/modes-and-weryai-mapping.md) §8** and recipe blocks in **[`resources/recipes-weryai.md`](resources/recipes-weryai.md)** (D, E, F).
 - **Length:** Stay within **2000** characters for **`prompt`**.
 - **Confirmation:** The pre-submit table **must** include the **full** expanded **`prompt`**.
@@ -91,7 +91,7 @@ node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","d
 
 ## Definition of done
 
-Done when the user receives at least one playable **[Video](url)** link or a clear error with a fix. **Pre-submit:** full **`prompt`** and parameters were **explicitly** confirmed. **Post-submit:** the user was notified with task id(s) and **chose** **`status`** vs **`wait`**. Submitted **`prompt`** must be the engineered production string unless the user opted out. **Do not** wrap user-facing video URLs in code fences.
+Done when the user receives at least one playable **[Video](url)** link or a clear error with a fix. **Pre-submit:** full **`prompt`** and parameters were **explicitly** confirmed. **Post-submit:** the user was notified with task id(s) and **chose** **`status`** vs **`wait`**. Submitted **`prompt`** must be the engineered production string unless the user opted out. With default **`generate_audio`: `true`**, that string **must** include **audio / SFX / ambience** prose unless the user explicitly requested silent generation. **Do not** wrap user-facing video URLs in code fences.
 
 ## Boundaries (out of scope)
 
@@ -143,14 +143,14 @@ Done when the user receives at least one playable **[Video](url)** link or a cle
 | `aspect_ratio` | `9:16` |
 | `duration` | `10` (must be one of the allowed integers) |
 | `resolution` | `720p` |
-| `generate_audio` | `true` unless the user wants silent motion |
+| `generate_audio` | **`true`** by default; **`false`** only when the user explicitly wants **silent** video (then **omit** audio lines from the **`prompt`**) |
 
 ---
 
 ## Scenario: Text-to-video with prompt engineering
 
 1. Read **[`resources/seedance2-prompt-engineering-playbook.md`](resources/seedance2-prompt-engineering-playbook.md)** and pick a matching recipe from **[`resources/recipes-weryai.md`](resources/recipes-weryai.md)** if applicable; set **Text-only** mode; draft beats for the chosen **`duration`**.
-2. Build one English **`prompt`**; keep within **2000** characters.
+2. Build one English **`prompt`**; keep within **2000** characters. If using default **`generate_audio`**, include an **`Audio:`** section (ambience + SFX; generic terms).
 3. **Pre-submit gate** with full **`prompt`** and numeric fields.
 4. After explicit confirmation:
 
@@ -166,7 +166,7 @@ node scripts/video_gen.js submit-text --json '{"model":"SEEDANCE_2_0","prompt":"
 
 1. Obtain one **`https`** image URL (or local path only with script review + explicit consent).
 2. Plan **single-image** mode and **asset mapping** (identity, composition, palette to preserve); see **[`resources/modes-and-weryai-mapping.md`](resources/modes-and-weryai-mapping.md) §2.3** and recipes **F** / **H** in **[`resources/recipes-weryai.md`](resources/recipes-weryai.md)**.
-3. Expand **`prompt`** with motion beats and camera; merge dialogue/sound lines if needed.
+3. Expand **`prompt`** with motion beats and camera; merge dialogue/sound lines if needed. With default **`generate_audio`**, add **`Audio:`** (ambience + SFX) even when the user did not mention sound.
 4. **Pre-submit gate** including the image URL and full **`prompt`**.
 5. After explicit confirmation:
 

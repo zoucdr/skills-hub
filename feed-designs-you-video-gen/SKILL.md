@@ -36,6 +36,7 @@ User may **swap wording** but **must keep five windows** unless they explicitly 
 - **Higher assurance**: Prefer a short-lived or isolated environment; review `scripts/video_gen.js` before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
 ## Prompt expansion (mandatory)
+**Audio (default-on):** Default **`generate_audio`: `true`** for models that support audio. Always add an **`Audio:`** subsection to the expanded **`prompt`** (whooshes, ticks, sub-bass, risers, room tone—**generic**, non-copyrighted)—**even if the user never mentioned sound**. Use **`generate_audio`: `false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
 
 - **Duration:** Default **10**; **5** or **15** when allowed and requested. For **five equal beats**, each caption span = **`duration / 5`** seconds (state numeric ranges explicitly in the prompt).
 - **Timeline scaling:** If merging to fewer than five lines, list **new non-overlapping** windows in the confirmation table.

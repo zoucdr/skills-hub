@@ -36,7 +36,7 @@ Time-compressed journey from pencil sketch to final piece—lines grow denser, c
 
 **When:** The user gives only keywords, one line, or loose intent—or asks for richer video language. **Exception:** They paste a finished long prompt within the model's `prompt_length_limit` and ask you **not** to rewrite; still show the **full** text in the confirmation table.
 
-**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical.
+**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical. **Audio (default-on):** **`generate_audio` defaults to `true`** when the selected model supports audio; add a labeled **`Audio:`** block in the expanded **`prompt`** (ambience + layered SFX; generic, non-copyrighted)—**even if the user never mentioned sound**. Use **`generate_audio`: `false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
 
 **Length:** Obey `prompt_length_limit` for the chosen `model_key` when this doc lists it; trim filler adjectives before removing core action, lens, or light clauses.
 
@@ -98,7 +98,7 @@ Done when the user receives at least one playable video URL from the API respons
 | Model | KLING_V3_0_PRO |
 | Aspect ratio | 9:16 (fixed) |
 | Duration | 10 seconds (`duration`: 10—enough time to show layered progression) |
-| Audio | Off |
+| Audio | **On** — default **`generate_audio`: `true`**; expanded **`prompt`** must include **`Audio:`** (ambience + SFX; generic) unless the user wants silent |
 | Visual style | Top-down or eye-level close-up; canvas or tablet in frame; clear brush motion; color fills progressively; time-compressed timeline |
 
 > **API validity (default `KLING_V3_0_PRO`):** Text-to-video `duration` only **5 / 10 / 15**; `aspect_ratio` only **9:16, 1:1, 16:9**. Image-to-video `aspect_ratio` only **9:16, 16:9, 1:1**. **No `resolution` field—do not send it.** For **fast** tier with VEO: text-to-video **`VEO_3_1_FAST`**, image-to-video **`CHATBOT_VEO_3_1_FAST`**, with `duration` **fixed at 8**, `aspect_ratio` only **9:16** or **16:9**. When switching `model_key`, follow the allowed sets in this section’s model/API constraints and the API validity note above; do not send `resolution` to models that do not support it.
@@ -127,7 +127,7 @@ Done when the user receives at least one playable video URL from the API respons
    > | `model` | `KLING_V3_0_PRO` | Best tier default; say “cheap / draft / fast” → `WAN_2_6`; say “balanced” → `KLING_V3_0_STA`; or name a model directly |
    > | `aspect_ratio` | `9:16` | Default KLING: 9:16, 1:1, 16:9 only; if you change model, check that model’s `aspect_ratios` in the table |
    > | `duration` | `10s` | KLING family: 5 / 10 / 15; VEO fast: duration 8 only |
-   > | `generate_audio` | `false` | Whether to auto-generate audio |
+   > | `generate_audio` | `true` | Default **on**; **`Audio:`** in **`prompt`** unless user wants silent |
    > | `prompt` | **Full expanded English prompt** (entire text for this run) | Revise before confirm |
    > | `Loop seam` | No | Reply “loop” to enable seamless loop |
    >
@@ -135,7 +135,7 @@ Done when the user receives at least one playable video URL from the API respons
 4. After confirmation, run in the terminal from the skill package root:
 
    ```sh
-   node scripts/video_gen.js wait --json '{"model":"（model from confirmation table）","prompt":"（full expanded English prompt）","aspect_ratio":"9:16","duration":10,"generate_audio":false}'
+   node scripts/video_gen.js wait --json '{"model":"（model from confirmation table）","prompt":"（full expanded English prompt）","aspect_ratio":"9:16","duration":10,"generate_audio":true}'
    ```
 
    `aspect_ratio`, `duration`, `generate_audio`, and `model` must match the table; add `resolution` only if the model supports it. Parse stdout `videos` for URLs.
@@ -147,7 +147,7 @@ Done when the user receives at least one playable video URL from the API respons
 | model | KLING_V3_0_PRO |
 | aspect_ratio | 9:16 |
 | duration | 10 |
-| generate_audio | false |
+| generate_audio | true |
 
 **Expanded prompt:** Compose at generation time per `## Prompt expansion (mandatory)` from the user's actual brief—do not reuse fixed sample paragraphs.
 

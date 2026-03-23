@@ -42,7 +42,7 @@ Cats / bunnies / pandas as leads; one line for look count and vibe, straight to 
 
 **When:** The user gives only keywords, one line, or loose intent—or asks for richer video language. **Exception:** They paste a finished long prompt within the model's `prompt_length_limit` and ask you **not** to rewrite; still show the **full** text in the confirmation table.
 
-**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical.
+**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical. **Audio (default-on):** **`generate_audio` defaults to `true`** when the selected model supports audio; add a labeled **`Audio:`** block in the expanded **`prompt`** (ambience + layered SFX; generic, non-copyrighted)—**even if the user never mentioned sound**. Use **`generate_audio`: `false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
 
 **Length:** Obey `prompt_length_limit` for the chosen `model_key` when this doc lists it; trim filler adjectives before removing core action, lens, or light clauses.
 
@@ -104,7 +104,7 @@ Done when the user receives at least one playable video URL from the API respons
 | Model | KLING_V3_0_PRO |
 | Aspect | 9:16 (fixed) |
 | Duration | 5 s (`duration: 5`, tight for beat cuts) |
-| Audio | Off |
+| Audio | **On** — default **`generate_audio`: `true`**; expanded **`prompt`** must include **`Audio:`** (ambience + SFX; generic) unless the user wants silent |
 | Look | Front medium shots; clear visual beat on swaps; one hero frame per look; white / solid seamless bg |
 
 > **API validity (default `KLING_V3_0_PRO`):** Text-to-video: `duration` only **5 / 10 / 15**, `aspect_ratio` only **9:16, 1:1, 16:9**; image-to-video: `aspect_ratio` only **9:16, 16:9, 1:1**; **no `resolution` field—do not send.** Fast VEO tier: text **`VEO_3_1_FAST`**, image **`CHATBOT_VEO_3_1_FAST`**, `duration` **fixed 8**, `aspect_ratio` only **9:16** or **16:9**. For other `model_key` values, follow the allowed sets in this document and the API validity notes above; do not send unsupported fields such as `resolution`.
@@ -121,7 +121,7 @@ Collect character + direction; other params are fixed—confirm before run:
 > - model: KLING_V3_0_PRO
 > - aspect_ratio: 9:16
 > - duration: 5
-> - generate_audio: false
+> - generate_audio: true
 > - seamless loop: off (reply "loop" for loop-friendly outfit video)
 
 Embed in the brief: one line for character and count, e.g. “kitten, five commuter looks” or “panda, ten hoodies”—visual detail per look is auto-filled.
@@ -135,7 +135,7 @@ Embed in the brief: one line for character and count, e.g. “kitten, five commu
 | model | KLING_V3_0_PRO |
 | aspect_ratio | 9:16 |
 | duration | 5 |
-| generate_audio | false |
+| generate_audio | true |
 
 ---
 
@@ -154,7 +154,7 @@ State accessories + character vibe; generate directly.
    > | `model` | `KLING_V3_0_PRO` | Best tier default; fast: text `VEO_3_1_FAST`, image `CHATBOT_VEO_3_1_FAST` (`duration` fixed 8); good → `KLING_V3_0_STA`; or specify a model name |
    > | `aspect_ratio` | `9:16` | Default KLING: 9:16, 1:1, 16:9 only; if you switch model, check that row’s `aspect_ratios` etc. |
    > | `duration` | `5s` | KLING family: 5 / 10 / 15; VEO fast: duration 8 only |
-   > | `generate_audio` | `false` | Auto-generate audio or not |
+   > | `generate_audio` | `true` | Default **on**; **`Audio:`** in **`prompt`** unless user wants silent |
    > | `prompt` | **Full expanded English prompt** (entire text for this run) | Revise before confirm |
    > | `seamless loop` | off | Reply "loop" to add seamless loop |
    >

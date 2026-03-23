@@ -35,6 +35,7 @@ user-invocable: true
 **Parameter confirmation table (before any submit):** `model`, `duration`, `aspect_ratio`, `resolution` (Seedance only), `generate_audio`, `negative_prompt` (Kling only), **`image` / `images`** (if used), and the **entire** expanded `prompt` (not a summary).
 
 ## Prompt expansion (mandatory)
+**Audio (default-on):** Default **`generate_audio`: `true`** for models that support audio. Always add an **`Audio:`** subsection to the expanded **`prompt`** (whooshes, ticks, sub-bass, risers, room tone—**generic**, non-copyrighted)—**even if the user never mentioned sound**. Use **`generate_audio`: `false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
 
 - **Duration:** Default **10**; **5** or **15** when allowed and requested.
 - **Timeline scaling:** Keep **30% / 30% / 40%** of total runtime for the three beats (adjust seconds in the written prompt); or another **explicit** split the user approves.

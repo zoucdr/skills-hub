@@ -29,6 +29,7 @@ user-invocable: true
 - **Higher assurance**: Prefer a short-lived or isolated environment when possible; review `scripts/video_gen.js` before production use. Verify whether the runtime can read local image files and upload them to WeryAI, and obtain explicit consent before using that path.
 
 ## Prompt expansion (mandatory)
+**Audio (default-on):** Default **`generate_audio`: `true`** for models that support audio. Always add an **`Audio:`** subsection to the expanded **`prompt`** (whooshes, ticks, sub-bass, risers, room tone—**generic**, non-copyrighted)—**even if the user never mentioned sound**. Use **`generate_audio`: `false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
 
 - **Duration:** Default **10**; **5** or **15** when the user asks and the model allows.
 - **Timeline scaling:** Rescale **0–3 / 3–5 / 5–7 / 7–10** proportionally when **`duration` ≠ 10**; keep the **four-beat order**.

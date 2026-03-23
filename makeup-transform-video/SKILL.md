@@ -47,7 +47,7 @@ Bare to glam in one vertical clip—contrast and rhythm matter. Fits beauty, cre
 
 **When:** The user gives only keywords, one line, or loose intent—or asks for richer video language. **Exception:** They paste a finished long prompt within the model's `prompt_length_limit` and ask you **not** to rewrite; still show the **full** text in the confirmation table.
 
-**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical.
+**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical. **Audio (default-on):** **`generate_audio` defaults to `true`** when the selected model supports audio; add a labeled **`Audio:`** block in the expanded **`prompt`** (ambience + layered SFX; generic, non-copyrighted)—**even if the user never mentioned sound**. Use **`generate_audio`: `false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
 
 **Length:** Obey `prompt_length_limit` for the chosen `model_key` when this doc lists it; trim filler adjectives before removing core action, lens, or light clauses.
 
@@ -109,7 +109,7 @@ Done when the user receives at least one playable video URL from the API respons
 | Model | KLING_V3_0_PRO |
 | Aspect ratio | 9:16 (fixed) |
 | Duration | 5 seconds (`duration`: 5—fast beat) |
-| Audio | Off |
+| Audio | **On** — default **`generate_audio`: `true`**; expanded **`prompt`** must include **`Audio:`** (ambience + SFX; generic) unless the user wants silent |
 | Visual style | Front close-up / macro; soft beauty light; cooler natural “before,” warmer “after” with stronger highlights; quick cuts |
 
 > **API validity (default `KLING_V3_0_PRO`):** Text-to-video `duration` only **5 / 10 / 15**; `aspect_ratio` only **9:16, 1:1, 16:9**. Image-to-video `aspect_ratio` only **9:16, 16:9, 1:1**. **No `resolution` field—do not send it.** For **fast** tier with VEO: text-to-video **`VEO_3_1_FAST`**, image-to-video **`CHATBOT_VEO_3_1_FAST`**, with `duration` **fixed at 8**, `aspect_ratio` only **9:16** or **16:9**. When switching `model_key`, follow the allowed sets in this section’s model/API constraints and the API validity note above; do not send `resolution` to models that do not support it.
@@ -134,7 +134,7 @@ Build a full arc: **bare → application → final close-up** with eye/cheek/lip
    > | `model` | `KLING_V3_0_PRO` | Best default; **fast**: text `VEO_3_1_FAST`, image `CHATBOT_VEO_3_1_FAST` (`duration` 8); **good** → `KLING_V3_0_STA`; or name a model |
    > | `aspect_ratio` | `9:16` | Default KLING: 9:16, 1:1, 16:9 |
    > | `duration` | `5s` | KLING: 5 / 10 / 15; VEO fast: 8 only |
-   > | `generate_audio` | `false` | Whether to auto-generate audio |
+   > | `generate_audio` | `true` | Default **on**; **`Audio:`** in **`prompt`** unless user wants silent |
    > | `prompt` | **Full expanded English prompt** (entire text for this run) | Revise before confirm |
    > | `Loop seam` | No | Reply “loop” for seamless loop |
    >
@@ -165,7 +165,7 @@ Flow: collect step → prompt for gesture + material → confirm → `node scrip
 | model | KLING_V3_0_PRO |
 | aspect_ratio | 9:16 |
 | duration | 5 |
-| generate_audio | false |
+| generate_audio | true |
 
 ---
 

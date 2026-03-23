@@ -36,7 +36,7 @@ A seed in soil, roots reaching down, cotyledons breaking the surface, stems stre
 
 **When:** The user gives only keywords, one line, or loose intent—or asks for richer video language. **Exception:** They paste a finished long prompt within the model's `prompt_length_limit` and ask you **not** to rewrite; still show the **full** text in the confirmation table.
 
-**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical.
+**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical. **Audio (default-on):** **`generate_audio` defaults to `true`** when the selected model supports audio; add a labeled **`Audio:`** block in the expanded **`prompt`** (ambience + layered SFX; generic, non-copyrighted)—**even if the user never mentioned sound**. Use **`generate_audio`: `false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
 
 **Length:** Obey `prompt_length_limit` for the chosen `model_key` when this doc lists it; trim filler adjectives before removing core action, lens, or light clauses.
 
@@ -98,7 +98,7 @@ Done when the user receives at least one playable video URL from the API respons
 | Model | KLING_V3_0_PRO |
 | Aspect ratio | 9:16 (fixed) |
 | Duration | 10 seconds (`duration`: 10—full growth arc) |
-| Audio | Off |
+| Audio | **On** — default **`generate_audio`: `true`**; expanded **`prompt`** must include **`Audio:`** (ambience + SFX; generic) unless the user wants silent |
 | Visual style | Front medium or top-down; natural light (window sun); timelapse feel; light direction shifts over “days”; simple background (soil, terracotta, wood) |
 
 > **API validity (default `KLING_V3_0_PRO`):** Text-to-video `duration` only **5 / 10 / 15**; `aspect_ratio` only **9:16, 1:1, 16:9**. Image-to-video `aspect_ratio` only **9:16, 16:9, 1:1**. **No `resolution` field—do not send it.** For **fast** tier with VEO: text-to-video **`VEO_3_1_FAST`**, image-to-video **`CHATBOT_VEO_3_1_FAST`**, with `duration` **fixed at 8**, `aspect_ratio` only **9:16** or **16:9**. When switching `model_key`, follow the allowed sets in this section’s model/API constraints and the API validity note above; do not send `resolution` to models that do not support it.
@@ -119,7 +119,7 @@ Show parameters before generate:
 > - model: KLING_V3_0_PRO
 > - aspect_ratio: 9:16
 > - duration: 10
-> - generate_audio: false
+> - generate_audio: true
 > - Loop seam: No (reply **loop** to enable; appends `seamless loop` to the prompt)
 
 **Expanded prompt:** Compose at generation time per `## Prompt expansion (mandatory)` from the user's actual brief—do not reuse fixed sample paragraphs.
@@ -131,7 +131,7 @@ Show parameters before generate:
 | model | KLING_V3_0_PRO |
 | aspect_ratio | 9:16 |
 | duration | 10 |
-| generate_audio | false |
+| generate_audio | true |
 
 **Expected outcome:** Clear time advance; sprouting and bloom/fruit as peaks; light cycles or angle shifts sell the passage of time; ending feels like a payoff.
 
@@ -152,7 +152,7 @@ Name the plant and stage; then generate:
    > | `model` | `KLING_V3_0_PRO` | Best default; say “cheap / draft / fast” → `KLING_V3_0_STA`; say “balanced” → `WAN_2_6`; or name a model |
    > | `aspect_ratio` | `9:16` | Default KLING: 9:16, 1:1, 16:9 |
    > | `duration` | `10s` | KLING: 5 / 10 / 15; VEO fast: 8 only |
-   > | `generate_audio` | `false` | Whether to auto-generate audio |
+   > | `generate_audio` | `true` | Default **on**; **`Audio:`** in **`prompt`** unless user wants silent |
    > | `prompt` | **Full expanded English prompt** (entire text for this run) | Revise before confirm |
    > | `Loop seam` | No | Reply “loop” for seamless loop |
    >

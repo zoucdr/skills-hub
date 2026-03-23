@@ -42,7 +42,7 @@ One line: character + space + style → clip. Fits home / aesthetics / makeover 
 
 **When:** The user gives only keywords, one line, or loose intent—or asks for richer video language. **Exception:** They paste a finished long prompt within the model's `prompt_length_limit` and ask you **not** to rewrite; still show the **full** text in the confirmation table.
 
-**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical.
+**Always add (video language):** shot scale and angle; camera move or lock-off; light quality and motivation; subject action paced to `duration`; **one clear payoff** for this niche; state **9:16 vertical** when this skill defaults to vertical. **Audio (default-on):** **`generate_audio` defaults to `true`** when the selected model supports audio; add a labeled **`Audio:`** block in the expanded **`prompt`** (ambience + layered SFX; generic, non-copyrighted)—**even if the user never mentioned sound**. Use **`generate_audio`: `false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
 
 **Length:** Obey `prompt_length_limit` for the chosen `model_key` when this doc lists it; trim filler adjectives before removing core action, lens, or light clauses.
 
@@ -104,7 +104,7 @@ Done when the user receives at least one playable video URL from the API respons
 | Model | KLING_V3_0_PRO |
 | Aspect | 9:16 (fixed, vertical short) |
 | Duration | 10 s (`duration: 10`, room for full process) |
-| Audio | Off |
+| Audio | **On** — default **`generate_audio`: `true`**; expanded **`prompt`** must include **`Audio:`** (ambience + SFX; generic) unless the user wants silent |
 | Look | Medium or wide, natural + warm accent light; before cooler/darker, after warmer/brighter; time-lapse compression |
 
 > **API validity (default `KLING_V3_0_PRO`):** Text-to-video: `duration` only **5 / 10 / 15**, `aspect_ratio` only **9:16, 1:1, 16:9**; image-to-video: `aspect_ratio` only **9:16, 16:9, 1:1**; **no `resolution` field—do not send.** Fast VEO tier: text **`VEO_3_1_FAST`**, image **`CHATBOT_VEO_3_1_FAST`**, `duration` **fixed 8**, `aspect_ratio` only **9:16** or **16:9**. For other `model_key` values, follow the allowed sets in this document and the API validity notes above; do not send unsupported fields such as `resolution`.
@@ -133,7 +133,7 @@ Animals “finish” a tired space overnight—the classic arc: enter messy room
    > | `model` | `KLING_V3_0_PRO` | Best tier default; fast: text `VEO_3_1_FAST`, image `CHATBOT_VEO_3_1_FAST` (`duration` fixed 8); good → `KLING_V3_0_STA`; or specify a model name |
    > | `aspect_ratio` | `9:16` | Default KLING: 9:16, 1:1, 16:9 only; if you switch model, check that row’s `aspect_ratios` etc. |
    > | `duration` | `10s` | KLING family: 5 / 10 / 15; VEO fast: duration 8 only |
-   > | `generate_audio` | `false` | Auto-generate audio or not |
+   > | `generate_audio` | `true` | Default **on**; **`Audio:`** in **`prompt`** unless user wants silent |
    > | `prompt` | **Full expanded English prompt** (entire text for this run) | Revise before confirm |
    > | `seamless loop` | off | Reply "loop" to add seamless loop |
    >
@@ -141,7 +141,7 @@ Animals “finish” a tired space overnight—the classic arc: enter messy room
 4. After confirmation, in the terminal from the skill package root:
 
    ```sh
-   node scripts/video_gen.js wait --json '{"model":"(confirmed model)","prompt":"(full English prompt)","aspect_ratio":"9:16","duration":10,"generate_audio":false}'
+   node scripts/video_gen.js wait --json '{"model":"(confirmed model)","prompt":"(full English prompt)","aspect_ratio":"9:16","duration":10,"generate_audio":true}'
    ```
 
    `aspect_ratio`, `duration`, `generate_audio`, `model` must match the table; add `resolution` only if supported. Parse `videos` from stdout.
@@ -153,7 +153,7 @@ Animals “finish” a tired space overnight—the classic arc: enter messy room
 | model | KLING_V3_0_PRO |
 | aspect_ratio | 9:16 |
 | duration | 10 |
-| generate_audio | false |
+| generate_audio | true |
 
 **Sample prompt (bunny, rental, cream):**
 > A small white bunny with oversized ears begins transforming a dull, cluttered rental apartment bedroom, medium wide shot shows peeling walls and mismatched cheap furniture, the bunny hangs linen curtains, places cream-colored cushions, adds dried pampas grass in a ceramic vase, time-lapse with warm evening light slowly shifting, final reveal: the same room now glows in a soft cream-beige aesthetic with warm Edison bulb string lights overhead, low-angle medium shot shows the complete transformation, diffused golden light, cozy hygge atmosphere, paint texture walls, before-after contrast dramatic
@@ -183,7 +183,7 @@ More “real” makeover: camera on the room only—good when the result itself 
 3. After confirmation, from the skill package root:
 
    ```sh
-   node scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"(full English prompt)","aspect_ratio":"9:16","duration":10,"generate_audio":false}'
+   node scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"(full English prompt)","aspect_ratio":"9:16","duration":10,"generate_audio":true}'
    ```
 
    Fields match the table; parse stdout for URLs.
@@ -195,7 +195,7 @@ More “real” makeover: camera on the room only—good when the result itself 
 | model | KLING_V3_0_PRO |
 | aspect_ratio | 9:16 |
 | duration | 10 |
-| generate_audio | false |
+| generate_audio | true |
 
 **Sample prompt (low-budget rental glow-up):**
 > Wide establishing shot of a low-budget rental room transformation, left half of the frame shows original water-stained walls, plastic furniture, fluorescent lighting, the right half reveals the same space after makeover with white paint, thrifted wooden shelf, warm LED strip lights, fabric headboard, time-lapse renovation progress fills the center, final wide shot shows the complete after: cozy Scandinavian-minimalist aesthetic on zero budget, warm 3000K ambient lighting, slight aerial perspective

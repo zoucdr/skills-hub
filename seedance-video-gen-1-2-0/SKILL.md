@@ -47,7 +47,7 @@ Always re-check **`duration`**, **`aspect_ratio`**, **`resolution`**, **`generat
 
 **When:** Input is short or vague. **Exception:** The user supplies a finished long prompt within **`prompt_length_limit`** and explicitly asks you **not** to rewrite—still show the **full** text in the confirmation table.
 
-**Always add:** shot size and angle; camera move or lock-off; lighting and mood; motion paced to **`duration`**; one clear payoff; framing for **`aspect_ratio`**; if **`generate_audio`** is **true**, describe ambience/SFX in generic words (no copyrighted music).
+**Always add:** shot size and angle; camera move or lock-off; lighting and mood; motion paced to **`duration`**; one clear payoff; framing for **`aspect_ratio`**. **Audio (default-on):** For any model row that supports audio, default **`generate_audio`: `true`** in JSON and add a labeled **`Audio:`** block in the **`prompt`** (ambience + layered SFX—generic, non-copyrighted)—**even if the user never mentioned sound**. For **silent** output or models **without** audio, use **`generate_audio`: `false`** (or omit per API) and omit **`Audio:`** from the **`prompt`**.
 
 **`negative_prompt`:** Send **only** when the frozen row for that **`model_key`** and **channel** shows **Yes**. Otherwise **omit** the field.
 

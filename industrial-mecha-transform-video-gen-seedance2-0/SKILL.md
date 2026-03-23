@@ -35,7 +35,7 @@ user-invocable: true
 
 **When:** User input is short, vague, or missing cinematic detail. **Exception:** They supply a finished long prompt within **2000** characters and ask you **not** to rewrite—still show the **full** text in the confirmation table.
 
-**Always add:** shot size and angle; camera move; lighting and color grade aligned to this skill; subject action paced to `duration`; **one clear payoff**; platform framing (**9:16** unless user chose another allowed ratio); if `generate_audio` is **true**, describe ambience / SFX in generic words (no copyrighted music references).
+**Always add:** shot size and angle; camera move; lighting and color grade aligned to this skill; subject action paced to `duration`; **one clear payoff**; platform framing (**9:16** unless user chose another allowed ratio). **`generate_audio` defaults to `true`** for `SEEDANCE_2_0`; unless the user explicitly requests **silent** video, use **`generate_audio`: `true`** in JSON **and** add a dedicated **`Audio:`** block in the **`prompt`** (ambience, layered SFX, optional dialogue—generic, non-copyrighted; **even when the user said nothing about sound**). For **silent** output: **`generate_audio`: `false`** and omit audio lines from the **`prompt`**.
 
 **Length:** Stay within **`prompt_length_limit` 2000** for `SEEDANCE_2_0`; trim adjectives before losing the core transformation beat.
 

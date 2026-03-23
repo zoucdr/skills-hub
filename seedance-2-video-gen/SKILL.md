@@ -1,6 +1,6 @@
 ---
 name: seedance-2-video-gen
-version: 1.0.0
+version: 1.0.1
 description: "Generate Seedance 2.0 videos through WeryAI for text-to-video, image-to-video, multi-image video, and first-frame/last-frame transitions. Use when you need a Seedance 2.0 video generator, want to animate a reference image (prefer a public https URL), create a storyboard-to-video clip, migrate `image + last_image` workflows, or generate controlled start/end frame video with your WeryAI API key."
 
 tags: [seedance, seedance-2, video-gen, text-to-video, image-to-video, multi-image-video, storyboard, start-frame, end-frame]
@@ -41,7 +41,7 @@ Use one safe check before the first paid run:
 
 ```sh
 node scripts/video_gen.js models --mode text_to_video
-node scripts/video_gen.js wait --json '{"prompt":"A glowing koi swims through ink clouds","duration":5}' --dry-run
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"A glowing koi swims through ink clouds","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}' --dry-run
 ```
 
 - `models` confirms that the key is configured and the models endpoint is reachable.
@@ -90,6 +90,7 @@ For advanced prompt design patterns, read [references/seedance-prompt-optimizati
 - Subject motion paced to the selected `duration`.
 - One clear visual payoff in the final shot.
 - Output framing such as `9:16 vertical` when using the default aspect ratio.
+- **Audio (default-on):** Add a labeled **`Audio:`** block (ambience, layered SFX, subtle foley—**generic**, non-copyrighted) **even if the user never mentioned sound**. JSON **`generate_audio`** defaults to **`true`** for models that support audio; use **`false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
 
 **Mode-specific additions:**
 
@@ -150,7 +151,7 @@ When the user asks for "better Seedance prompts" rather than just API execution:
 ## Workflow
 
 1. Decide which path fits the request: `text`, `image`, `multi-image`, or `first-frame/last-frame`.
-2. Collect the user's brief, `duration`, optional `aspect_ratio`, optional `resolution`, and reference image URLs if the mode uses assets (prefer public `https`).
+2. Collect the user's brief, `duration`, optional `aspect_ratio`, optional `resolution`, **`generate_audio`** (default **`true`** unless the user wants silent), and reference image URLs if the mode uses assets (prefer public `https`).
 3. Expand the prompt with the rules from `## Prompt expansion (mandatory)`. If the request needs tighter control, read `references/seedance-prompt-optimization.md` and explicitly decide mode, asset mapping, timeline beats, and negative constraints before writing the final prompt.
 4. If you are unsure about current multi-image support or field limits, run `node scripts/video_gen.js models --mode multi_image_to_video` before a paid request.
 5. Show a confirmation table with the **full expanded prompt**, model, duration, aspect ratio, resolution, audio choice, and any image URLs.
@@ -166,23 +167,23 @@ node scripts/video_gen.js models --mode text_to_video
 node scripts/video_gen.js models --mode image_to_video
 node scripts/video_gen.js models --mode multi_image_to_video
 
-# Text-to-video
-node scripts/video_gen.js wait --json '{"prompt":"A paper crane unfolds into a real bird, cinematic lighting, 9:16 vertical","duration":5}'
+# Text-to-video (non-empty model required; default audio on)
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"A paper crane unfolds into a real bird, cinematic lighting, 9:16 vertical. Audio: soft paper rustle, gentle whoosh, quiet room tone.","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 
 # Single image to video
-node scripts/video_gen.js wait --json '{"prompt":"Animate this portrait with subtle hair and cloth movement","image":"https://example.com/frame.png","duration":5,"aspect_ratio":"9:16","resolution":"720p"}'
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"Animate this portrait with subtle hair and cloth movement. Audio: faint fabric rustle, subtle room ambience.","image":"https://example.com/frame.png","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 
 # Multi-image to video
-node scripts/video_gen.js wait --json '{"prompt":"Turn these storyboard frames into one coherent reveal shot","images":["https://example.com/1.png","https://example.com/2.png","https://example.com/3.png"],"duration":5,"aspect_ratio":"9:16"}'
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"Turn these storyboard frames into one coherent reveal shot. Audio: light transition whooshes, soft underscore.","images":["https://example.com/1.png","https://example.com/2.png","https://example.com/3.png"],"duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 
 # First-frame / last-frame guided video
-node scripts/video_gen.js wait --json '{"prompt":"Start on the first frame and transition naturally to the last frame with the same subject and environment","first_frame":"https://example.com/start.png","last_frame":"https://example.com/end.png","duration":5,"aspect_ratio":"9:16"}'
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"Start on the first frame and transition naturally to the last frame with the same subject and environment. Audio: smooth morph tone, airy ambience.","first_frame":"https://example.com/start.png","last_frame":"https://example.com/end.png","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 
 # WaveSpeed-style compatibility alias
-node scripts/video_gen.js wait --json '{"prompt":"Transition smoothly from the start image to the end image","image":"https://example.com/start.png","last_image":"https://example.com/end.png","duration":5,"aspect_ratio":"9:16"}'
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"Transition smoothly from the start image to the end image. Audio: soft blend whoosh, quiet room.","image":"https://example.com/start.png","last_image":"https://example.com/end.png","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
 
 # Preview without spending credits
-node scripts/video_gen.js wait --json '{"prompt":"A glowing koi swims through ink clouds","duration":5}' --dry-run
+node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"A glowing koi swims through ink clouds. Audio: water shimmer, subtle chime.","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}' --dry-run
 
 # Poll an existing task
 node scripts/video_gen.js status --task-id <task-id>
@@ -190,7 +191,7 @@ node scripts/video_gen.js status --task-id <task-id>
 
 ## Definition of done
 
-Done when the user receives at least one playable video URL, or a clear failure with `errorCode` / `errorMessage` and a concrete next step. The submitted payload must stay within the selected model's supported field set.
+Done when the user receives at least one playable video URL, or a clear failure with `errorCode` / `errorMessage` and a concrete next step. The submitted payload must stay within the selected model's supported field set. With default **`generate_audio`: `true`**, the **`prompt`** should include **`Audio:`** prose unless the user requested silent generation.
 
 ## Boundaries (out of scope)
 
@@ -233,7 +234,7 @@ Done when the user receives at least one playable video URL, or a clear failure 
 | Aspect ratio | `9:16` |
 | Duration | `5` |
 | Resolution | `720p` |
-| Audio | `false` by default; enable only when you want generated ambience |
+| Audio | **`true`** by default; expanded **`prompt`** must include **`Audio:`** unless the user wants silent |
 | Prompt style | concise cinematic English prompt with one clear motion beat and one final payoff |
 
 ---
@@ -263,13 +264,13 @@ Use this when the user has only an idea and wants Seedance 2.0 to generate the c
    > | `aspect_ratio` | `9:16` | Must stay inside the Seedance row |
    > | `duration` | `5` | Allowed: 5 / 10 / 15 |
    > | `resolution` | `720p` | Allowed: 480p / 720p |
-   > | `generate_audio` | `false` | Turn on only if the user wants generated ambience |
+   > | `generate_audio` | `true` | Default **on**; **`Audio:`** in **`prompt`** unless user wants silent |
    > | `prompt` | **full expanded prompt** | Never show only a summary |
 
 4. After confirmation, run:
 
    ```sh
-   node scripts/video_gen.js wait --json '{"prompt":"...","duration":5,"aspect_ratio":"9:16","resolution":"720p"}'
+   node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"...","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
    ```
 
 ---
@@ -291,7 +292,7 @@ Use this when the user already has one reference image and wants subtle or mediu
 3. Confirm parameters and URL, then run:
 
    ```sh
-   node scripts/video_gen.js wait --json '{"prompt":"...","image":"https://example.com/input.png","duration":5,"aspect_ratio":"9:16","resolution":"720p"}'
+   node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"...","image":"https://example.com/input.png","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
    ```
 
 ---
@@ -313,7 +314,7 @@ Use this when the user wants several frames turned into one coherent shot or sho
 3. Confirm the final prompt plus ordered `images`, then run:
 
    ```sh
-   node scripts/video_gen.js wait --json '{"prompt":"...","images":["https://example.com/1.png","https://example.com/2.png","https://example.com/3.png"],"duration":5,"aspect_ratio":"9:16"}'
+   node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"...","images":["https://example.com/1.png","https://example.com/2.png","https://example.com/3.png"],"duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
    ```
 
 ---
@@ -335,7 +336,7 @@ Use this when the user wants tighter motion control from a known opening frame t
 3. Confirm both URLs and the full prompt, then run:
 
    ```sh
-   node scripts/video_gen.js wait --json '{"prompt":"...","first_frame":"https://example.com/start.png","last_frame":"https://example.com/end.png","duration":5,"aspect_ratio":"9:16"}'
+   node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"...","first_frame":"https://example.com/start.png","last_frame":"https://example.com/end.png","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
    ```
 
 4. If the live registry rejects multi-image routing, reduce expectations: the runtime will fall back to single-image behavior with the first frame.

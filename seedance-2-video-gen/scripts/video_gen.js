@@ -2,6 +2,7 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { fileURLToPath } = require('node:url');
+const { formatApiError: formatSharedApiError, formatNetworkError: formatSharedNetworkError } = require('../../../core/weryai-core/errors.js');
 /**
  * WeryAI 视频生成 — 通用 CLI（零 npm 依赖，需 Node.js 18+）
  *
@@ -17,19 +18,14 @@ const { fileURLToPath } = require('node:url');
  *
  * 环境变量:
  *   WERYAI_API_KEY（models / 生成 / status 必填；--dry-run 除外）— 敏感凭据，勿写入仓库；registry 元数据声明见同目录 SKILL.md。
- *   本脚本仅读取上述密钥；API 主机与轮询策略为固定常量，勿用其他 env 覆盖。
- *   wait 轮询：首次间隔 3s，之后每次翻倍，单步上限 60s，总超时 600s（10 min）。
+ *   本脚本仅读取上述密钥；API 主机与轮询间隔为固定常量，勿用其他 env 覆盖。
  */
 
 const BASE_URL = 'https://api.weryai.com';
 const MODELS_BASE_URL = 'https://api-growth-agent.weryai.com';
 const MODELS_API_PATH = '/growthai/v1/video/models';
 const UPLOAD_API_PATH = '/growthai/v1/generation/upload-file';
-/** First delay before the first status poll (ms). */
-const POLL_FIRST_DELAY_MS = 3000;
-/** Max delay between polls — backoff doubles until this cap (ms). */
-const POLL_MAX_DELAY_MS = 60000;
-/** Total wall-clock budget for all polls in `wait` (ms). */
+const POLL_INTERVAL_MS = 6000;
 const POLL_TIMEOUT_MS = 600000;
 const IMAGE_MIME_TYPES = {
   '.jpg': 'image/jpeg',
@@ -290,55 +286,11 @@ function isApiSuccess(res) {
 }
 
 function formatApiError(res) {
-  const httpStatus = res.httpStatus || 0;
-  const code = res.status;
-  const msg = res.msg || '';
+  return formatSharedApiError(res);
+}
 
-  if (httpStatus === 403) {
-    return {
-      ok: false,
-      phase: 'failed',
-      errorCode: '403',
-      errorMessage: ERROR_MESSAGES[403] + (msg ? ` (${msg})` : ''),
-    };
-  }
-  if (httpStatus === 429) {
-    return {
-      ok: false,
-      phase: 'failed',
-      errorCode: 'RATE_LIMIT',
-      errorMessage: 'Rate limited by WeryAI API. Please wait and try again.',
-    };
-  }
-  if (httpStatus >= 500) {
-    return {
-      ok: false,
-      phase: 'failed',
-      errorCode: '500',
-      errorMessage: `${ERROR_MESSAGES[500]} (HTTP ${httpStatus})`,
-    };
-  }
-  if (httpStatus === 400) {
-    return {
-      ok: false,
-      phase: 'failed',
-      errorCode: '400',
-      errorMessage: ERROR_MESSAGES[400] + (msg ? ` (${msg})` : ''),
-    };
-  }
-
-  const friendly = ERROR_MESSAGES[code] || '';
-  const message =
-    friendly && msg
-      ? `${friendly} (${msg})`
-      : friendly || msg || `API error (status: ${code}, HTTP ${httpStatus})`;
-
-  return {
-    ok: false,
-    phase: 'failed',
-    errorCode: code != null ? String(code) : null,
-    errorMessage: message,
-  };
+function formatNetworkError(err) {
+  return formatSharedNetworkError(err);
 }
 
 function detectMode(params) {
@@ -390,7 +342,10 @@ async function submitTask(params, apiKey) {
     return {
       ok: false,
       phase: 'failed',
+      errorTitle: 'Missing required parameter',
       errorCode: 'MISSING_PARAM',
+      errorCategory: 'validation',
+      retryable: false,
       errorMessage: "'model' is required in JSON parameters (no default model).",
     };
   }
@@ -407,7 +362,10 @@ async function submitTask(params, apiKey) {
     return {
       ok: false,
       phase: 'failed',
+      errorTitle: 'Image preparation failed',
       errorCode: 'IMAGE_PREPARE_FAILED',
+      errorCategory: 'validation',
+      retryable: false,
       errorMessage: err.message || String(err),
     };
   }
@@ -415,12 +373,7 @@ async function submitTask(params, apiKey) {
   try {
     res = await apiRequest('POST', pathMap[mode], body, apiKey);
   } catch (err) {
-    return {
-      ok: false,
-      phase: 'failed',
-      errorCode: 'NETWORK_ERROR',
-      errorMessage: err.message || String(err),
-    };
+    return formatNetworkError(err);
   }
 
   if (!isApiSuccess(res)) return formatApiError(res);
@@ -435,7 +388,10 @@ async function submitTask(params, apiKey) {
     taskId: taskIds[0] ?? null,
     taskStatus: null,
     videos: null,
+    errorTitle: null,
     errorCode: null,
+    errorCategory: null,
+    retryable: null,
     errorMessage: null,
   };
 }
@@ -456,15 +412,17 @@ function extractVideos(taskData) {
 
 async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
   const start = Date.now();
-  let nextDelayMs = POLL_FIRST_DELAY_MS;
   while (true) {
-    const elapsedMs = Date.now() - start;
-    if (elapsedMs >= POLL_TIMEOUT_MS) {
+    const elapsed = (Date.now() - start) / 1000;
+    if (elapsed * 1000 >= POLL_TIMEOUT_MS) {
       return {
         ok: false,
         phase: 'failed',
+        errorTitle: 'Request timed out',
         errorCode: 'TIMEOUT',
-        errorMessage: `Poll timeout after ${Math.floor(elapsedMs / 1000)}s.`,
+        errorCategory: 'timeout',
+        retryable: true,
+        errorMessage: `Poll timeout after ${Math.floor(elapsed)}s.`,
         batchId,
         taskIds,
         taskId,
@@ -473,8 +431,7 @@ async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
       };
     }
 
-    await sleep(nextDelayMs);
-    nextDelayMs = Math.min(nextDelayMs * 2, POLL_MAX_DELAY_MS);
+    await sleep(POLL_INTERVAL_MS);
 
     let res;
     try {
@@ -493,9 +450,7 @@ async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
     const rawStatus = taskData.task_status || '';
     const normalized = STATUS_MAP[rawStatus] || 'unknown';
     const elapsedSec = Math.floor((Date.now() - start) / 1000);
-    log(
-      `Polling ${taskId}... status: ${rawStatus} (${elapsedSec}s elapsed); next backoff delay ${Math.min(nextDelayMs, POLL_MAX_DELAY_MS)}ms`,
-    );
+    log(`Polling ${taskId}... status: ${rawStatus} (${elapsedSec}s elapsed)`);
 
     if (normalized === 'completed') {
       const videos = extractVideos(taskData);
@@ -507,7 +462,10 @@ async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
         taskId,
         taskStatus: rawStatus,
         videos: videos.length ? videos : null,
+        errorTitle: null,
         errorCode: null,
+        errorCategory: null,
+        retryable: null,
         errorMessage: null,
       };
     }
@@ -523,7 +481,10 @@ async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
         taskId,
         taskStatus: rawStatus,
         videos: null,
+        errorTitle: 'Task failed',
         errorCode: 'TASK_FAILED',
+        errorCategory: 'task',
+        retryable: false,
         errorMessage: errMsg,
       };
     }
@@ -545,12 +506,7 @@ async function cmdStatus(taskId, apiKey) {
   try {
     res = await apiRequest('GET', `/v1/generation/${taskId}/status`, null, apiKey);
   } catch (err) {
-    return {
-      ok: false,
-      phase: 'failed',
-      errorCode: 'NETWORK_ERROR',
-      errorMessage: err.message || String(err),
-    };
+    return formatNetworkError(err);
   }
 
   if (!isApiSuccess(res)) return formatApiError(res);
@@ -570,8 +526,11 @@ async function cmdStatus(taskId, apiKey) {
     taskId,
     taskStatus: rawStatus,
     videos: videos.length ? videos : null,
+    errorTitle: phase === 'failed' ? 'Task failed' : null,
     errorCode: phase === 'failed' ? 'TASK_FAILED' : null,
-    errorMessage: phase === 'failed' ? tr.message || taskData.msg || null : null,
+    errorCategory: phase === 'failed' ? 'task' : null,
+    retryable: phase === 'failed' ? false : null,
+    errorMessage: phase === 'failed' ? tr.message || taskData.msg || 'The task could not be completed. Please review the request and try again.' : null,
   };
 }
 
@@ -582,12 +541,7 @@ async function cmdModels(modeFilter, apiKey) {
   try {
     res = await fetchModelsRegistry(apiKey);
   } catch (err) {
-    return {
-      ok: false,
-      phase: 'failed',
-      errorCode: 'NETWORK_ERROR',
-      errorMessage: err.message || String(err),
-    };
+    return formatNetworkError(err);
   }
 
   if (!isApiSuccess(res)) return formatApiError(res);
@@ -600,7 +554,10 @@ async function cmdModels(modeFilter, apiKey) {
       return {
         ok: false,
         phase: 'failed',
+        errorTitle: 'Invalid request',
         errorCode: 'VALIDATION',
+        errorCategory: 'validation',
+        retryable: false,
         errorMessage: `Invalid --mode. Use: ${VALID_MODEL_MODES.join(', ')}`,
       };
     }
@@ -664,7 +621,10 @@ async function main() {
       printJson({
         ok: false,
         phase: 'failed',
+        errorTitle: 'Invalid JSON',
         errorCode: 'INVALID_JSON',
+        errorCategory: 'validation',
+        retryable: false,
         errorMessage: `Invalid JSON: ${e.message}`,
       });
       process.exit(1);
@@ -677,7 +637,10 @@ async function main() {
       printJson({
         ok: false,
         phase: 'failed',
+        errorTitle: 'Missing API key',
         errorCode: 'NO_API_KEY',
+        errorCategory: 'auth',
+        retryable: false,
         errorMessage: 'Missing WERYAI_API_KEY environment variable.',
       });
       process.exit(1);
@@ -698,7 +661,10 @@ async function main() {
       printJson({
         ok: false,
         phase: 'failed',
+        errorTitle: 'Missing required parameter',
         errorCode: 'MISSING_PARAM',
+        errorCategory: 'validation',
+        retryable: false,
         errorMessage: "'model' is required in JSON parameters (no default model).",
       });
       process.exit(1);
@@ -727,7 +693,10 @@ async function main() {
     printJson({
       ok: false,
       phase: 'failed',
+      errorTitle: 'Missing API key',
       errorCode: 'NO_API_KEY',
+      errorCategory: 'auth',
+      retryable: false,
       errorMessage: 'Missing WERYAI_API_KEY environment variable.',
     });
     process.exit(1);
@@ -740,7 +709,10 @@ async function main() {
       printJson({
         ok: false,
         phase: 'failed',
+        errorTitle: 'Missing required parameter',
         errorCode: 'MISSING_PARAM',
+        errorCategory: 'validation',
+        retryable: false,
         errorMessage: 'status command requires --task-id <id>',
       });
       process.exit(1);
@@ -751,7 +723,10 @@ async function main() {
       printJson({
         ok: false,
         phase: 'failed',
+        errorTitle: 'Missing required parameter',
         errorCode: 'MISSING_PARAM',
+        errorCategory: 'validation',
+        retryable: false,
         errorMessage: "'prompt' is required in JSON parameters.",
       });
       process.exit(1);
@@ -760,7 +735,10 @@ async function main() {
       printJson({
         ok: false,
         phase: 'failed',
+        errorTitle: 'Missing required parameter',
         errorCode: 'MISSING_PARAM',
+        errorCategory: 'validation',
+        retryable: false,
         errorMessage: "'model' is required in JSON parameters (no default model).",
       });
       process.exit(1);
@@ -776,7 +754,10 @@ main().catch((err) => {
   printJson({
     ok: false,
     phase: 'failed',
+    errorTitle: 'Unexpected failure',
     errorCode: 'FATAL',
+    errorCategory: 'server',
+    retryable: false,
     errorMessage: err.message || String(err),
   });
   process.exit(1);
