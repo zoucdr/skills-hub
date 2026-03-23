@@ -25,4 +25,4 @@ outcome_tests:
     type: llm_rubric
     rubric: |
       Does the assistant stay within WeryAI video_gen constraints (model, duration, aspect_ratio)?
-      Does it refuse local image paths and ask for https URLs?
+      For images, does it prefer public https URLs, and only use local file paths after explicit user consent and a clear warning that the runtime may read the file and upload it to WeryAI?
