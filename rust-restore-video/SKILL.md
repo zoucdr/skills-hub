@@ -1,6 +1,6 @@
 ---
 name: rust-restore-video
-version: 1.0.1
+version: 1.0.2
 description: "Generate vertical satisfying rust restoration shorts (WeryAI): text-to-video or rusty-object image to grind and polish motion. Use when you need rust restoration satisfying video, derust refresh clips, or users ask for scale flaking off, metal brightening, mirror finish. SEO: rust restore video; rust restoration video generation."
 
 tags: [restoration, satisfying, asmr, craft, vintage, short-video]
