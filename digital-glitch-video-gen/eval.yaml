@@ -1,0 +1,31 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "digital-glitch-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the digital-glitch-video-gen skill for digital_glitch_video_style with RGB split and signal noise."
+  - id: implicit-glitch
+    should_trigger: true
+    prompt: "Corrupted signal look—tearing, strobing flashes, glitch hop stutter bed, broken media texture."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Digital interference portrait—horizontal smear, jump-cut rhythm, experimental electronic noise."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Glitch this still—RGB split, jitter push (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my backend only."
+  - id: negative-clean-ad
+    should_trigger: false
+    prompt: "Polished product hero, soft box only, gimbal-smooth—no glitch or RGB split."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

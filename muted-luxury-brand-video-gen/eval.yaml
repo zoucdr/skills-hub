@@ -1,0 +1,37 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "muted-luxury-brand-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the muted-luxury-brand-video-gen skill for a 9:16 muted_luxury_brand_video with desaturated luxury and editorial fashion tone."
+  - id: implicit-muted-palette
+    should_trigger: true
+    prompt: "Muted palette, soft contrast, premium minimalism—gray wool lookbook on concrete, very slow pan, ambient electronic."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Desaturated luxury interior with limestone and oak; locked composition, local curtain motion, runway underscore mood."
+  - id: implicit-camera
+    should_trigger: true
+    prompt: "High-end brand clip: slight dolly-in, static hero frame, micro-movement in fabric only, cool gray grade."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Turn this product still into muted luxury—editorial fashion tone, gentle push-in, minimal electronic (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Rust crate and add property-based tests only."
+  - id: negative-neon-retail
+    should_trigger: false
+    prompt: "Neon sale banner, max saturation, flashing price tags, loud EDM drop, chaotic whip-pan TikTok energy."
+  - id: negative-blockbuster
+    should_trigger: false
+    prompt: "Hollywood epic trailer—massive explosions, brass stabs, orange-teal blockbuster contrast and lens flares."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

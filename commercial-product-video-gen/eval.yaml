@@ -1,0 +1,31 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "commercial-product-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the commercial-product-video-gen skill for commercial_product_video with polished product lighting and turntable."
+  - id: implicit-promo
+    should_trigger: true
+    prompt: "Premium advertising look—slider pan across bottle, macro detail, light electronic with soft drums."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Commercial clean hero shot, even softbox feel, high detail metal texture."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Animate this packshot—commercial clean, orbit (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my backend only."
+  - id: negative-grunge-doc
+    should_trigger: false
+    prompt: "Handheld vérité interview, flat ugly fluorescent only—no premium product lighting."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

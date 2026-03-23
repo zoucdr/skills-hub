@@ -1,0 +1,31 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "travel-epic-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the travel-epic-video-gen skill for travel_epic_video with grand landscape and wide scenic atmosphere."
+  - id: implicit-mountain
+    should_trigger: true
+    prompt: "Ridge reveal—immersive destination, aerial pull-back mood, light epic pads, wind foley."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Freedom wide shot, tiny figure big peak, forward follow on trail, indie folk guitar generic."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Animate this vista still—wide lateral, travel epic (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my backend only."
+  - id: negative-studio-room
+    should_trigger: false
+    prompt: "Tiny apartment corner, single lamp, no landscape—claustrophobic interior only."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

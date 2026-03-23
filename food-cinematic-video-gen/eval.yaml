@@ -1,0 +1,31 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "food-cinematic-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the food-cinematic-video-gen skill for food_cinematic_video with steam and warm appetizing macro."
+  - id: implicit-ramen
+    should_trigger: true
+    prompt: "Steam rising from bowl—delicious texture, macro push, light jazz bed, rich warm tones."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Overhead cooking—food cinematic, sizzle foley, lateral slide across board."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Animate this plated dish—orbit, steam, warm lo-fi (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my backend only."
+  - id: negative-clinical-flat
+    should_trigger: false
+    prompt: "Flat overhead nutrition chart, sterile LED only, no steam or appetite macro."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

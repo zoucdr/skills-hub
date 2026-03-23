@@ -1,0 +1,37 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "korean-aesthetic-portrait-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the korean-aesthetic-portrait-video-gen skill for a 9:16 korean_aesthetic_portrait_video with creamy palette and romantic clean look."
+  - id: implicit-korean-aesthetic
+    should_trigger: true
+    prompt: "Korean aesthetic portrait—soft skin tone, pink-cream grade, smooth dolly-in, gentle electronic bed."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Polished beauty café visit: semi-orbit around the subject, airy highlights, light R&B mood, steady follow walk."
+  - id: implicit-camera
+    should_trigger: true
+    prompt: "Couple clip: subtle jib rise, romantic clean look, moderate soft focus, lyrical pop underscore (generic)."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Animate this beauty still—korean aesthetic, half orbit, creamy palette, soft skin tone (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Rust crate and add property-based tests only."
+  - id: negative-neon-action
+    should_trigger: false
+    prompt: "Neon cyberpunk chase, harsh contrast, shaky handheld, aggressive dubstep drop, orange-teal blockbuster look."
+  - id: negative-gritty-doc
+    should_trigger: false
+    prompt: "Gritty war documentary: heavy grain, desaturated mud tones, chaotic whip pans, news voiceover only."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

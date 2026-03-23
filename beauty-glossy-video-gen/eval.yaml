@@ -1,0 +1,31 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "beauty-glossy-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the beauty-glossy-video-gen skill for beauty_glossy_video with soft highlights and macro makeup detail."
+  - id: implicit-skincare
+    should_trigger: true
+    prompt: "Serum dropper macro—flawless skin texture, polished makeup detail, gentle electronic bed."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Feminine premium look, soft key light, slow face orbit, R&B instrumental mood."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Beauty glossy motion from portrait still (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my backend only."
+  - id: negative-horror-skin
+    should_trigger: false
+    prompt: "Horror cracked skin, sick green grade, jump scare—no beauty glossy glam."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

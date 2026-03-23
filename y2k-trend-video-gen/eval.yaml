@@ -1,0 +1,34 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "y2k-trend-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the y2k-trend-video-gen skill for a 9:16 y2k_trend_video with glossy texture and metallic highlights."
+  - id: implicit-y2k-dance
+    should_trigger: true
+    prompt: "Bedroom dance—y2k aesthetic, iridescent backdrop, fast push-pull, hyperpop sidechain bed, digital youth energy."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Mirror orbit fit check—glossy plastic chrome props, sparkle glints, electropop bounce, pop rebellion mood."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Animate this outfit still—y2k_trend_video, handheld shimmer, bubblegum kick-snare (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Rust crate and add property-based tests only."
+  - id: negative-vhs-grunge
+    should_trigger: false
+    prompt: "VHS scan lines, heavy chromatic smear, muddy home video—no glossy Y2K sparkle."
+  - id: negative-muted-luxury
+    should_trigger: false
+    prompt: "Muted limestone interior, soft gray wool, whisper piano—no hyperpop or plastic gloss."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

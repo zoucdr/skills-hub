@@ -1,0 +1,50 @@
+version: "1"
+defaults:
+  trials: 5
+  timeout: 600
+  threshold: 0.8
+skill: "epic-blockbuster-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the epic-blockbuster-video-gen skill for a 16:9 trailer-scale shot with KLING and war-drum audio."
+  - id: implicit-domain
+    should_trigger: true
+    prompt: "Epic scale, heroic low angle, aerial rise, dramatic contrast, blockbuster look for a promo teaser."
+  - id: implicit-trailer
+    should_trigger: true
+    prompt: "Massive environment, fast pull-back reveal, orchestral swell and timpani—text to video."
+  - id: implicit-game-cinematic
+    should_trigger: true
+    prompt: "I need a game launch cinematic—Hollywood-style blockbuster fortress shot, drone rise, brass hits."
+  - id: implicit-establishing
+    should_trigger: true
+    prompt: "Generate a 16:9 establishing shot of a ruined megacity at dusk with god-rays and trailer-style percussion."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Turn this key art into an epic blockbuster clip—big push-in and trailer-style percussion (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Rust crate and add property-based tests only."
+  - id: negative-kubernetes
+    should_trigger: false
+    prompt: "Deploy this Helm chart to my GKE cluster and fix the ingress TLS."
+  - id: negative-cozy-vlog
+    should_trigger: false
+    prompt: "Make a cozy cottage morning vlog with soft piano and coffee ASMR—nothing epic or trailer-like."
+  - id: negative-product-spin
+    should_trigger: false
+    prompt: "Spinning product showcase on white seamless for e-commerce, 15 seconds, clean and minimal."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"
+  # Optional LLM rubric (requires external grader): SKILL.md includes Pre-submit gate, Prompt expansion with Audio:,
+  # submit-* + status in CLI reference, and Boundaries that forbid copyrighted trailer scores.
+  # - id: release-readiness-copy
+  #   type: llm_rubric
+  #   rubric: |
+  #     Workflow (0-0.5): Pre-submit confirmation, async submit then user-chosen status/wait.
+  #     Expansion (0-0.5): Mandatory prompt expansion including generic trailer-style audio when generate_audio is true.

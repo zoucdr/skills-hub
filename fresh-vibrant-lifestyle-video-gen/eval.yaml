@@ -1,0 +1,39 @@
+version: "1"
+defaults:
+  trials: 5
+  timeout: 600
+  threshold: 0.8
+skill: "fresh-vibrant-lifestyle-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the fresh-vibrant-lifestyle-video-gen skill for a 9:16 travel brunch clip with saturated colors and upbeat plucky audio."
+  - id: implicit-domain
+    should_trigger: true
+    prompt: "Fresh vibrant lifestyle video—bright daylight, clean highlights, quick pan, lively mood for a food stall."
+  - id: implicit-couple-outdoor
+    should_trigger: true
+    prompt: "Couple hiking—vibrant greens, airy sunlight, follow cam, light handheld, feel-good outdoor vibe, text to video."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Turn this picnic photo into motion—small push-in, saturated colors, fresh atmosphere (image URL)."
+  - id: implicit-city-pop-audio
+    should_trigger: true
+    prompt: "Generate a vertical clip with City Pop vibe and lo-fi upbeat bed—saturated colors, not dark cinematic."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Go module and add fuzz tests only."
+  - id: negative-cinematic-dark
+    should_trigger: false
+    prompt: "Orange-teal cinematic drama—heavy grain, low key lighting, slow dolly only, moody trailer look."
+  - id: negative-documentary
+    should_trigger: false
+    prompt: "Vérité documentary interview—flat natural light, long observational take, muted grade, no saturated pop."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      # After assembly:
+      # - file_exists: "scripts/video_gen.js"
+      # - file_exists: "references/WERYAI_VIDEO_API.md"

@@ -1,0 +1,31 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "luxury-brand-film-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the luxury-brand-film-video-gen skill for luxury_brand_film with refined highlights and slow orbit."
+  - id: implicit-jewelry
+    should_trigger: true
+    prompt: "Watch macro—premium texture, elegant motion, minimal strings, exclusive mood."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Luxury advertising perfume bottle—slow dolly, tactile glass, fashion ambient electronic."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Luxury orbit on this jewelry still (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my backend only."
+  - id: negative-flash-sale
+    should_trigger: false
+    prompt: "Flash sale neon, 99% OFF stickers, dubstep drop—no quiet luxury film."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

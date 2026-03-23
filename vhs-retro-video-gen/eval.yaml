@@ -1,0 +1,34 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "vhs-retro-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the vhs-retro-video-gen skill for a 9:16 vhs_retro_video_fx with scan lines and tape glitch."
+  - id: implicit-vhs-texture
+    should_trigger: true
+    prompt: "Night alley—VHS texture, chromatic distortion, handheld wobble, lo-fi synthwave bed, nostalgic home video."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Mock doc interview—CRT color skew, tracking wobble, scan lines, old TV noise mood, snap zoom."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Turn this photo into VHS—tape glitch, horizontal smear, chromatic aberration, generic lo-fi hiss bed (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Rust crate and add property-based tests only."
+  - id: negative-clean-commercial
+    should_trigger: false
+    prompt: "Pristine 4K product hero—HDR, gimbal-smooth orbit, clean white cyc, crisp logo lockup."
+  - id: negative-cinematic-prestige
+    should_trigger: false
+    prompt: "70mm film scan—natural grain only, no scan lines, anamorphic flares, orchestral score, prestige drama."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

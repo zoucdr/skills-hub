@@ -1,0 +1,37 @@
+version: "1"
+defaults:
+  trials: 5
+  timeout: 600
+  threshold: 0.8
+skill: "documentary-observation-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the documentary-observation-video-gen skill for 16:9 handheld interview B-roll with natural light and room tone."
+  - id: implicit-doc-handheld
+    should_trigger: true
+    prompt: "Documentary realism, observational pan, slight handheld shake, authentic skin—kitchen scene at window light."
+  - id: implicit-follow-cam
+    should_trigger: true
+    prompt: "Follow-cam behind someone walking through a train station, vérité look, ambient PA and footsteps."
+  - id: implicit-interview
+    should_trigger: true
+    prompt: "Generate a doc-style cutaway: workshop tools, long lens compression, natural light, light documentary piano."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Turn this still into a handheld doc clip—mild exposure drift, production ambience (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Rust crate and add property-based tests only."
+  - id: negative-blockbuster
+    should_trigger: false
+    prompt: "Hollywood epic trailer—low-angle hero, massive armies, brass stabs and war drums, blockbuster contrast."
+  - id: negative-music-video
+    should_trigger: false
+    prompt: "Neon cyberpunk music video with strobes, glam beauty lighting, and heavy bass drop."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

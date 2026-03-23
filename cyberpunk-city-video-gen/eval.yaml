@@ -1,0 +1,34 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "cyberpunk-city-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the cyberpunk-city-video-gen skill for a 9:16 cyberpunk_city_video with neon rain and purple blue glow."
+  - id: implicit-rain-neon
+    should_trigger: true
+    prompt: "Night megacity—rainy reflections, magenta cyan signage, low-angle push through steam, dark electronic industrial bed."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Futuristic dystopia alley—orbit around silhouette, volumetric haze, synthwave pulse and metal percussion."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Turn this portrait into cyberpunk street—wet ground reflections, fast lateral track (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Rust crate and add property-based tests only."
+  - id: negative-daylight-pastoral
+    should_trigger: false
+    prompt: "Golden-hour meadow picnic, natural film grain only, acoustic guitar—no neon or rain-slick city."
+  - id: negative-y2k-gloss
+    should_trigger: false
+    prompt: "Y2K bedroom sparkle, bubblegum hyperpop, plastic gloss—no dystopian rain megacity."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

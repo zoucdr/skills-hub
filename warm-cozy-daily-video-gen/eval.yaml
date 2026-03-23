@@ -1,0 +1,39 @@
+version: "1"
+defaults:
+  trials: 5
+  timeout: 600
+  threshold: 0.8
+skill: "warm-cozy-daily-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the warm-cozy-daily-video-gen skill for a 9:16 café clip with golden light, soft contrast, and soft piano audio."
+  - id: implicit-domain
+    should_trigger: true
+    prompt: "Warm cozy daily video—golden hour at home, low contrast, gentle bloom, comforting homely mood, text to video."
+  - id: implicit-pet-cafe
+    should_trigger: true
+    prompt: "Pet on a sunny windowsill—amber tones, light handheld sway, lo-fi acoustic bed, vertical clip."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Animate this breakfast table photo—tabletop slide, follow hands pouring coffee, warm cozy grade (image URL)."
+  - id: implicit-audio-mood
+    should_trigger: true
+    prompt: "Generate a vertical clip with light folk guitar and soft piano—homely atmosphere, not high-saturation pop."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Rust crate and add property-based tests only."
+  - id: negative-vibrant-pop
+    should_trigger: false
+    prompt: "Fresh vibrant lifestyle—high saturation, bright daylight, quick pan, City Pop upbeat energy."
+  - id: negative-cinematic-dark
+    should_trigger: false
+    prompt: "Orange-teal cinematic thriller—low key, heavy grain, aggressive dolly, moody trailer only."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      # After assembly:
+      # - file_exists: "scripts/video_gen.js"
+      # - file_exists: "references/WERYAI_VIDEO_API.md"

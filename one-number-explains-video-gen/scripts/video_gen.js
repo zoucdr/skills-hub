@@ -2,9 +2,9 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { fileURLToPath } = require('node:url');
-const { formatApiError: formatSharedApiError, formatNetworkError: formatSharedNetworkError } = require('../../../core/weryai-core/errors.js');
 /**
  * WeryAI 视频生成 — 通用 CLI（零 npm 依赖，需 Node.js 18+）
+ * 单文件自包含：除 Node 内置模块外不 require 仓库内其他文件。
  *
  * 命令:
  *   wait | submit-text | submit-image | submit-multi-image | status | models
@@ -35,36 +35,172 @@ const IMAGE_MIME_TYPES = {
   '.gif': 'image/gif',
 };
 
+/** Normalize API task_status strings (any casing) to internal phase buckets. */
 const STATUS_MAP = {
   waiting: 'waiting',
-  WAITING: 'waiting',
   pending: 'waiting',
-  PENDING: 'waiting',
   processing: 'processing',
-  PROCESSING: 'processing',
   succeed: 'completed',
-  SUCCEED: 'completed',
   success: 'completed',
-  SUCCESS: 'completed',
+  completed: 'completed',
+  complete: 'completed',
   failed: 'failed',
-  FAILED: 'failed',
+  fail: 'failed',
 };
 
-const ERROR_MESSAGES = {
-  400: 'Bad request — check your request parameters.',
-  403: 'Invalid API key or IP access denied — verify WERYAI_API_KEY is correct.',
-  500: 'WeryAI server error. Please try again later.',
-  1001: 'Request rate limit exceeded — slow down and retry after a moment.',
-  1002: 'Parameter error — check prompt, image URLs, aspect_ratio, model key, and duration.',
-  1003: 'Resource not found — the task_id may not exist or has expired.',
-  1006: 'Model not supported — check the model key or try a different model.',
-  1007: 'Queue full — the service is busy, please try again later.',
-  1011: 'Insufficient credits — recharge at weryai.com.',
-  2003: 'Content flagged by safety system — revise your prompt or input image.',
-  2004: 'Image format not supported — use jpg, png, or webp.',
-  6004: 'Generation failed — please try again later.',
-  6010: 'Concurrent task limit reached (max 20) — wait for existing tasks to complete.',
-};
+function mapTaskStatus(raw) {
+  const k = String(raw ?? '').trim().toLowerCase();
+  return STATUS_MAP[k] || 'unknown';
+}
+
+// --- Inlined API error shaping (video + upload paths only) ---
+/** Machine-oriented bucket for logs / policy; user-facing text comes from the API body when present. */
+function inferBusinessCategory(code) {
+  const n = Number(code);
+  if (!Number.isFinite(n)) return 'api';
+  if (n >= 2000 && n < 3000) return 'content_safety';
+  if (n === 1011) return 'credits';
+  if (n === 1001 || n === 6002) return 'rate_limit';
+  if (n === 1014 || n === 1015 || n === 1102) return 'upload';
+  if (n === 6010) return 'active_job_limit';
+  if (n === 1003 || n === 1010) return 'not_found';
+  return 'server';
+}
+
+const BUSINESS_RETRYABLE_CODES = new Set([
+  '1001', '1014', '1015', '1102', '5000', '6001', '6002', '6003', '6004', '6010',
+]);
+
+function businessRetryable(code) {
+  return BUSINESS_RETRYABLE_CODES.has(String(code));
+}
+
+function formatApiError(response) {
+  const httpStatus = response.httpStatus;
+  const code = response.status != null ? String(response.status) : null;
+  const rawMessage = pickRawMessage(response);
+
+  if (httpStatus === 401 || httpStatus === 403) {
+    return failure(String(httpStatus), {
+      category: 'auth',
+      title: `HTTP ${httpStatus}`,
+      message: rawMessage || 'Authentication failed.',
+      retryable: false,
+    }, { raw: response });
+  }
+  if (httpStatus === 404) {
+    return failure('404', {
+      category: 'not_found',
+      title: 'HTTP 404',
+      message: rawMessage || 'Resource not found.',
+      retryable: false,
+    }, { raw: response });
+  }
+  if (httpStatus === 429) {
+    return failure('429', {
+      category: 'rate_limit',
+      title: 'HTTP 429',
+      message: rawMessage || 'Too many requests.',
+      retryable: true,
+    }, { raw: response });
+  }
+  if (httpStatus >= 500) {
+    return failure('500', {
+      category: 'server',
+      title: 'HTTP 5xx',
+      message: rawMessage || 'Service error.',
+      retryable: true,
+    }, { raw: response });
+  }
+  if (httpStatus === 400) {
+    return failure('400', {
+      category: 'validation',
+      title: 'HTTP 400',
+      message: rawMessage || 'Bad request.',
+      retryable: false,
+    }, { raw: response });
+  }
+
+  if (code === '1002') {
+    return classifyValidationError(response);
+  }
+
+  if (code) {
+    return failure(code, {
+      category: inferBusinessCategory(code),
+      title: 'API error',
+      message: rawMessage || `Request failed (status ${code}).`,
+      retryable: businessRetryable(code),
+    }, { raw: response });
+  }
+
+  return failure(code, {
+    category: 'server',
+    title: 'Request failed',
+    message: rawMessage || 'We could not complete this request right now. Please try again later.',
+    retryable: true,
+  }, { raw: response });
+}
+
+function formatNetworkError(err) {
+  return failure('NETWORK_ERROR', {
+    category: 'network',
+    title: 'Network error',
+    message: 'We could not reach the API right now. Please check the network and try again.',
+    retryable: true,
+    hint: err?.message || String(err),
+  });
+}
+
+function pickValidationField(response) {
+  const v =
+    response.field ??
+    response.error_field ??
+    response.errorField ??
+    (response.data && typeof response.data === 'object' ? response.data.field : null);
+  if (v == null) return null;
+  const s = String(v).trim();
+  return s || null;
+}
+
+/** status 1002: use API text as-is; optional field from body if present. */
+function classifyValidationError(response) {
+  const rawMessage = pickRawMessage(response);
+  const message =
+    rawMessage ||
+    'The request parameters are invalid or not supported. Please review your input and try again.';
+  return failure(
+    '1002',
+    {
+      category: 'validation',
+      title: 'Parameter error',
+      message,
+      retryable: false,
+      field: pickValidationField(response),
+    },
+    { raw: response }
+  );
+}
+
+function pickRawMessage(response) {
+  return String(response?.msg || response?.message || response?.desc || '').trim();
+}
+
+function failure(errorCode, view, extra = {}) {
+  return {
+    ok: false,
+    phase: 'failed',
+    errorCode: errorCode != null ? String(errorCode) : null,
+    errorCategory: view.category,
+    errorTitle: view.title,
+    errorMessage: view.message,
+    retryable: view.retryable,
+    field: view.field ?? null,
+    hint: view.hint ?? null,
+    raw: extra.raw ?? null,
+  };
+}
+// --- end inlined errors ---
 
 function log(msg) {
   process.stderr.write(`[weryai] ${msg}\n`);
@@ -151,30 +287,26 @@ function makeUploadBatchNo() {
 
 function collectPossibleUploadUrls(data) {
   const candidates = [];
-  if (!data) return candidates;
-  const maybePush = (value) => {
-    if (typeof value === 'string' && value.trim()) candidates.push(value.trim());
+  if (!data || typeof data !== 'object') return candidates;
+  const push = (v) => {
+    if (typeof v === 'string' && v.trim()) candidates.push(v.trim());
   };
-  const maybePushMany = (value) => {
-    if (Array.isArray(value)) {
-      for (const item of value) maybePush(item);
-    }
-  };
-
-  maybePush(data.url);
-  maybePush(data.file_url);
-  maybePush(data.fileUrl);
-  maybePush(data.https_url);
-  maybePush(data.httpsUrl);
-  maybePush(data.public_url);
-  maybePush(data.publicUrl);
-  maybePush(data.object_url);
-  maybePush(data.objectUrl);
-  maybePush(data.origin_url);
-  maybePush(data.originUrl);
-  maybePushMany(data.object_url_list);
-  maybePushMany(data.objectUrlList);
-
+  const keys = [
+    'url',
+    'file_url',
+    'fileUrl',
+    'https_url',
+    'httpsUrl',
+    'public_url',
+    'publicUrl',
+    'object_url',
+    'objectUrl',
+  ];
+  for (const k of keys) push(data[k]);
+  const lists = ['object_url_list', 'objectUrlList'];
+  for (const k of lists) {
+    if (Array.isArray(data[k])) for (const item of data[k]) push(item);
+  }
   if (data.file && typeof data.file === 'object') {
     candidates.push(...collectPossibleUploadUrls(data.file));
   }
@@ -182,14 +314,10 @@ function collectPossibleUploadUrls(data) {
     candidates.push(...collectPossibleUploadUrls(data.data));
   }
   if (Array.isArray(data.files)) {
-    for (const item of data.files) {
-      candidates.push(...collectPossibleUploadUrls(item));
-    }
+    for (const item of data.files) candidates.push(...collectPossibleUploadUrls(item));
   }
   if (Array.isArray(data.list)) {
-    for (const item of data.list) {
-      candidates.push(...collectPossibleUploadUrls(item));
-    }
+    for (const item of data.list) candidates.push(...collectPossibleUploadUrls(item));
   }
   return candidates;
 }
@@ -283,14 +411,6 @@ function isApiSuccess(res) {
   const httpOk = res.httpStatus >= 200 && res.httpStatus < 300;
   const bodyOk = res.status === 0 || res.status === 200;
   return httpOk && bodyOk;
-}
-
-function formatApiError(res) {
-  return formatSharedApiError(res);
-}
-
-function formatNetworkError(err) {
-  return formatSharedNetworkError(err);
 }
 
 function detectMode(params) {
@@ -448,7 +568,7 @@ async function pollUntilDone(taskId, batchId, taskIds, apiKey) {
 
     const taskData = res.data || {};
     const rawStatus = taskData.task_status || '';
-    const normalized = STATUS_MAP[rawStatus] || 'unknown';
+    const normalized = mapTaskStatus(rawStatus);
     const elapsedSec = Math.floor((Date.now() - start) / 1000);
     log(`Polling ${taskId}... status: ${rawStatus} (${elapsedSec}s elapsed)`);
 
@@ -513,7 +633,7 @@ async function cmdStatus(taskId, apiKey) {
 
   const taskData = res.data || {};
   const rawStatus = taskData.task_status || '';
-  const normalized = STATUS_MAP[rawStatus] || 'unknown';
+  const normalized = mapTaskStatus(rawStatus);
   const videos = extractVideos(taskData);
   const phase =
     normalized === 'completed' ? 'completed' : normalized === 'failed' ? 'failed' : 'running';
@@ -568,6 +688,7 @@ async function cmdModels(modeFilter, apiKey) {
     out.multi_image_to_video = data.multi_image_to_video || [];
   }
 
+  out.collectedAt = new Date().toISOString();
   return out;
 }
 

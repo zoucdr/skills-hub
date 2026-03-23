@@ -1,0 +1,34 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "retro-80s-neon-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the retro-80s-neon-video-gen skill for a 9:16 retro_80s_neon_video with synthwave palette and magenta cyan neon."
+  - id: implicit-neon-night
+    should_trigger: true
+    prompt: "Wet street at night—80s retro, neon glow, lateral truck past tube signs, disco four-on-the-floor bed, nostalgic nightlife."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Fashion spin-follow under magenta cyan lights—synthwave palette, fast push-in, retro pop groove mood."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Turn this portrait into 80s neon—orbit move, exaggerated practicals, synthwave arps (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Rust crate and add property-based tests only."
+  - id: negative-muted-doc
+    should_trigger: false
+    prompt: "Flat gray office B-roll, natural daylight only, no neon, vérité handheld, silent ambience."
+  - id: negative-luxury-minimal
+    should_trigger: false
+    prompt: "Muted luxury limestone interior, single tungsten pool, whisper-quiet, desaturated editorial—no synthwave."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

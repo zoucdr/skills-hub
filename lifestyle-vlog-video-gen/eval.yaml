@@ -1,0 +1,31 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "lifestyle-vlog-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the lifestyle-vlog-video-gen skill for lifestyle_vlog_editor casual daily moments and soft natural light."
+  - id: implicit-morning
+    should_trigger: true
+    prompt: "Morning routine clip—friendly handheld perspective, window light, lo-fi bed, lifestyle vlog pacing."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Desk overhead coffee—tabletop whip transition, bedroom pop mood, casual daily moments."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Vlog motion from this selfie still—handheld drift (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my backend only."
+  - id: negative-epic-travel
+    should_trigger: false
+    prompt: "IMAX mountain vista, massive orchestral swell, crane shot—no casual handheld vlog."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

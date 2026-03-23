@@ -1,0 +1,37 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "realistic-drama-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the realistic-drama-video-gen skill for a 9:16 realistic_drama_scene with restrained contrast and subtle color grading."
+  - id: implicit-restrained-drama
+    should_trigger: true
+    prompt: "Realistic drama in a small apartment—static medium, spatial pressure between two people, understated piano, naturalistic performance."
+  - id: implicit-camera-audio
+    should_trigger: true
+    prompt: "Gentle push-in, slow follow, shoulder-held camera, minimal strings and room tone—slice-of-life tension, no flashy grade."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Subtle color grading, naturalistic performance, restrained contrast—quiet hallway scene after an argument."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Turn this portrait into realistic drama—controlled handheld, dialogue atmosphere, soft atmospheric strings (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Rust crate and add property-based tests only."
+  - id: negative-blockbuster
+    should_trigger: false
+    prompt: "Hollywood epic trailer—low-angle hero, massive armies, brass stabs and war drums, blockbuster contrast."
+  - id: negative-doc-only
+    should_trigger: false
+    prompt: "Pure vérité documentary fly-on-the-wall interview B-roll with observational pan only—no staged drama."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

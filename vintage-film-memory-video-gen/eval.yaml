@@ -1,0 +1,34 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "vintage-film-memory-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the vintage-film-memory-video-gen skill for a 9:16 vintage_film_memory_video with analog grain and faded nostalgic tone."
+  - id: implicit-film-grain
+    should_trigger: true
+    prompt: "Old travel clip—retro cinema texture, yellow-brown cast, locked-off frame, slow dolly, soft jazz trio bed."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Vintage film look: analog grain, faded color, memory mood, stable lateral drift, vinyl-era room tone."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Turn this still into vintage film—faded greens, slow push-in, nostalgic tone, generic retro underscore (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Rust crate and add property-based tests only."
+  - id: negative-hdr-commercial
+    should_trigger: false
+    prompt: "HDR product hero—razor sharp, clinical white cyc, neon rim lights, loud EDM drop."
+  - id: negative-cyber-neon
+    should_trigger: false
+    prompt: "Cyberpunk alley—purple cyan neon rain, holographic UI, glitch bass, whip-pan energy."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

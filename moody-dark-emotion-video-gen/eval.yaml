@@ -1,0 +1,37 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "moody-dark-emotion-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the moody-dark-emotion-video-gen skill for a 9:16 moody_dark_emotion clip with low key lighting and cold highlights."
+  - id: implicit-mood-keywords
+    should_trigger: true
+    prompt: "Moody dark night scene—deep shadows, mysterious atmosphere, psychological tension, ultra-slow push-in."
+  - id: implicit-camera-audio
+    should_trigger: true
+    prompt: "Locked-off static shot, slow pull-back, follow through darkness, dark ambient drone and low-frequency electronic bed."
+  - id: implicit-style-phrase
+    should_trigger: true
+    prompt: "Low key lighting, deep shadows, cold highlights—solitary figure by a rain-streaked window, inner drama."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Animate this still into moody dark emotion—very slow dolly out, selective rim light, sparse foley (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my Rust crate and add property-based tests only."
+  - id: negative-bright-lifestyle
+    should_trigger: false
+    prompt: "Bright sunny beach vlog—high key, golden hour, upbeat pop energy, saturated travel commercial."
+  - id: negative-horror-gore
+    should_trigger: false
+    prompt: "Explicit torture horror—graphic gore, splatter, extreme violence close-ups for shock."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"

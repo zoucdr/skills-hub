@@ -1,0 +1,34 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "futuristic-tech-showcase-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the futuristic-tech-showcase-video-gen skill for futuristic_tech_showcase with blue-white lab lighting and turntable orbit."
+  - id: implicit-clean-tech
+    should_trigger: true
+    prompt: "Minimal hardware hero on white cyclorama—precision slider, sci-fi UI feel rim light, ambient tech pad."
+  - id: implicit-keywords
+    should_trigger: true
+    prompt: "Sleek modern surfaces, clean geometry, mechanical push-in, cool white key—keynote style."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Animate this device still—futuristic tech, slow tilt transition (image URL)."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my backend only."
+  - id: negative-cyberpunk-rain
+    should_trigger: false
+    prompt: "Cyberpunk rain alley, magenta cyan neon puddles, industrial grime—no clean lab look."
+  - id: negative-cozy-warm
+    should_trigger: false
+    prompt: "Cozy fireplace reading nook, tungsten only, wool textures—no blue-white tech minimalism."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
+      - file_exists: "references/WERYAI_VIDEO_API.md"
