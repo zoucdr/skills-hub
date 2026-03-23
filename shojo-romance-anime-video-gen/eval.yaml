@@ -1,0 +1,30 @@
+version: "1"
+defaults:
+  trials: 3
+  timeout: 600
+  threshold: 0.75
+skill: "shojo-romance-anime-video-gen"
+trigger_tests:
+  - id: explicit-invoke
+    should_trigger: true
+    prompt: "Use the shojo-romance-anime-video-gen skill for vertical anime video matching its genre anchors."
+  - id: implicit-domain
+    should_trigger: true
+    prompt: "Shojo anime romance—pastel tones, soft glow, delicate emotion."
+  - id: implicit-domain-2
+    should_trigger: true
+    prompt: "Dreamy sparkles, gentle piano instrumental bed."
+  - id: implicit-image-to-video
+    should_trigger: true
+    prompt: "Animate my character still with an https image URL using shojo-romance-anime-video-gen."
+  - id: negative-control
+    should_trigger: false
+    prompt: "Refactor my backend only."
+  - id: negative-genre-mismatch
+    should_trigger: false
+    prompt: "Mecha robot factory fight—no shojo romance pastel mood."
+outcome_tests:
+  - id: layout
+    type: deterministic
+    checks:
+      - file_exists: "SKILL.md"
