@@ -92,14 +92,14 @@ Playable URL(s) or clear failure; parameters within model limits. The submitted 
 
 | Field | Value |
 |-------|--------|
-| Model | KLING_V3_0_PRO |
+| Model | Kling 3.0 Pro |
 | Aspect | 9:16 |
 | Duration | 5 (short hook) |
 | `generate_audio` | **`true`** (default); expanded **`prompt`** must include **`Audio:`** (brush, water, squeeze—generic ASMR cues) unless the user wants silent |
 | Audio | On (brush, water, squeeze ASMR) |
 | Look | Top-down close, soft light, extreme before/after color, slow grime flow, minimal background |
 
-> **API validity (`KLING_V3_0_PRO`):** Text: `duration` **5 / 10 / 15**, `aspect_ratio` **9:16, 1:1, 16:9**; image: `aspect_ratio` **9:16, 16:9, 1:1**; **no `resolution`.** VEO fast: **`VEO_3_1_FAST`** / **`CHATBOT_VEO_3_1_FAST`**, `duration` **8**, `aspect_ratio` **9:16** or **16:9**. Other keys: follow tables here.
+> **API validity (`KLING_V3_0_PRO`):** Text: `duration` **5 / 10 / 15**, `aspect_ratio` **9:16, 1:1, 16:9**; image: `aspect_ratio` **9:16, 16:9, 1:1**; **no `resolution`.** VEO fast: **`Veo 3.1 Fast`** / **`Veo 3.1 Fast`**, `duration` **8**, `aspect_ratio` **9:16** or **16:9**. Other keys: follow tables here.
 
 ---
 
@@ -113,7 +113,7 @@ Playable URL(s) or clear failure; parameters within model limits. The submitted 
 node scripts/video_gen.js wait --json '{"model":"KLING_V3_0_PRO","prompt":"(English prompt)","aspect_ratio":"9:16","duration":5,"generate_audio":true}'
 ```
 
-**Parameters:** model KLING_V3_0_PRO, 9:16, 5, generate_audio true.
+**Parameters:** model Kling 3.0 Pro, 9:16, 5, generate_audio true.
 
 **Expanded prompt:** Build per `## Prompt expansion (mandatory)` from the user's rug/stain brief; do not paste fixed samples.
 

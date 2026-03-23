@@ -116,17 +116,17 @@ Done when the user receives at least one playable video URL from the API respons
 
 | model_key | durations | aspect_ratios | resolutions | Audio | negative_prompt | Prompt max |
 |-----------|-----------|---------------|-------------|-------|-----------------|------------|
-| `SEEDANCE_2_0` | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | Yes | No | 2000 |
-| `DOUBAO_1_5_PRO` | 5, 10 | 9:16, 16:9, 4:3, 3:4, 1:1, 21:9 | 480p, 720p, 1080p | Yes | No | 2000 |
-| `DOUBAO_1_PRO_FAST` | 5, 10 | 9:16, 16:9, 4:3, 3:4, 1:1, 21:9 | 480p, 720p, 1080p | No | No | 2000 |
+| `Seedance 2.0` | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | Yes | No | 2000 |
+| `Seedance 1.5 Pro` | 5, 10 | 9:16, 16:9, 4:3, 3:4, 1:1, 21:9 | 480p, 720p, 1080p | Yes | No | 2000 |
+| `Seedance 1.0 Pro Fast` | 5, 10 | 9:16, 16:9, 4:3, 3:4, 1:1, 21:9 | 480p, 720p, 1080p | No | No | 2000 |
 
 ### Image-to-video (single `image`)
 
 | model_key | durations | aspect_ratios | resolutions | Audio | negative_prompt | upload_image_limit | Multi-image |
 |-----------|-----------|---------------|-------------|-------|-----------------|-------------------|-------------|
-| `SEEDANCE_2_0` | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | Yes | No | 3 | Supported (this skill uses single image only) |
-| `DOUBAO_1_5_PRO` | 5, 10 | 9:16, 16:9, 4:3, 3:4, 1:1, 21:9 | 480p, 720p, 1080p | Yes | Yes | 1 | No |
-| `DOUBAO_1_PRO_FAST` | 5, 10 | 9:16, 16:9, 4:3, 3:4, 1:1, 21:9 | 480p, 720p, 1080p | No | Yes | 1 | No |
+| `Seedance 2.0` | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | Yes | No | 3 | Supported (this skill uses single image only) |
+| `Seedance 1.5 Pro` | 5, 10 | 9:16, 16:9, 4:3, 3:4, 1:1, 21:9 | 480p, 720p, 1080p | Yes | Yes | 1 | No |
+| `Seedance 1.0 Pro Fast` | 5, 10 | 9:16, 16:9, 4:3, 3:4, 1:1, 21:9 | 480p, 720p, 1080p | No | Yes | 1 | No |
 
 **This skill’s defaults:** Recommend **`aspect_ratio` 9:16**; **`duration` 5** (snappy, easy to finish); **`generate_audio`: `true`** whenever the **selected model supports audio** (expanded **`prompt`** must include **`Audio:`**—soft ambience, gentle foley—**even if the user never mentioned sound**). **Fast** tier `DOUBAO_1_PRO_FAST` has **no audio** in the frozen row—**omit** `generate_audio` or set **`false`** and **omit** **`Audio:`** for that model only. Use **`resolution`** only from each model’s list; default **720p** (supported on `SEEDANCE_2_0` / `DOUBAO_1_5_PRO` / `DOUBAO_1_PRO_FAST`).
 
@@ -136,9 +136,9 @@ Done when the user receives at least one playable video URL from the API respons
 
 | Tier | model_key | When to use |
 |------|-----------|-------------|
-| ⭐ Best (default) | `SEEDANCE_2_0` | Production: audio, up to 15s, fur and slow motion tend to be steadier |
-| 👍 Good | `DOUBAO_1_5_PRO` | Need **1080p** or **3:4** and similar vertical ratios |
-| ⚡ Fast | `DOUBAO_1_PRO_FAST` | Drafts and batch looks; saves time |
+| ⭐ Best (default) | `Seedance 2.0` | Production: audio, up to 15s, fur and slow motion tend to be steadier |
+| 👍 Good | `Seedance 1.5 Pro` | Need **1080p** or **3:4** and similar vertical ratios |
+| ⚡ Fast | `Seedance 1.0 Pro Fast` | Drafts and batch looks; saves time |
 
 Say “cheaper / draft / faster” → **fast**; “balanced / good” → **good**; default **best**. You can also name a `model_key` directly.
 
@@ -148,8 +148,8 @@ Say “cheaper / draft / faster” → **fast**; “balanced / good” → **goo
 
 | Field | Value |
 |-------|-------|
-| Aspect ratio | 9:16 (vertical short-video; **good** tier can use 3:4 if inside DOUBAO `aspect_ratios`) |
-| Duration | 5s (can use 10; only `SEEDANCE_2_0` allows 15) |
+| Aspect ratio | 9:16 (vertical short-video; **good** tier can use 3:4 if inside Seedance 1.0 Pro `aspect_ratios`) |
+| Duration | 5s (can use 10; only `Seedance 2.0` allows 15) |
 | Resolution | 720p (480p optional; follow the model table above) |
 | Audio | **`true`** when the model supports audio (**best** / **good**); **fast** (`DOUBAO_1_PRO_FAST`): no audio—omit **`Audio:`** / omit or `false` `generate_audio` |
 | Style | Soft focus, warm WB, shallow DOF, slow motion, clean background; avoid horror, gore, uncanny anthropomorphism |
@@ -166,7 +166,7 @@ Quick ideation: user gives **species + coat + one action + setting**; you add le
 
 1. If unclear, ask breed and action; default to viral vertical framing.
 2. Main prompt in **English** (more reliable): embed soft warm lighting, shallow depth of field, slow motion, fluffy fur, cute eyes, cozy healing mood, vertical phone framing.
-3. Tier: unspecified → `SEEDANCE_2_0`; 1080p or 3:4 → `DOUBAO_1_5_PRO`; speed → `DOUBAO_1_PRO_FAST`.
+3. Tier: unspecified → `Seedance 2.0`; 1080p or 3:4 → `Seedance 1.5 Pro`; speed → `Seedance 1.0 Pro Fast`.
 4. **Parameter confirmation table** (wait for user **confirm**):
 
    > 📋 **Ready to generate—please confirm:**
@@ -219,7 +219,7 @@ User supplies a pet image; subject moves slightly (breath, ears, blink, tail)—
    node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"...","image":"/absolute/path/to/user-pet.png","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}'
    ```
 
-5. Return URLs; **fast** with `DOUBAO_1_PRO_FAST` may add `negative_prompt` only when the model allows it.
+5. Return URLs; **fast** with `Seedance 1.0 Pro Fast` may add `negative_prompt` only when the model allows it.
 
 **Expanded prompt:** Compose at generation time per `## Prompt expansion (mandatory)` from the user's actual brief—do not reuse fixed sample paragraphs.
 

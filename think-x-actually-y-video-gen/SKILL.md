@@ -57,7 +57,7 @@ user-invocable: true
 
 ## Workflow
 
-1. Choose path: **text-to-video**, **single image**, or **multi-image** (**SEEDANCE_2_0** only, ≤3 URLs).
+1. Choose path: **text-to-video**, **single image**, or **multi-image** (**Seedance 2.0** only, ≤3 URLs).
 2. Extract or **draft X, Y, Z**; if the user only gave a topic, **propose** three beats and get their OK on concepts **before** expanding the full cinematic prompt.
 3. **Expand prompt (mandatory):** Build the full production `prompt` (three distinct looks, motion, timed English captions per beat, negatives for Kling). Validate length against `prompt_length_limit` for the chosen `model`.
 4. **Pre-submit gate:** Show the **parameter confirmation table** with the **complete** expanded `prompt`. **Stop** until the user **explicitly confirms** or requests edits.
@@ -109,25 +109,25 @@ node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"…","d
 
 | model_key | durations | aspect_ratios | resolutions | audio | negative_prompt | prompt limit |
 |-----------|-----------|---------------|-------------|-------|-----------------|--------------|
-| KLING_V3_0_PRO | 5, 10, 15 | 9:16, 1:1, 16:9 | *(omit)* | yes | yes | 2000 |
-| KLING_V3_0_STA | 5, 10, 15 | 9:16, 1:1, 16:9 | *(omit)* | yes | yes | 2000 |
-| SEEDANCE_2_0 | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | yes | no | 2000 |
+| Kling 3.0 Pro | 5, 10, 15 | 9:16, 1:1, 16:9 | *(omit)* | yes | yes | 2000 |
+| Kling 3.0 Standard | 5, 10, 15 | 9:16, 1:1, 16:9 | *(omit)* | yes | yes | 2000 |
+| Seedance 2.0 | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | yes | no | 2000 |
 
 ### Image-to-video
 
 | model_key | durations | aspect_ratios | resolutions | audio | negative_prompt | image slots |
 |-----------|-----------|---------------|-------------|-------|-----------------|-------------|
-| KLING_V3_0_PRO | 5, 10, 15 | 9:16, 16:9, 1:1 | *(omit)* | yes | yes | single `image` |
-| KLING_V3_0_STA | 5, 10, 15 | 9:16, 16:9, 1:1 | *(omit)* | yes | yes | single `image` |
-| SEEDANCE_2_0 | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | yes | no | up to **3** `images` |
+| Kling 3.0 Pro | 5, 10, 15 | 9:16, 16:9, 1:1 | *(omit)* | yes | yes | single `image` |
+| Kling 3.0 Standard | 5, 10, 15 | 9:16, 16:9, 1:1 | *(omit)* | yes | yes | single `image` |
+| Seedance 2.0 | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | yes | no | up to **3** `images` |
 
 ## Recommended models
 
 | Tier | model_key | Default duration |
 |------|-----------|------------------|
-| ⭐ Best | KLING_V3_0_PRO | 10 |
-| 👍 Good | KLING_V3_0_STA | 10 |
-| ⚡ Fast | SEEDANCE_2_0 | 10 (`resolution`: **720p**) |
+| ⭐ Best | Kling 3.0 Pro | 10 |
+| 👍 Good | Kling 3.0 Standard | 10 |
+| ⚡ Fast | Seedance 2.0 | 10 (`resolution`: **720p**) |
 
 ## Default parameters
 

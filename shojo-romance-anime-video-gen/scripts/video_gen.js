@@ -249,16 +249,6 @@ async function fetchModelsRegistry(apiKey) {
   return httpJson('GET', MODELS_BASE_URL + MODELS_API_PATH, null, apiKey);
 }
 
-function isPublicHttpsUrl(value) {
-  if (typeof value !== 'string' || !value.trim()) return false;
-  try {
-    const url = new URL(value);
-    return url.protocol === 'https:';
-  } catch {
-    return false;
-  }
-}
-
 function isRemoteUrl(value) {
   if (typeof value !== 'string' || !value.trim()) return false;
   try {
@@ -324,7 +314,7 @@ function collectPossibleUploadUrls(data) {
 
 function extractUploadedFileUrl(res) {
   const urls = collectPossibleUploadUrls(res?.data);
-  return urls.find(isPublicHttpsUrl) || null;
+  return urls.find(isRemoteUrl) || null;
 }
 
 async function uploadFileToPublicUrl(inputPath, apiKey) {
@@ -398,10 +388,7 @@ async function ensurePublicImageUrl(value, apiKey) {
   if (typeof value !== 'string' || !value.trim()) {
     throw new Error('Image source must be a non-empty string.');
   }
-  if (isPublicHttpsUrl(value)) return value;
-  if (isRemoteUrl(value)) {
-    throw new Error(`Remote image URL must use https: ${value}`);
-  }
+  if (isRemoteUrl(value)) return value;
 
   log(`Uploading local image to public URL: ${value}`);
   return uploadFileToPublicUrl(value, apiKey);
@@ -792,10 +779,10 @@ async function main() {
     }
     const body = 'prompt' in params ? buildRequestBody(params) : {};
     const notes = [];
-    if (body.image && !isPublicHttpsUrl(body.image)) {
+    if (body.image && !isRemoteUrl(body.image)) {
       notes.push('Local `image` paths are uploaded to WeryAI file storage during a real run; `--dry-run` does not upload files.');
     }
-    if (Array.isArray(body.images) && body.images.some((item) => !isPublicHttpsUrl(item))) {
+    if (Array.isArray(body.images) && body.images.some((item) => !isRemoteUrl(item))) {
       notes.push('Local entries in `images` are uploaded to WeryAI file storage during a real run; `--dry-run` keeps the original paths.');
     }
     printJson({

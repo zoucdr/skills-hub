@@ -23,6 +23,9 @@ trigger_tests:
   - id: wavespeed-migration
     should_trigger: true
     prompt: "I have a Seedance workflow with image plus last_image; migrate it to this WeryAI skill."
+  - id: almighty-mixed-reference
+    should_trigger: true
+    prompt: "Use Seedance 2.0 almighty reference mode with image + video + audio to generate a 5s clip."
   - id: negative-control
     should_trigger: false
     prompt: "Refactor my Node.js API handlers and add tests."
@@ -37,8 +40,9 @@ outcome_tests:
     rubric: |
       The skill should:
       - stay within documented Seedance 2.0 constraints,
-      - require public https image URLs,
-      - explain text, single-image, multi-image, and first-frame/last-frame usage,
-      - document compatibility for image + last_image migration,
+      - support text/image/multi-image and almighty mixed-reference routing,
+      - document and validate almighty limits (prompt 500, count limits, duration 5-15, video_number 1-4),
+      - support local media upload through the official /v1/generation/upload-file contract,
+      - keep compatibility for first_frame+last_frame and image+last_image workflows,
       - include actionable Seedance 2.0 prompt-engineering guidance beyond raw API usage,
       - require prompt expansion before paid submission.

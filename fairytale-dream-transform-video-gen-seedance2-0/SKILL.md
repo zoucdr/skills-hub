@@ -37,7 +37,7 @@ user-invocable: true
 
 **Always add:** shot size and angle; camera move; lighting and color grade aligned to this skill; subject action paced to `duration`; **one clear payoff**; platform framing (**9:16** unless user chose another allowed ratio). **`generate_audio` defaults to `true`** for `SEEDANCE_2_0`; unless the user explicitly requests **silent** video, use **`generate_audio`: `true`** in JSON **and** add a dedicated **`Audio:`** block in the **`prompt`** (ambience, layered SFX, optional dialogue—generic, non-copyrighted; **even when the user said nothing about sound**). For **silent** output: **`generate_audio`: `false`** and omit audio lines from the **`prompt`**.
 
-**Length:** Stay within **`prompt_length_limit` 2000** for `SEEDANCE_2_0`; trim adjectives before losing the core transformation beat.
+**Length:** Stay within **`prompt_length_limit` 2000** for `Seedance 2.0`; trim adjectives before losing the core transformation beat.
 
 **Confirmation:** The pre-submit table **must** include the **full expanded `prompt`**.
 
@@ -57,9 +57,9 @@ user-invocable: true
 ## Workflow
 
 1. Confirm the request matches this skill (text-to-video and/or single image-to-video).
-2. Collect the user's **brief**, optional **`image`** URL, and tier (**best** / **good** / **fast**)—all map to **`SEEDANCE_2_0`** with different duration defaults (see **Recommended models**).
+2. Collect the user's **brief**, optional **`image`** URL, and tier (**best** / **good** / **fast**)—all map to **`Seedance 2.0`** with different duration defaults (see **Recommended models**).
 3. **Expand prompt (mandatory):** Unless the user opted out with a finished long prompt, expand using `## Prompt expansion (mandatory)`. **Do not** submit only the user's minimal words.
-4. Validate **`model`** is **`SEEDANCE_2_0` only**; validate `duration`, `aspect_ratio`, `resolution`, `generate_audio` against the frozen tables.
+4. Validate **`model`** is **`Seedance 2.0` only**; validate `duration`, `aspect_ratio`, `resolution`, `generate_audio` against the frozen tables.
 5. Show the confirmation table with the **full expanded `prompt`**; wait for **confirm** or edits.
 6. Run `node scripts/video_gen.js wait --json '...'`.
 7. Parse stdout JSON; return `videos` URLs or explain errors.
@@ -101,13 +101,13 @@ Done when the user gets at least one playable **[Video](url)**-style link, or a 
 
 | model_key | durations | aspect_ratios | resolutions | Audio | negative_prompt | prompt limit |
 |-----------|-----------|---------------|-------------|-------|-----------------|---------------|
-| `SEEDANCE_2_0` | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | Yes | No (do not send) | 2000 |
+| `Seedance 2.0` | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | Yes | No (do not send) | 2000 |
 
 ### Image-to-video (single `image`)
 
 | model_key | durations | aspect_ratios | resolutions | Audio | negative_prompt | upload_image_limit |
 |-----------|-----------|---------------|-------------|-------|-----------------|-------------------|
-| `SEEDANCE_2_0` | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | Yes | No (do not send) | 3 |
+| `Seedance 2.0` | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | Yes | No (do not send) | 3 |
 
 ---
 
@@ -115,9 +115,9 @@ Done when the user gets at least one playable **[Video](url)**-style link, or a 
 
 | Tier | model_key | Notes |
 |------|-----------|-------|
-| ⭐ Best (default) | `SEEDANCE_2_0` | Prefer **`duration` 10 or 15**, **`resolution` 720p**, **`generate_audio` true** for fullest mood |
-| 👍 Good | `SEEDANCE_2_0` | Balanced: **`duration` 10**, **`resolution` 720p**, audio per user |
-| ⚡ Fast | `SEEDANCE_2_0` | Snappy: **`duration` 5**, **`resolution` 480p** or **720p**, audio optional |
+| ⭐ Best (default) | `Seedance 2.0` | Prefer **`duration` 10 or 15**, **`resolution` 720p**, **`generate_audio` true** for fullest mood |
+| 👍 Good | `Seedance 2.0` | Balanced: **`duration` 10**, **`resolution` 720p**, audio per user |
+| ⚡ Fast | `Seedance 2.0` | Snappy: **`duration` 5**, **`resolution` 480p** or **720p**, audio optional |
 
 Tier only changes **duration / resolution / audio** defaults—**never** the model.
 
@@ -127,7 +127,7 @@ Tier only changes **duration / resolution / audio** defaults—**never** the mod
 
 | Field | Value |
 |-------|--------|
-| Model | `SEEDANCE_2_0` (fixed) |
+| Model | `Seedance 2.0` (fixed) |
 | Aspect ratio | `9:16` |
 | Duration | `10` (use `5` for punchy; `15` for slower ceremony) |
 | Resolution | `720p` (`480p` allowed) |

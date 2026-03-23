@@ -95,13 +95,13 @@ Done when the user receives at least one playable video URL from the API respons
 
 | Field | Value |
 |-------|-------|
-| Model | KLING_V3_0_PRO |
+| Model | Kling 3.0 Pro |
 | Aspect ratio | 9:16 (fixed) |
 | Duration | 10 seconds (`duration`: 10—full growth arc) |
 | Audio | **On** — default **`generate_audio`: `true`**; expanded **`prompt`** must include **`Audio:`** (ambience + SFX; generic) unless the user wants silent |
 | Visual style | Front medium or top-down; natural light (window sun); timelapse feel; light direction shifts over “days”; simple background (soil, terracotta, wood) |
 
-> **API validity (default `KLING_V3_0_PRO`):** Text-to-video `duration` only **5 / 10 / 15**; `aspect_ratio` only **9:16, 1:1, 16:9**. Image-to-video `aspect_ratio` only **9:16, 16:9, 1:1**. **No `resolution` field—do not send it.** For **fast** tier with VEO: text-to-video **`VEO_3_1_FAST`**, image-to-video **`CHATBOT_VEO_3_1_FAST`**, with `duration` **fixed at 8**, `aspect_ratio` only **9:16** or **16:9**. When switching `model_key`, follow the allowed sets in this section’s model/API constraints and the API validity note above; do not send `resolution` to models that do not support it.
+> **API validity (default `Kling 3.0 Pro`):** Text-to-video `duration` only **5 / 10 / 15**; `aspect_ratio` only **9:16, 1:1, 16:9**. Image-to-video `aspect_ratio` only **9:16, 16:9, 1:1**. **No `resolution` field—do not send it.** For **fast** tier with VEO: text-to-video **`Veo 3.1 Fast`**, image-to-video **`Veo 3.1 Fast`**, with `duration` **fixed at 8**, `aspect_ratio` only **9:16** or **16:9**. When switching `model_key`, follow the allowed sets in this section’s model/API constraints and the API validity note above; do not send `resolution` to models that do not support it.
 
 ---
 
@@ -116,7 +116,7 @@ e.g. “bunny grows strawberries” or “cat grows balcony tomatoes”—the sk
 Show parameters before generate:
 
 > Generating with the parameters below—reply **confirm** or say what to change:
-> - model: KLING_V3_0_PRO
+> - model: Kling 3.0 Pro
 > - aspect_ratio: 9:16
 > - duration: 10
 > - generate_audio: true
@@ -128,7 +128,7 @@ Show parameters before generate:
 
 | Field | Value |
 |-------|-------|
-| model | KLING_V3_0_PRO |
+| model | Kling 3.0 Pro |
 | aspect_ratio | 9:16 |
 | duration | 10 |
 | generate_audio | true |
@@ -149,7 +149,7 @@ Name the plant and stage; then generate:
    >
    > | Parameter | This run | Notes |
    > |-----------|----------|-------|
-   > | `model` | `KLING_V3_0_PRO` | Best default; say “cheap / draft / fast” → `KLING_V3_0_STA`; say “balanced” → `WAN_2_6`; or name a model |
+   > | `model` | `Kling 3.0 Pro` | Best default; say “cheap / draft / fast” → `Kling 3.0 Standard`; say “balanced” → `Wan 2.6`; or name a model |
    > | `aspect_ratio` | `9:16` | Default KLING: 9:16, 1:1, 16:9 |
    > | `duration` | `10s` | KLING: 5 / 10 / 15; VEO fast: 8 only |
    > | `generate_audio` | `true` | Default **on**; **`Audio:`** in **`prompt`** unless user wants silent |

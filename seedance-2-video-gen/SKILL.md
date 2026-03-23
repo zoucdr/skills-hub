@@ -3,86 +3,100 @@ name: seedance-2-video-gen
 version: 1.0.1
 description: "Generate Seedance 2.0 videos through WeryAI for text-to-video, image-to-video, multi-image video, and first-frame/last-frame transitions. Use when you need a Seedance 2.0 video generator, want to animate a reference image (prefer a public https URL), create a storyboard-to-video clip, migrate `image + last_image` workflows, or generate controlled start/end frame video with your WeryAI API key."
 
-tags: [seedance, seedance-2, video-gen, text-to-video, image-to-video, multi-image-video, storyboard, start-frame, end-frame]
+tags: [seedance, seedance-2, video-gen, text-to-video, image-to-video, multi-image-video, almighty-reference, start-frame, end-frame, video-edit]
 
 metadata: { "openclaw": { "emoji": "🎬", "primaryEnv": "WERYAI_API_KEY", "paid": true, "network_required": true, "requires": { "env": ["WERYAI_API_KEY"], "bins": ["node"], "node": ">=18" } } }
 user-invocable: true
 ---
 
-# Seedance 2.0 video generator
+# Seedance 2.0 video generator (almighty-ready)
 
-Generate Seedance 2.0 videos through WeryAI with one focused skill: text-to-video, image-to-video, multi-image video, and first-frame/last-frame transition control. This skill is intentionally strict about secret declaration and input safety: the only runtime secret is `WERYAI_API_KEY`. Prefer public **`https`** URLs for reference media; if the assembled `scripts/video_gen.js` supports local file paths, review/verify the script and explicitly consent before it reads local files and uploads them to WeryAI to obtain public URLs.
+Generate Seedance 2.0 videos on WeryAI with one skill for text-to-video, image-to-video, first-frame/last-frame transition video, multi-image storyboard video, and almighty mixed-reference video generation.
+Animate and transform scenes from single images, storyboard frames, or mixed references while keeping subject and motion continuity.
 
 **Dependencies:** `scripts/video_gen.js` at the skill package root (alongside `SKILL.md`) + `WERYAI_API_KEY` + Node.js 18+. No other Cursor skills are required.
 
-## Authentication and first-time setup
+- text-only generation
+- single-image animation
+- multi-image storyboard generation
+- first-frame/last-frame compatibility aliases
+- almighty mixed references (`images + videos + audios + prompt`)
 
-Before the first real generation run:
+Runtime secret: only `WERYAI_API_KEY`.
 
-1. Create a WeryAI account.
-2. Open the API key page at `https://www.weryai.com/api/keys`.
-3. Create a new API key and copy the secret value.
-4. Add it to the required environment variable `WERYAI_API_KEY`.
-5. Make sure the WeryAI account has available balance or credits before paid generation.
+## Core upgrade
 
-### OpenClaw-friendly setup
+This skill now supports four input modalities for richer control:
 
-- This skill already declares `WERYAI_API_KEY` in `metadata.openclaw.requires.env` and `primaryEnv`.
-- After installation, if the installer or runtime asks for required environment variables, paste the key into `WERYAI_API_KEY`.
-- If you are configuring the runtime manually, export it before running commands:
+- Image reference: composition, character, and detail lock
+- Video reference: camera language, action rhythm, effect imitation
+- Audio reference: mood and timing guidance
+- Text prompt: intent and constraints
+
+Smart routing policy:
+
+- If payload includes `videos` or `audios`, route to `POST /v1/generation/almighty-reference-to-video`.
+- Otherwise keep legacy routing (`text-to-video`, `image-to-video`, `multi-image-to-video`).
+
+## Prerequisites
+
+- `WERYAI_API_KEY` must be set.
+- Node.js 18+.
+- Prefer public `https` URLs for media.
+- Local files are supported and auto-uploaded by this skill via `POST /v1/generation/upload-file`.
 
 ```sh
 export WERYAI_API_KEY="your_api_key_here"
 ```
 
-### Quick verification
-
-Use one safe check before the first paid run:
+## Quick checks
 
 ```sh
 node scripts/video_gen.js models --mode text_to_video
 node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"A glowing koi swims through ink clouds","duration":5,"aspect_ratio":"9:16","resolution":"720p","generate_audio":true}' --dry-run
 ```
 
-- `models` confirms that the key is configured and the models endpoint is reachable.
-- `--dry-run` confirms the request shape locally without spending credits.
-- Real `wait` or `submit-*` commands still require available WeryAI balance.
+## Modes and input shapes
 
-## Quick summary
+| Mode | Trigger | API route | Key fields |
+|---|---|---|---|
+| Text | no media refs | `/v1/generation/text-to-video` | `prompt`, `duration`, optional `aspect_ratio`, `resolution`, `generate_audio` |
+| Single image | `image` only | `/v1/generation/image-to-video` | `image`, `prompt`, plus common fields |
+| Multi image | `images` only | `/v1/generation/multi-image-to-video` | `images`, `prompt`, plus common fields |
+| Almighty | has `videos` or `audios` | `/v1/generation/almighty-reference-to-video` | `images`, `videos`, `audios`, `prompt`, `video_number`, plus common fields |
 
-- Main jobs: Seedance 2.0 text-to-video, single-image animation, multi-image video, start/end-frame transition video
-- Main inputs: `prompt`, `image`, `images`, `first_frame`, `last_frame`, `last_image`
-- Main outputs: `taskId`, `videos`, task status, model capability checks
-- Main trust signals: declared `WERYAI_API_KEY`, dry-run support, explicit paid-task warning, and documented reference-input handling (prefer `https`; local paths only after script review and explicit consent)
+Compatibility aliases still supported:
 
-## Example prompts
+- `first_frame + last_frame` -> normalized to ordered `images`
+- `image + last_image` -> normalized to ordered `images`
 
-- `Generate a Seedance 2.0 text-to-video clip: a silver train exits a tunnel into sunrise mist, 9:16 vertical`
-- `Animate this reference portrait URL with Seedance 2.0 image-to-video and keep the face consistent`
-- `Turn these three storyboard images into one coherent product reveal video with consistent lighting`
-- `Use these first and last frames to generate a smooth transition video with the same character`
-- `Migrate this WaveSpeed Seedance flow that uses image plus last_image into the WeryAI version`
+## Almighty constraints
 
-## Prerequisites
+Almighty validations in this skill:
 
-- `WERYAI_API_KEY` **must be set** before running `video_gen.js`.
-- Node.js **18+** is required.
-- Prefer public **`https`** URLs for `image`, `images`, `first_frame`, `last_frame`, and `last_image`. If the assembled `scripts/video_gen.js` supports local file paths, review/verify the script and explicitly consent before local read-and-upload to WeryAI.
-- Every real `wait` or `submit-*` run creates a paid WeryAI task.
+- `prompt` max 500 chars
+- `images` <= 9
+- `videos` <= 3
+- `audios` <= 3
+- mixed file total (`images + videos + audios`) <= 12
+- at least one of `images` or `videos`
+- `duration` must be 5-15 seconds
+- `video_number` must be 1-4
 
-## Security, secrets, and API hosts
+Notes:
 
-- **`WERYAI_API_KEY`**: Treat it as a secret. Configure it only in the runtime environment; never write the secret value into the skill files.
-- **Optional URL overrides** (`WERYAI_BASE_URL`, `WERYAI_MODELS_BASE_URL`): `video_gen.js` defaults to **`https://api.weryai.com`** and **`https://api-growth-agent.weryai.com`**. Only override them for trusted environments.
-- **Higher assurance**: Run paid jobs in a short-lived shell or isolated environment, and review `scripts/video_gen.js` before production use.
+- Backend enforces media-duration constraints for reference clips.
+- Per current OpenAPI contract, almighty duration floor is 5s.
 
-## Prompt expansion (mandatory)
+## Local upload behavior
 
-`video_gen.js` does **not** expand prompts for you. Before every paid call, turn the user's short brief into a complete production prompt in English unless they already gave you a final long prompt and explicitly asked you not to rewrite it.
+Supported local files before generation submit:
 
-For advanced prompt design patterns, read [references/seedance-prompt-optimization.md](references/seedance-prompt-optimization.md) before drafting the final API `prompt`.
+- Images: `jpg/jpeg/png/webp/gif`, max 10MB
+- Videos: `mp4/mov`, max 50MB
+- Audios: `mp3/wav`, max 50MB
 
-**Always add:**
+Upload endpoint used by this skill:
 
 - Shot scale, angle, and lens feel.
 - Camera movement or a clear lock-off choice.
@@ -92,63 +106,48 @@ For advanced prompt design patterns, read [references/seedance-prompt-optimizati
 - Output framing such as `9:16 vertical` when using the default aspect ratio.
 - **Audio (default-on):** Add a labeled **`Audio:`** block (ambience, layered SFX, subtle foley—**generic**, non-copyrighted) **even if the user never mentioned sound**. JSON **`generate_audio`** defaults to **`true`** for models that support audio; use **`false`** and omit **`Audio:`** only when the user explicitly wants **silent** output.
 
-**Mode-specific additions:**
+Dry-run behavior:
 
-- **Text-to-video**: define the scene, motion beat, and ending reveal.
-- **Single image**: preserve identity, composition, and palette from the reference image; keep the motion plausible.
-- **Multi-image**: describe the transition path across the image sequence instead of treating the images as unrelated shots.
-- **First-frame / last-frame**: explicitly describe how the opening frame evolves into the ending frame while preserving the same subject, scene logic, and temporal continuity.
+- `--dry-run` never uploads local files
+- output includes `uploadPreview` to show which local paths would be uploaded
 
-**Length:** Current frozen Seedance rows in this document use a `prompt` limit of **2000 chars** where documented. If you re-check live metadata with `models`, trust the live value.
+## Prompt workflow (mandatory)
 
-**Confirmation:** Always show the **full expanded prompt** and all selected parameters in a table, then wait for the user to reply **`confirm`** or request edits.
+Before paid submit, expand brief into production prompt:
 
-### Prompt optimization workflow
+1. Decide mode.
+2. Map each media to explicit role.
+3. Build 2-4 timeline beats by duration.
+4. Write one action arc + one final payoff.
+5. Add minimal constraints for continuity.
 
-Use this sequence whenever the user asks for stronger Seedance prompt quality or tighter control:
+Always show full prompt and all params before submit, then wait for explicit confirmation.
 
-1. Pick the mode first: text-only, single-image, multi-image, or first/last-frame.
-2. Map each asset to a role: identity anchor, first frame, waypoint, or ending frame.
-3. Break the clip into 2 to 4 timecoded beats based on `duration`.
-4. Write one primary action arc and one clear final payoff.
-5. Add only the negative constraints that directly help this request.
+## @asset layered referencing
 
-If the request is complex, structure the prompt plan internally as:
+Use explicit role mapping in prompt drafts:
 
-- `Mode`
-- `Asset mapping`
-- `Timeline beats`
-- `Final prompt`
-- `Negative constraints`
-- `Generation settings`
+- Visual anchor: `@图片1` / `@图1`
+- Camera/motion style: `参考@视频1运镜`
+- Action rhythm: `参考@视频2动作节奏`
+- Music/sound bed: `@音频1用于配乐`
 
-## Input shapes
+Good:
 
-| Use case | Accepted fields | Notes |
-|----------|-----------------|-------|
-| Text-to-video | `prompt`, `duration`, optional `aspect_ratio`, `resolution`, `generate_audio` | Default model is `SEEDANCE_2_0`. |
-| Single-image animation | `image` + `prompt` | Keeps the reference composition and identity. |
-| Multi-image video | `images` + `prompt` | Ordered list, trimmed to the model limit. |
-| Start/end-frame guidance | `first_frame` + `last_frame` + `prompt` | Internally normalized to ordered `images`. |
-| WaveSpeed-style migration | `image` + `last_image` + `prompt` | Supported as a compatibility alias for end-frame workflows. |
+- `@图1为首帧，参考@视频1的跑步动作，镜头从正面切到侧面，@音频1做节奏底。`
 
-## Migration notes
+Bad:
 
-- If you are coming from a WaveSpeed-style Seedance workflow, map `last_image` to this skill's end-frame path. This skill accepts `image + last_image` as a compatibility alias and normalizes it to the ordered multi-image route.
-- Prefer public **`https`** reference URLs by default. If your assembled `scripts/video_gen.js` supports local paths, review/verify it and explicitly consent before relying on local read-and-upload to WeryAI.
-- This skill's metadata correctly declares the required secret (`WERYAI_API_KEY`) so installers and reviewers can see the runtime contract up front.
+- `用这些素材生成一个视频。`
 
-## Prompt engineering recipes
+## High-value templates
 
-When the user asks for "better Seedance prompts" rather than just API execution:
+### Video extend
 
-- Use the mode table, timeline planning, and prompt skeletons in `references/seedance-prompt-optimization.md`.
-- Prefer timecoded beats over long adjective-heavy paragraphs.
-- For `first_frame` / `last_frame` or `image` + `last_image`, explicitly describe the bridge action between start and end state.
-- For `images`, treat them as ordered waypoints of one coherent shot, not unrelated inspirations.
-- For product, character, transformation, or storyboard prompts, use the scenario-specific recipes from the reference file before writing the final prompt.
+- `将@视频1延长 5s，新增段落为...，保持人物与场景连续。`
+- Set `duration` to the added segment length.
 
-## Workflow
+### Video fusion
 
 1. Decide which path fits the request: `text`, `image`, `multi-image`, or `first-frame/last-frame`.
 2. Collect the user's brief, `duration`, optional `aspect_ratio`, optional `resolution`, **`generate_audio`** (default **`true`** unless the user wants silent), and reference image URLs if the mode uses assets (prefer public `https`).
@@ -188,6 +187,18 @@ node scripts/video_gen.js wait --json '{"model":"SEEDANCE_2_0","prompt":"A glowi
 # Poll an existing task
 node scripts/video_gen.js status --task-id <task-id>
 ```
+
+## Poll timeout classes
+
+- `task_class=short`: default `5` minutes (`300000ms`), intended for text-to-video.
+- `task_class=long`: default `20` minutes (`1200000ms`), intended for image/multi-image/almighty.
+- `task_class=auto` (default): infer from effective mode.
+- `WERYAI_POLL_TIMEOUT_MS` remains the highest-priority explicit override.
+
+## Compliance notice
+
+- Do not store `WERYAI_API_KEY` in repository files.
+- Platform compliance for realistic human face references is handled by backend policy; this skill does not implement client-side blocking.
 
 ## Definition of done
 

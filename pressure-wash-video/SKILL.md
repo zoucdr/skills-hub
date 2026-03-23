@@ -95,13 +95,13 @@ Done when the user receives at least one playable video URL from the API respons
 
 | Field | Value |
 |-------|--------|
-| Model | KLING_V3_0_PRO |
+| Model | Kling 3.0 Pro |
 | Aspect | 9:16 (fixed, vertical short) |
-| Duration | Short (`duration: 5`, minimum for KLING_V3_0_PRO) |
+| Duration | Short (`duration: 5`, minimum for Kling 3.0 Pro) |
 | Audio | On (jet + runoff ASMR is core) |
 | Look | Overhead or eye-level, cool natural light, slow water advance, sharp clean/dirty line, minimal background (fixed) |
 
-> **API validity (default `KLING_V3_0_PRO`):** Text-to-video: `duration` only **5 / 10 / 15**, `aspect_ratio` only **9:16, 1:1, 16:9**; image-to-video: `aspect_ratio` only **9:16, 16:9, 1:1**; **no `resolution` field—do not send.** Fast VEO tier: text **`VEO_3_1_FAST`**, image **`CHATBOT_VEO_3_1_FAST`**, `duration` **fixed 8**, `aspect_ratio` only **9:16** or **16:9**. For other `model_key` values, follow the allowed sets in this document and the API validity notes above; do not send unsupported fields such as `resolution`.
+> **API validity (default `Kling 3.0 Pro`):** Text-to-video: `duration` only **5 / 10 / 15**, `aspect_ratio` only **9:16, 1:1, 16:9**; image-to-video: `aspect_ratio` only **9:16, 16:9, 1:1**; **no `resolution` field—do not send.** Fast VEO tier: text **`Veo 3.1 Fast`**, image **`Veo 3.1 Fast`**, `duration` **fixed 8**, `aspect_ratio` only **9:16** or **16:9**. For other `model_key` values, follow the allowed sets in this document and the API validity notes above; do not send unsupported fields such as `resolution`.
 
 ---
 
@@ -130,7 +130,7 @@ User describes target and stain type; generate directly. Good for batch-testing 
 
 | Field | Value |
 |-------|--------|
-| model | KLING_V3_0_PRO |
+| model | Kling 3.0 Pro |
 | aspect_ratio | 9:16 |
 | duration | 5 |
 | generate_audio | true |
@@ -172,7 +172,7 @@ Upload a dirty surface image; generate motion centered on that surface with pres
 
 | Field | Value |
 |-------|--------|
-| model | KLING_V3_0_PRO |
+| model | Kling 3.0 Pro |
 | aspect_ratio | 9:16 |
 | duration | 5 |
 | generate_audio | true |

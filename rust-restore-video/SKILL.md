@@ -95,13 +95,13 @@ Done when the user receives at least one playable video URL from the API respons
 
 | Field | Value |
 |-------|--------|
-| Model | KLING_V3_0_PRO |
+| Model | Kling 3.0 Pro |
 | Aspect | 9:16 (fixed, vertical short) |
 | Duration | Short (`duration: 5`) |
 | Look | Tight macro, dark workshop (wood bench / anvil), side light on metal texture, slow-mo sparks and rust dust (fixed) |
 | Audio | On (wheel + metal friction ASMR is core) |
 
-> **API validity (default `KLING_V3_0_PRO`):** Text-to-video: `duration` only **5 / 10 / 15**, `aspect_ratio` only **9:16, 1:1, 16:9**; image-to-video: `aspect_ratio` only **9:16, 16:9, 1:1**; **no `resolution` field—do not send.** Fast VEO tier: text **`VEO_3_1_FAST`**, image **`CHATBOT_VEO_3_1_FAST`**, `duration` **fixed 8**, `aspect_ratio` only **9:16** or **16:9**. For other `model_key` values, follow the allowed sets in this document and the API validity notes above; do not send unsupported fields such as `resolution`.
+> **API validity (default `Kling 3.0 Pro`):** Text-to-video: `duration` only **5 / 10 / 15**, `aspect_ratio` only **9:16, 1:1, 16:9**; image-to-video: `aspect_ratio` only **9:16, 16:9, 1:1**; **no `resolution` field—do not send.** Fast VEO tier: text **`Veo 3.1 Fast`**, image **`Veo 3.1 Fast`**, `duration` **fixed 8**, `aspect_ratio` only **9:16** or **16:9**. For other `model_key` values, follow the allowed sets in this document and the API validity notes above; do not send unsupported fields such as `resolution`.
 
 ---
 
@@ -119,7 +119,7 @@ Collect object + action, pick the strongest phase (scale peel / shine appears / 
 
 | Field | Value |
 |-------|--------|
-| model | KLING_V3_0_PRO |
+| model | Kling 3.0 Pro |
 | aspect_ratio | 9:16 |
 | duration | 5 |
 | generate_audio | true |
@@ -148,7 +148,7 @@ Confirm URL, infer object and rust level, choose angle for max contrast → show
 
 | Field | Value |
 |-------|--------|
-| model | KLING_V3_0_PRO |
+| model | Kling 3.0 Pro |
 | aspect_ratio | 9:16 |
 | duration | 5 |
 | generate_audio | true |
@@ -175,4 +175,4 @@ Confirm URL, infer object and rust level, choose angle for max contrast → show
 - Full arc (derust → polish → assembly): use `duration` **10** and say so at confirmation
 - Prefer public **`https`** URLs; private hosts or in-app-only links may fail. If the runtime supports local paths, review `scripts/video_gen.js` and explicitly consent before local read-and-upload to WeryAI.
 
-> **Note:** `KLING_V3_0_PRO` supports `negative_prompt` to exclude unwanted hands, tool occlusion, etc.—mention at confirmation if you want it added.
+> **Note:** `Kling 3.0 Pro` supports `negative_prompt` to exclude unwanted hands, tool occlusion, etc.—mention at confirmation if you want it added.

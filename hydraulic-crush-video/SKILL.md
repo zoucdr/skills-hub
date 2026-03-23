@@ -95,13 +95,13 @@ Done when the user receives at least one playable video URL from the API respons
 
 | Field | Value |
 |-------|-------|
-| Model | KLING_V3_0_PRO |
+| Model | Kling 3.0 Pro |
 | Aspect ratio | 9:16 (fixed vertical) |
-| Duration | Short (`duration`: 5—minimum for KLING_V3_0_PRO) |
+| Duration | Short (`duration`: 5—minimum for Kling 3.0 Pro) |
 | Audio | On (press + break sounds are core satisfaction) |
 | Visual style | Extreme macro, cool white light, slow motion, minimal background—deformation and detail first |
 
-> **API validity (default `KLING_V3_0_PRO`):** Text-to-video `duration` only **5 / 10 / 15**; `aspect_ratio` only **9:16, 1:1, 16:9**. Image-to-video `aspect_ratio` only **9:16, 16:9, 1:1**. **No `resolution` field—do not send it.** For **fast** tier with VEO: text-to-video **`VEO_3_1_FAST`**, image-to-video **`CHATBOT_VEO_3_1_FAST`**, with `duration` **fixed at 8**, `aspect_ratio` only **9:16** or **16:9**. When switching `model_key`, follow the allowed sets in this section’s model/API constraints and the API validity note above; do not send `resolution` to models that do not support it.
+> **API validity (default `Kling 3.0 Pro`):** Text-to-video `duration` only **5 / 10 / 15**; `aspect_ratio` only **9:16, 1:1, 16:9**. Image-to-video `aspect_ratio` only **9:16, 16:9, 1:1**. **No `resolution` field—do not send it.** For **fast** tier with VEO: text-to-video **`Veo 3.1 Fast`**, image-to-video **`Veo 3.1 Fast`**, with `duration` **fixed at 8**, `aspect_ratio` only **9:16** or **16:9**. When switching `model_key`, follow the allowed sets in this section’s model/API constraints and the API validity note above; do not send `resolution` to models that do not support it.
 
 ---
 
@@ -130,7 +130,7 @@ User names the object and how it should fail—good for batch ideas, testing hoo
 
 | Field | Value |
 |-------|-------|
-| model | KLING_V3_0_PRO |
+| model | Kling 3.0 Pro |
 | aspect_ratio | 9:16 |
 | duration | 5 |
 | generate_audio | true |
@@ -165,7 +165,7 @@ Public **HTTPS** image of an object → that object crushed slowly or bursting. 
 
 | Field | Value |
 |-------|-------|
-| model | KLING_V3_0_PRO |
+| model | Kling 3.0 Pro |
 | aspect_ratio | 9:16 |
 | duration | 5 |
 | generate_audio | true |

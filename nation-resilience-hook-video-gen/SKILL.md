@@ -61,7 +61,7 @@ user-invocable: true
 
 ## Workflow
 
-1. Confirm **text-to-video** and/or **image-to-video** (optional **multi-image** only with **`SEEDANCE_2_0`**, ≤3 URLs).
+1. Confirm **text-to-video** and/or **image-to-video** (optional **multi-image** only with **`Seedance 2.0`**, ≤3 URLs).
 2. Collect **brief** (which country / abstract “nation” idea), optional `image`/`images`, tier or `model_key`.
 3. **Expand prompt** per above—**author English lines** from the brief unless user supplied a script.
 4. Validate JSON fields against frozen tables.
@@ -89,7 +89,7 @@ Playable **[Video](url)** or clear failure. Submitted `prompt` includes **explic
 - Do not use local image paths unless you have reviewed `scripts/video_gen.js` and explicitly consent to local read-and-upload to WeryAI; otherwise prefer public **`https`** URLs. Do not put secret key values in files.
 - Do not link shared `../references/` capability docs; use **`references/WERYAI_VIDEO_API.md`**.
 - Do not send unsupported API fields; no `negative_prompt` on **Seedance 2.0**.
-- **Multi-image** only **`SEEDANCE_2_0`**, max **3** URLs.
+- **Multi-image** only **`Seedance 2.0`**, max **3** URLs.
 
 ### Example prompts
 
@@ -108,25 +108,25 @@ Playable **[Video](url)** or clear failure. Submitted `prompt` includes **explic
 
 | model_key | durations | aspect_ratios | resolutions | audio | negative_prompt | prompt limit |
 |-----------|-----------|---------------|-------------|-------|-----------------|--------------|
-| KLING_V3_0_PRO | 5, 10, 15 | 9:16, 1:1, 16:9 | *(omit `resolution`)* | yes | yes | 2000 |
-| KLING_V3_0_STA | 5, 10, 15 | 9:16, 1:1, 16:9 | *(omit `resolution`)* | yes | yes | 2000 |
-| SEEDANCE_2_0 | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | yes | no | 2000 |
+| Kling 3.0 Pro | 5, 10, 15 | 9:16, 1:1, 16:9 | *(omit `resolution`)* | yes | yes | 2000 |
+| Kling 3.0 Standard | 5, 10, 15 | 9:16, 1:1, 16:9 | *(omit `resolution`)* | yes | yes | 2000 |
+| Seedance 2.0 | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | yes | no | 2000 |
 
 ### Image-to-video
 
 | model_key | durations | aspect_ratios | resolutions | audio | negative_prompt | image slots |
 |-----------|-----------|---------------|-------------|-------|-----------------|-------------|
-| KLING_V3_0_PRO | 5, 10, 15 | 9:16, 16:9, 1:1 | *(omit)* | yes | yes | single `image` |
-| KLING_V3_0_STA | 5, 10, 15 | 9:16, 16:9, 1:1 | *(omit)* | yes | yes | single `image` |
-| SEEDANCE_2_0 | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | yes | no | up to **3** `images` |
+| Kling 3.0 Pro | 5, 10, 15 | 9:16, 16:9, 1:1 | *(omit)* | yes | yes | single `image` |
+| Kling 3.0 Standard | 5, 10, 15 | 9:16, 16:9, 1:1 | *(omit)* | yes | yes | single `image` |
+| Seedance 2.0 | 5, 10, 15 | 9:16, 1:1, 16:9 | 480p, 720p | yes | no | up to **3** `images` |
 
 ## Recommended models
 
 | Tier | model_key | Default duration |
 |------|-----------|------------------|
-| ⭐ Best | KLING_V3_0_PRO | 10 |
-| 👍 Good | KLING_V3_0_STA | 10 |
-| ⚡ Fast | SEEDANCE_2_0 | 10 (`resolution`: **720p**) |
+| ⭐ Best | Kling 3.0 Pro | 10 |
+| 👍 Good | Kling 3.0 Standard | 10 |
+| ⚡ Fast | Seedance 2.0 | 10 (`resolution`: **720p**) |
 
 **Tier:** unspecified → Best; “draft/quick” → Fast; “balanced” → Good.
 

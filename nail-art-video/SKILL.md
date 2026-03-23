@@ -106,13 +106,13 @@ Done when the user receives at least one playable video URL from the API respons
 
 | Field | Value |
 |-------|--------|
-| Model | KLING_V3_0_PRO |
+| Model | Kling 3.0 Pro |
 | Aspect | 9:16 (fixed, vertical hand macro) |
 | Duration | 5 s (`duration: 5`, focus on peak moments) |
 | Audio | On (gel + UV beeps are core ASMR) |
 | Look | Extreme macro, hand close-up, white backdrop, soft diffuse light, gloss-first, high color saturation |
 
-> **API validity (default `KLING_V3_0_PRO`):** Text-to-video: `duration` only **5 / 10 / 15**, `aspect_ratio` only **9:16, 1:1, 16:9**; image-to-video: `aspect_ratio` only **9:16, 16:9, 1:1**; **no `resolution` field—do not send.** Fast VEO tier: text **`VEO_3_1_FAST`**, image **`CHATBOT_VEO_3_1_FAST`**, `duration` **fixed 8**, `aspect_ratio` only **9:16** or **16:9**. For other `model_key` values, follow the allowed sets in this document and the API validity notes above; do not send unsupported fields such as `resolution`.
+> **API validity (default `Kling 3.0 Pro`):** Text-to-video: `duration` only **5 / 10 / 15**, `aspect_ratio` only **9:16, 1:1, 16:9**; image-to-video: `aspect_ratio` only **9:16, 16:9, 1:1**; **no `resolution` field—do not send.** Fast VEO tier: text **`Veo 3.1 Fast`**, image **`Veo 3.1 Fast`**, `duration` **fixed 8**, `aspect_ratio` only **9:16** or **16:9**. For other `model_key` values, follow the allowed sets in this document and the API validity notes above; do not send unsupported fields such as `resolution`.
 
 ---
 
@@ -127,7 +127,7 @@ Describe the character and the nail look; the rest is filled by prompt.
 Collect character + nail design → build a prompt stressing gel gloss, cat-eye lines, mirror top coat → show parameter confirmation → run `node scripts/video_gen.js wait --json '…'` (fields match the confirmation table)
 
 > About to generate with:
-> - model: KLING_V3_0_PRO
+> - model: Kling 3.0 Pro
 > - aspect_ratio: 9:16
 > - duration: 5
 > - generate_audio: true
@@ -139,7 +139,7 @@ Collect character + nail design → build a prompt stressing gel gloss, cat-eye 
 
 | Field | Value |
 |-------|--------|
-| model | KLING_V3_0_PRO |
+| model | Kling 3.0 Pro |
 | aspect_ratio | 9:16 |
 | duration | 5 |
 | generate_audio | true |
@@ -158,7 +158,7 @@ State the material type; generate directly.
    >
    > | Field | This run | Notes |
    > |-------|----------|-------|
-   > | `model` | `KLING_V3_0_PRO` | Best tier default; fast: text `VEO_3_1_FAST`, image `CHATBOT_VEO_3_1_FAST` (`duration` fixed 8); good → `KLING_V3_0_STA`; or specify a model name |
+   > | `model` | `Kling 3.0 Pro` | Best tier default; fast: text `Veo 3.1 Fast`, image `Veo 3.1 Fast` (`duration` fixed 8); good → `Kling 3.0 Standard`; or specify a model name |
    > | `aspect_ratio` | `9:16` | Default KLING: 9:16, 1:1, 16:9 only; if you switch model, check that row’s `aspect_ratios` etc. |
    > | `duration` | `5s` | KLING family: 5 / 10 / 15; VEO fast: duration 8 only |
    > | `generate_audio` | `true` | Auto-generate audio or not |

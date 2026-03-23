@@ -95,13 +95,13 @@ Done when the user receives at least one playable video URL from the API respons
 
 | Field | Value |
 |-------|-------|
-| Model | KLING_V3_0_PRO |
+| Model | Kling 3.0 Pro |
 | Aspect ratio | 9:16 (fixed) |
 | Duration | 10 seconds (`duration`: 10—enough time to show layered progression) |
 | Audio | **On** — default **`generate_audio`: `true`**; expanded **`prompt`** must include **`Audio:`** (ambience + SFX; generic) unless the user wants silent |
 | Visual style | Top-down or eye-level close-up; canvas or tablet in frame; clear brush motion; color fills progressively; time-compressed timeline |
 
-> **API validity (default `KLING_V3_0_PRO`):** Text-to-video `duration` only **5 / 10 / 15**; `aspect_ratio` only **9:16, 1:1, 16:9**. Image-to-video `aspect_ratio` only **9:16, 16:9, 1:1**. **No `resolution` field—do not send it.** For **fast** tier with VEO: text-to-video **`VEO_3_1_FAST`**, image-to-video **`CHATBOT_VEO_3_1_FAST`**, with `duration` **fixed at 8**, `aspect_ratio` only **9:16** or **16:9**. When switching `model_key`, follow the allowed sets in this section’s model/API constraints and the API validity note above; do not send `resolution` to models that do not support it.
+> **API validity (default `Kling 3.0 Pro`):** Text-to-video `duration` only **5 / 10 / 15**; `aspect_ratio` only **9:16, 1:1, 16:9**. Image-to-video `aspect_ratio` only **9:16, 16:9, 1:1**. **No `resolution` field—do not send it.** For **fast** tier with VEO: text-to-video **`Veo 3.1 Fast`**, image-to-video **`Veo 3.1 Fast`**, with `duration` **fixed at 8**, `aspect_ratio` only **9:16** or **16:9**. When switching `model_key`, follow the allowed sets in this section’s model/API constraints and the API validity note above; do not send `resolution` to models that do not support it.
 
 ---
 
@@ -124,7 +124,7 @@ Done when the user receives at least one playable video URL from the API respons
    >
    > | Parameter | This run | Notes |
    > |-----------|----------|-------|
-   > | `model` | `KLING_V3_0_PRO` | Best tier default; say “cheap / draft / fast” → `WAN_2_6`; say “balanced” → `KLING_V3_0_STA`; or name a model directly |
+   > | `model` | `Kling 3.0 Pro` | Best tier default; say “cheap / draft / fast” → `Wan 2.6`; say “balanced” → `Kling 3.0 Standard`; or name a model directly |
    > | `aspect_ratio` | `9:16` | Default KLING: 9:16, 1:1, 16:9 only; if you change model, check that model’s `aspect_ratios` in the table |
    > | `duration` | `10s` | KLING family: 5 / 10 / 15; VEO fast: duration 8 only |
    > | `generate_audio` | `true` | Default **on**; **`Audio:`** in **`prompt`** unless user wants silent |
@@ -144,7 +144,7 @@ Done when the user receives at least one playable video URL from the API respons
 
 | Field | Value |
 |-------|-------|
-| model | KLING_V3_0_PRO |
+| model | Kling 3.0 Pro |
 | aspect_ratio | 9:16 |
 | duration | 10 |
 | generate_audio | true |

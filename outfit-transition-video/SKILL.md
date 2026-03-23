@@ -101,13 +101,13 @@ Done when the user receives at least one playable video URL from the API respons
 
 | Field | Value |
 |-------|--------|
-| Model | KLING_V3_0_PRO |
+| Model | Kling 3.0 Pro |
 | Aspect | 9:16 (fixed) |
 | Duration | 5 s (`duration: 5`, tight for beat cuts) |
 | Audio | **On** — default **`generate_audio`: `true`**; expanded **`prompt`** must include **`Audio:`** (ambience + SFX; generic) unless the user wants silent |
 | Look | Front medium shots; clear visual beat on swaps; one hero frame per look; white / solid seamless bg |
 
-> **API validity (default `KLING_V3_0_PRO`):** Text-to-video: `duration` only **5 / 10 / 15**, `aspect_ratio` only **9:16, 1:1, 16:9**; image-to-video: `aspect_ratio` only **9:16, 16:9, 1:1**; **no `resolution` field—do not send.** Fast VEO tier: text **`VEO_3_1_FAST`**, image **`CHATBOT_VEO_3_1_FAST`**, `duration` **fixed 8**, `aspect_ratio` only **9:16** or **16:9**. For other `model_key` values, follow the allowed sets in this document and the API validity notes above; do not send unsupported fields such as `resolution`.
+> **API validity (default `Kling 3.0 Pro`):** Text-to-video: `duration` only **5 / 10 / 15**, `aspect_ratio` only **9:16, 1:1, 16:9**; image-to-video: `aspect_ratio` only **9:16, 16:9, 1:1**; **no `resolution` field—do not send.** Fast VEO tier: text **`Veo 3.1 Fast`**, image **`Veo 3.1 Fast`**, `duration` **fixed 8**, `aspect_ratio` only **9:16** or **16:9**. For other `model_key` values, follow the allowed sets in this document and the API validity notes above; do not send unsupported fields such as `resolution`.
 
 ---
 
@@ -118,7 +118,7 @@ User describes the character and number of looks / style direction; generate fas
 Collect character + direction; other params are fixed—confirm before run:
 
 > About to generate with:
-> - model: KLING_V3_0_PRO
+> - model: Kling 3.0 Pro
 > - aspect_ratio: 9:16
 > - duration: 5
 > - generate_audio: true
@@ -132,7 +132,7 @@ Embed in the brief: one line for character and count, e.g. “kitten, five commu
 
 | Field | Value |
 |-------|--------|
-| model | KLING_V3_0_PRO |
+| model | Kling 3.0 Pro |
 | aspect_ratio | 9:16 |
 | duration | 5 |
 | generate_audio | true |
@@ -151,7 +151,7 @@ State accessories + character vibe; generate directly.
    >
    > | Field | This run | Notes |
    > |-------|----------|-------|
-   > | `model` | `KLING_V3_0_PRO` | Best tier default; fast: text `VEO_3_1_FAST`, image `CHATBOT_VEO_3_1_FAST` (`duration` fixed 8); good → `KLING_V3_0_STA`; or specify a model name |
+   > | `model` | `Kling 3.0 Pro` | Best tier default; fast: text `Veo 3.1 Fast`, image `Veo 3.1 Fast` (`duration` fixed 8); good → `Kling 3.0 Standard`; or specify a model name |
    > | `aspect_ratio` | `9:16` | Default KLING: 9:16, 1:1, 16:9 only; if you switch model, check that row’s `aspect_ratios` etc. |
    > | `duration` | `5s` | KLING family: 5 / 10 / 15; VEO fast: duration 8 only |
    > | `generate_audio` | `true` | Default **on**; **`Audio:`** in **`prompt`** unless user wants silent |
