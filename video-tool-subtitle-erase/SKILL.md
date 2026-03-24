@@ -9,14 +9,14 @@ tags: [video, weryai, video-tools]
 
 This skill covers **only** **`subtitle-erase`** on an **existing** video URL. It is **not** text-to-video or image-to-video generation from scratch.
 
-**Dependencies:** `scripts/video_toolkits.js` next to this `SKILL.md`, `WERYAI_API_KEY`, Node.js 18+.
+**Dependencies:** `scripts/video_subtitle_erase.js` (self-contained CLI), `WERYAI_API_KEY`, Node.js 18+.
 
 ## API surface (this tool only)
 
 - **Required:** `video_url`
 - **Optional:** `rect_vo_list` (normalized `0~1` boxes); omit for auto-detect
 
-Full parameter matrix and enums: For the full matrix, open the **`weryai-video-toolkits`** skill package `references/video-tools-matrix.md`, or run `node scripts/video_toolkits.js tools` from this package.
+Full parameter matrix and enums: For the full matrix, open the **`weryai-video-toolkits`** skill package `references/video-tools-matrix.md`, or run `node scripts/video_subtitle_erase.js spec` from this package.
 
 ## Pre-submit gate (mandatory)
 
@@ -31,22 +31,19 @@ Prefer `--dry-run` to validate JSON; default to `submit` then user-driven `statu
 From **this skill root**:
 
 ```sh
-node scripts/video_toolkits.js wait \
-  --tool subtitle-erase \
+node scripts/video_subtitle_erase.js wait \
   --json '{"video_url":"https://example.com/video.mp4"}'
 
-node scripts/video_toolkits.js submit \
-  --tool subtitle-erase \
+node scripts/video_subtitle_erase.js submit \
   --json '{"video_url":"https://example.com/video.mp4"}'
 
-node scripts/video_toolkits.js status --task-id <task-id>
+node scripts/video_subtitle_erase.js status --task-id <task-id>
 ```
 
 Dry-run:
 
 ```sh
-node scripts/video_toolkits.js wait \
-  --tool subtitle-erase \
+node scripts/video_subtitle_erase.js wait \
   --json '{"video_url":"https://example.com/video.mp4"}' \
   --dry-run
 ```

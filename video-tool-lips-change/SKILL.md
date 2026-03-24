@@ -9,13 +9,13 @@ tags: [video, weryai, video-tools]
 
 This skill covers **only** **`lips-change`** on an **existing** video URL. It is **not** text-to-video or image-to-video generation from scratch.
 
-**Dependencies:** `scripts/video_toolkits.js` next to this `SKILL.md`, `WERYAI_API_KEY`, Node.js 18+.
+**Dependencies:** `scripts/video_lips_change.js` (self-contained CLI), `WERYAI_API_KEY`, Node.js 18+.
 
 ## API surface (this tool only)
 
 - **Required:** `video_url`, `audio_url` (`https://` only)
 
-Full parameter matrix and enums: For the full matrix, open the **`weryai-video-toolkits`** skill package `references/video-tools-matrix.md`, or run `node scripts/video_toolkits.js tools` from this package.
+Full parameter matrix and enums: For the full matrix, open the **`weryai-video-toolkits`** skill package `references/video-tools-matrix.md`, or run `node scripts/video_lips_change.js spec` from this package.
 
 ## Pre-submit gate (mandatory)
 
@@ -30,22 +30,19 @@ Prefer `--dry-run` to validate JSON; default to `submit` then user-driven `statu
 From **this skill root**:
 
 ```sh
-node scripts/video_toolkits.js wait \
-  --tool lips-change \
+node scripts/video_lips_change.js wait \
   --json '{"video_url":"https://example.com/video.mp4","audio_url":"https://example.com/audio.mp3"}'
 
-node scripts/video_toolkits.js submit \
-  --tool lips-change \
+node scripts/video_lips_change.js submit \
   --json '{"video_url":"https://example.com/video.mp4","audio_url":"https://example.com/audio.mp3"}'
 
-node scripts/video_toolkits.js status --task-id <task-id>
+node scripts/video_lips_change.js status --task-id <task-id>
 ```
 
 Dry-run:
 
 ```sh
-node scripts/video_toolkits.js wait \
-  --tool lips-change \
+node scripts/video_lips_change.js wait \
   --json '{"video_url":"https://example.com/video.mp4","audio_url":"https://example.com/audio.mp3"}' \
   --dry-run
 ```

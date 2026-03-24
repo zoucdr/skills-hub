@@ -9,7 +9,7 @@ tags: [video, weryai, video-tools]
 
 This skill covers **only** **`extend`** on an **existing** video URL. It is **not** text-to-video or image-to-video generation from scratch.
 
-**Dependencies:** `scripts/video_toolkits.js` next to this `SKILL.md`, `WERYAI_API_KEY`, Node.js 18+.
+**Dependencies:** `scripts/video_extend.js` (self-contained CLI), `WERYAI_API_KEY`, Node.js 18+.
 
 ## API surface (this tool only)
 
@@ -17,7 +17,7 @@ This skill covers **only** **`extend`** on an **existing** video URL. It is **no
 - **Optional:** `style`, `resolution`, `duration` (see `weryai-video-toolkits` matrix)
 - **Defaults:** `style=anime`, `resolution=720p`, `duration=5`
 
-Full parameter matrix and enums: For the full matrix, open the **`weryai-video-toolkits`** skill package `references/video-tools-matrix.md`, or run `node scripts/video_toolkits.js tools` from this package.
+Full parameter matrix and enums: For the full matrix, open the **`weryai-video-toolkits`** skill package `references/video-tools-matrix.md`, or run `node scripts/video_extend.js spec` from this package.
 
 ## Pre-submit gate (mandatory)
 
@@ -32,22 +32,19 @@ Prefer `--dry-run` to validate JSON; default to `submit` then user-driven `statu
 From **this skill root**:
 
 ```sh
-node scripts/video_toolkits.js wait \
-  --tool extend \
+node scripts/video_extend.js wait \
   --json '{"video_url":"https://example.com/video.mp4","prompt":"Continue the motion naturally for 5 seconds"}'
 
-node scripts/video_toolkits.js submit \
-  --tool extend \
+node scripts/video_extend.js submit \
   --json '{"video_url":"https://example.com/video.mp4","prompt":"Continue the motion naturally for 5 seconds"}'
 
-node scripts/video_toolkits.js status --task-id <task-id>
+node scripts/video_extend.js status --task-id <task-id>
 ```
 
 Dry-run:
 
 ```sh
-node scripts/video_toolkits.js wait \
-  --tool extend \
+node scripts/video_extend.js wait \
   --json '{"video_url":"https://example.com/video.mp4","prompt":"Continue the motion naturally for 5 seconds"}' \
   --dry-run
 ```

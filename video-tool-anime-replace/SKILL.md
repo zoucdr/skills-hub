@@ -7,9 +7,13 @@ tags: [video, weryai, video-tools]
 
 # WeryAI video tool — anime replace
 
-This skill covers **only** **`anime-replace`** on an **existing** video URL. It is **not** text-to-video or image-to-video generation from scratch.
+This skill is **self-contained**: it documents and runs **only** the **`anime-replace`** workflow on an **existing** video given by URL. It is **not** text-to-video or image-to-video generation from scratch.
 
-**Dependencies:** `scripts/video_toolkits.js` next to this `SKILL.md`, `WERYAI_API_KEY`, Node.js 18+.
+**Entry script:** `scripts/video_anime_replace.js` (alongside this `SKILL.md`).
+
+**Runtime:** `WERYAI_API_KEY`, Node.js 18+.
+
+**Inputs:** `video_url` and `image_url` must be **public `https://` URLs**. This script does not read local files and does not perform upload-file flows.
 
 ## API surface (this tool only)
 
@@ -17,7 +21,7 @@ This skill covers **only** **`anime-replace`** on an **existing** video URL. It 
 - **Optional:** `type` (`move` | `replace`), `resolution` (`480p` | `580p` | `720p`)
 - **Defaults:** `type=replace`, `resolution=720p`
 
-For the full matrix and enums, open the **`weryai-video-toolkits`** package `references/video-tools-matrix.md`, or run `node scripts/video_toolkits.js tools` from this package.
+From **this skill root**, run `node scripts/video_anime_replace.js spec` to print the full tool schema (endpoint, required fields, defaults, enums) as JSON.
 
 ## Pre-submit gate (mandatory)
 
@@ -25,41 +29,38 @@ Do **not** run `submit` / `wait` until the user explicitly confirms URLs and non
 
 ## Workflow
 
-Prefer `--dry-run` to validate JSON; default to `submit` then user-driven `status` / `wait` unless they ask to block until done. Share final URLs as Markdown links `[Video](https://…)`.
+Prefer `--dry-run` to validate JSON. Use `wait` to submit and poll until the task finishes; use `submit` only when the user wants a `task_id` without blocking, then `status` for later checks. Share final URLs as Markdown links `[Video](https://…)`.
 
-## CLI (this tool)
+## CLI
 
 From **this skill root**:
 
 ```sh
-node scripts/video_toolkits.js wait \
-  --tool anime-replace \
+node scripts/video_anime_replace.js wait \
   --json '{"video_url":"https://example.com/video.mp4","image_url":"https://example.com/ref.jpg"}'
 
-node scripts/video_toolkits.js submit \
-  --tool anime-replace \
+node scripts/video_anime_replace.js submit \
   --json '{"video_url":"https://example.com/video.mp4","image_url":"https://example.com/ref.jpg","type":"replace","resolution":"720p"}'
 
-node scripts/video_toolkits.js status --task-id <task-id>
+node scripts/video_anime_replace.js status --task-id <task-id>
 ```
 
 Dry-run:
 
 ```sh
-node scripts/video_toolkits.js wait \
-  --tool anime-replace \
+node scripts/video_anime_replace.js wait \
   --json '{"video_url":"https://example.com/video.mp4","image_url":"https://example.com/ref.jpg"}' \
   --dry-run
 ```
 
 ## Security
 
-Never write `WERYAI_API_KEY` into files; only public `https://` media URLs.
+Never write `WERYAI_API_KEY` into files. The script reads **only** `WERYAI_API_KEY` from the environment (no other env keys). **`video_anime_replace.js`** accepts **only** `https://` media URLs (no disk read / no upload-file). Base URL and poll intervals are constants in the script, not env-driven.
 
 ## Out of scope
 
-- Other WeryAI video tools (subtitle, upscale, extend, etc.) — use their dedicated `video-tool-*` skills or **`weryai-video-toolkits`**.
-- Text-to-video / image-to-video — **`weryai-video-generator`** or a `-video-gen` skill.
+- Any other WeryAI video-tool endpoints (subtitle, upscale, extend, face change, etc.).
+- Text-to-video or image-to-video from scratch.
 
 ## References
 
