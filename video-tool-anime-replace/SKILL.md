@@ -15,6 +15,17 @@ This skill is **self-contained**: it documents and runs **only** the **`anime-re
 
 **Inputs:** `video_url` and `image_url` must be **public `https://` URLs**. This script does not read local files and does not perform upload-file flows.
 
+## What this package ships (verify before trust)
+
+Canonical layout for **this** skill only:
+
+- `SKILL.md`, `eval.yaml`
+- `scripts/video_anime_replace.js` (**the only** runnable script in scope)
+
+If your copy also contains `scripts/video_gen.js`, `scripts/video_toolkits.js`, `references/WERYAI_VIDEO_API.md`, or other CLIs, those files are **not** part of this skill’s contract — they may come from another repo sync or an over-broad install. **Do not run** them when you only want anime-replace; remove them or reinstall from a clean source. Inspect what you run: `node scripts/video_anime_replace.js spec`.
+
+**Other tools** (multi-endpoint CLIs, local-file upload to growth/upload-file APIs, extra environment variables in those CLIs) are **out of scope** for this package. This skill’s script uses **only** `WERYAI_API_KEY` and public `https://` URLs.
+
 ## API surface (this tool only)
 
 - **Required:** `video_url`, `image_url` (public `https://` URLs)
@@ -55,12 +66,14 @@ node scripts/video_anime_replace.js wait \
 
 ## Security
 
-Never write `WERYAI_API_KEY` into files. The script reads **only** `WERYAI_API_KEY` from the environment (no other env keys). **`video_anime_replace.js`** accepts **only** `https://` media URLs (no disk read / no upload-file). Base URL and poll intervals are constants in the script, not env-driven.
+Never write `WERYAI_API_KEY` into files. Keep **only** `WERYAI_API_KEY` set for this workflow; do not rely on undocumented env vars in sibling scripts if any were mistakenly present. The in-scope script reads **only** `WERYAI_API_KEY` (no other env keys). **`video_anime_replace.js`** accepts **only** `https://` media URLs (no disk read / no upload-file). Base URL and poll intervals are constants in the script, not env-driven.
+
+Do **not** pass local filesystem paths or run tools that accept them unless you have **explicitly** reviewed and consented to their upload behavior — that is never required for this skill.
 
 ## Out of scope
 
-- Any other WeryAI video-tool endpoints (subtitle, upscale, extend, face change, etc.).
-- Text-to-video or image-to-video from scratch.
+- Any other WeryAI video-tool endpoints (subtitle, upscale, extend, face change, etc.)
+- Text-to-video or image-to-video from scratch
 
 ## References
 
