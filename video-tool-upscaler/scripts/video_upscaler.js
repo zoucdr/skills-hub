@@ -18,9 +18,9 @@ const TOOL = {
  * Commands: help | spec | submit | wait | status
  */
 
-const BASE_URL = (process.env.WERYAI_BASE_URL || "https://api.weryai.com").replace(/\/$/, "");
-const POLL_INTERVAL_MS = Number(process.env.WERYAI_POLL_INTERVAL_MS || 6000);
-const POLL_TIMEOUT_MS = Number(process.env.WERYAI_POLL_TIMEOUT_MS || 600000);
+const BASE_URL = "https://api.weryai.com";
+const POLL_INTERVAL_MS = 6000;
+const POLL_TIMEOUT_MS = 600000;
 
 const STATUS_MAP = {
   waiting: "waiting",
